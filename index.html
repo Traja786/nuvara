@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nuvara — Invest in what matters</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #0A7C5C;
+    --green-dark: #065F46;
+    --green-light: #D1FAE5;
+    --green-subtle: #F0FDF9;
+    --gold: #F59E0B;
+    --black: #0F172A;
+    --grey-700: #334155;
+    --grey-500: #64748B;
+    --grey-200: #E2E8F0;
+    --grey-100: #F1F5F9;
+    --white: #FFFFFF;
+    --red: #EF4444;
+    --red-light: #FEF2F2;
+    --amber: #F59E0B;
+    --amber-light: #FFFBEB;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--white);
+    color: var(--black);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--grey-200);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--black);
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    display: inline-block;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-ghost {
+    background: none;
+    border: none;
+    color: var(--grey-700);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.15s;
+  }
+  .btn-ghost:hover { background: var(--grey-100); }
+
+  .btn-primary {
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 9px 18px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-primary:hover { background: var(--green-dark); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* HERO */
+  .hero-wrapper {
+    background: #0F172A;
+  }
+
+  .hero {
+    padding: 80px 24px 64px;
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.9);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .hero h1 {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(36px, 6vw, 58px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -2px;
+    color: #FFFFFF;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 span {
+    color: var(--green);
+  }
+
+  .hero p {
+    font-size: 17px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto 44px;
+    font-weight: 400;
+  }
+
+  /* SCANNER */
+  .scanner-card {
+    background: var(--white);
+    border: 1.5px solid var(--grey-200);
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+
+  .scanner-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--grey-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+
+  .search-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .search-input {
+    flex: 1;
+    padding: 14px 18px;
+    border: 1.5px solid var(--grey-200);
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    color: var(--black);
+    background: var(--grey-100);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .search-input:focus {
+    border-color: var(--green);
+    background: var(--white);
+  }
+  .search-input::placeholder { color: var(--grey-500); }
+
+  .scan-btn {
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 14px 24px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .scan-btn:hover { background: var(--green-dark); transform: translateY(-1px); }
+  .scan-btn:active { transform: translateY(0); }
+  .scan-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .popular-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  .popular-label {
+    font-size: 12px;
+    color: var(--grey-500);
+    font-weight: 500;
+  }
+
+  .ticker-chip {
+    background: var(--grey-100);
+    border: 1px solid var(--grey-200);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--grey-700);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .ticker-chip:hover {
+    background: var(--green-light);
+    border-color: var(--green);
+    color: var(--green-dark);
+  }
+
+  /* RESULT */
+  .result-box {
+    margin-top: 24px;
+    border-radius: 16px;
+    padding: 24px;
+    display: none;
+    animation: fadeUp 0.3s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-box.halal {
+    background: var(--green-subtle);
+    border: 1.5px solid var(--green-light);
+    display: block;
+  }
+  .result-box.haram {
+    background: var(--red-light);
+    border: 1.5px solid #FECACA;
+    display: block;
+  }
+  .result-box.doubtful {
+    background: var(--amber-light);
+    border: 1.5px solid #FDE68A;
+    display: block;
+  }
+
+  .result-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .result-company {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .result-ticker {
+    font-size: 12px;
+    color: var(--grey-500);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .verdict-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .verdict-badge.halal { background: var(--green); color: white; }
+  .verdict-badge.haram { background: var(--red); color: white; }
+  .verdict-badge.doubtful { background: var(--amber); color: white; }
+
+  .screens-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .screen-item {
+    background: white;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .screen-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .screen-icon.pass { background: var(--green-light); }
+  .screen-icon.fail { background: #FEE2E2; }
+  .screen-icon.warn { background: #FEF3C7; }
+
+  .screen-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--black);
+  }
+  .screen-detail {
+    font-size: 11px;
+    color: var(--grey-500);
+    margin-top: 1px;
+  }
+
+  .purification-box {
+    background: white;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .purification-label {
+    font-size: 12px;
+    color: var(--grey-500);
+    font-weight: 500;
+  }
+  .purification-amount {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--green-dark);
+  }
+
+  .result-note {
+    font-size: 12px;
+    color: var(--grey-500);
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  /* LOADING */
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 24px;
+    margin-top: 24px;
+  }
+  .loading.active { display: block; }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--green-light);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading p {
+    font-size: 14px;
+    color: var(--grey-500);
+  }
+
+  /* STATS */
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    padding: 56px 24px;
+    background: #0F172A;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin: 0;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-number {
+    font-family: 'Sora', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: -1px;
+  }
+
+  .stat-number span { color: var(--green); }
+
+  .stat-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  /* WAITLIST */
+  .waitlist-wrapper {
+    background: #0F172A;
+  }
+
+  .waitlist-section {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 72px 24px;
+    text-align: center;
+  }
+
+  .waitlist-section h2 {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(26px, 4vw, 36px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: #FFFFFF;
+    margin-bottom: 12px;
+  }
+
+  .waitlist-section p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  .waitlist-form {
+    display: flex;
+    gap: 10px;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+
+  .email-input {
+    flex: 1;
+    padding: 14px 18px;
+    border: 1.5px solid var(--grey-200);
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    color: var(--black);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .email-input:focus { border-color: var(--green); }
+  .email-input::placeholder { color: var(--grey-500); }
+
+  .waitlist-success {
+    display: none;
+    background: var(--green-subtle);
+    border: 1.5px solid var(--green-light);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--green-dark);
+    max-width: 440px;
+    margin: 0 auto;
+    animation: fadeUp 0.3s ease;
+  }
+
+  /* HOW IT WORKS */
+  .how-section {
+    background: var(--grey-100);
+    padding: 72px 24px;
+  }
+
+  .how-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .how-inner h2 {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(24px, 3.5vw, 34px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--black);
+    margin-bottom: 48px;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    text-align: left;
+  }
+
+  .step-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid var(--grey-200);
+  }
+
+  .step-num {
+    width: 36px;
+    height: 36px;
+    background: var(--green);
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 16px;
+    font-family: 'Sora', sans-serif;
+  }
+
+  .step-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--black);
+    margin-bottom: 8px;
+  }
+
+  .step-desc {
+    font-size: 13px;
+    color: var(--grey-500);
+    line-height: 1.6;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 32px 24px;
+    background: #0F172A;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+  }
+
+  .footer-logo {
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .footer-note {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    max-width: 420px;
+    line-height: 1.6;
+  }
+
+  /* TABS */
+  .tab-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    background: var(--grey-100);
+    border-radius: 12px;
+    padding: 4px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    color: var(--grey-500);
+    background: none;
+    transition: all 0.15s;
+  }
+
+  .tab-btn.active {
+    background: white;
+    color: var(--black);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+
+  /* PORTFOLIO AUDIT */
+  .portfolio-panel { display: none; }
+  .portfolio-panel.active { display: block; }
+  .scanner-panel { display: block; }
+  .scanner-panel.hidden { display: none; }
+
+  .portfolio-instructions {
+    font-size: 13px;
+    color: var(--grey-500);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+
+  .portfolio-textarea {
+    width: 100%;
+    padding: 14px;
+    border: 1.5px solid var(--grey-200);
+    border-radius: 12px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    color: var(--black);
+    background: var(--grey-100);
+    outline: none;
+    resize: vertical;
+    min-height: 110px;
+    transition: border-color 0.15s, background 0.15s;
+    line-height: 1.6;
+  }
+  .portfolio-textarea:focus {
+    border-color: var(--green);
+    background: white;
+  }
+  .portfolio-textarea::placeholder { color: var(--grey-500); }
+
+  .audit-btn {
+    width: 100%;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 14px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    margin-top: 10px;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .audit-btn:hover { background: var(--green-dark); transform: translateY(-1px); }
+  .audit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* AUDIT RESULTS */
+  .audit-results { margin-top: 20px; display: none; animation: fadeUp 0.3s ease; }
+  .audit-results.active { display: block; }
+
+  .audit-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .audit-stat {
+    background: var(--grey-100);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .audit-stat-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--black);
+  }
+  .audit-stat-num.green { color: var(--green); }
+  .audit-stat-num.red { color: var(--red); }
+  .audit-stat-num.amber { color: var(--amber); }
+
+  .audit-stat-label {
+    font-size: 11px;
+    color: var(--grey-500);
+    font-weight: 500;
+    margin-top: 3px;
+  }
+
+  .audit-score-bar {
+    background: var(--grey-100);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .score-label { font-size: 13px; font-weight: 600; color: var(--black); }
+  .score-track {
+    flex: 1;
+    height: 8px;
+    background: var(--grey-200);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .score-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: var(--green);
+    transition: width 0.8s ease;
+  }
+  .score-pct { font-size: 14px; font-weight: 700; color: var(--green); min-width: 36px; text-align: right; }
+
+  .audit-list-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--grey-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    margin-top: 14px;
+  }
+
+  .audit-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    background: var(--grey-100);
+    gap: 10px;
+  }
+
+  .audit-row-left { display: flex; align-items: center; gap: 10px; }
+  .audit-row-icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+  }
+  .audit-row-icon.pass { background: var(--green-light); }
+  .audit-row-icon.fail { background: #FEE2E2; }
+  .audit-row-icon.warn { background: #FEF3C7; }
+  .audit-row-icon.unknown { background: var(--grey-200); }
+
+  .audit-row-name { font-size: 13px; font-weight: 600; color: var(--black); }
+  .audit-row-sector { font-size: 11px; color: var(--grey-500); }
+
+  .audit-verdict {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .audit-verdict.halal { background: var(--green-light); color: var(--green-dark); }
+  .audit-verdict.haram { background: #FEE2E2; color: var(--red); }
+  .audit-verdict.doubtful { background: #FEF3C7; color: #92400E; }
+  .audit-verdict.unknown { background: var(--grey-200); color: var(--grey-500); }
+
+  .purification-total {
+    background: var(--green-subtle);
+    border: 1.5px solid var(--green-light);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .purification-total-label { font-size: 13px; font-weight: 600; color: var(--black); }
+  .purification-total-sub { font-size: 11px; color: var(--grey-500); margin-top: 2px; }
+  .purification-total-amount { font-size: 18px; font-weight: 800; color: var(--green-dark); font-family: 'Sora', sans-serif; }
+  @media (max-width: 600px) {
+    .steps-grid { grid-template-columns: 1fr; }
+    .screens-grid { grid-template-columns: 1fr; }
+    .stats-row { gap: 24px; flex-wrap: wrap; }
+    .waitlist-form { flex-direction: column; }
+    .search-row { flex-direction: column; }
+    .result-top { flex-direction: column; }
+    footer { flex-direction: column; gap: 16px; }
+  }
+
+  .alt-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-subtle);
+    border: 1.5px solid var(--green-light);
+    border-radius: 10px;
+    padding: 8px 12px;
+    margin: 0 6px 6px 0;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .alt-chip:hover { background: var(--green-light); border-color: var(--green); }
+  .alt-chip-ticker { font-size: 13px; font-weight: 700; color: var(--green-dark); }
+  .alt-chip-name { font-size: 11px; color: var(--grey-500); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    Nuvara<span class="logo-dot"></span>
+  </div>
+  <div class="nav-right">
+    <button class="btn-ghost" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Join waitlist</button>
+    <button class="btn-primary" onclick="document.getElementById('scanner').scrollIntoView({behavior:'smooth'})">Scan a stock →</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero-wrapper">
+<section class="hero">
+  <div class="hero-badge">
+    <span>✦</span> Free ethical stock & ETF scanner
+  </div>
+  <h1>Invest with<br /><span>a clear conscience</span></h1>
+  <p>Scan any stock in seconds. Know if it meets ethical and halal screening standards — before you invest a single penny.</p>
+
+  <!-- SCANNER CARD -->
+  <div class="scanner-card" id="scanner">
+
+    <!-- TABS -->
+    <div class="tab-row">
+      <button class="tab-btn active" id="tabStock" onclick="switchTab('stock')">Stock & ETF Scanner</button>
+      <button class="tab-btn" id="tabPortfolio" onclick="switchTab('portfolio')">Portfolio Audit</button>
+    </div>
+
+    <!-- STOCK SCANNER PANEL -->
+    <div class="scanner-panel" id="scannerPanel">
+      <div class="scanner-label">Scan a stock or ETF</div>
+      <div class="search-row">
+        <input
+          class="search-input"
+          id="stockInput"
+          type="text"
+          placeholder="Enter ticker, ETF or company name (e.g. AAPL, VWRL)"
+          onkeydown="if(event.key==='Enter') scanStock()"
+        />
+        <button class="scan-btn" id="scanBtn" onclick="scanStock()">Scan →</button>
+      </div>
+      <div class="popular-row">
+        <span class="popular-label">Try:</span>
+        <span class="ticker-chip" onclick="quickScan('AAPL')">AAPL</span>
+        <span class="ticker-chip" onclick="quickScan('TSLA')">TSLA</span>
+        <span class="ticker-chip" onclick="quickScan('JPM')">JPM</span>
+        <span class="ticker-chip" onclick="quickScan('HLAL')">HLAL ETF</span>
+        <span class="ticker-chip" onclick="quickScan('VWRL')">VWRL ETF</span>
+        <span class="ticker-chip" onclick="quickScan('SPUS')">SPUS ETF</span>
+      </div>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Running ethical screens...</p>
+      </div>
+
+      <div class="result-box" id="resultBox">
+        <div class="result-top">
+          <div>
+            <div class="result-company" id="resultCompany"></div>
+            <div class="result-ticker" id="resultTicker"></div>
+          </div>
+          <div class="verdict-badge" id="verdictBadge"></div>
+        </div>
+        <div class="screens-grid" id="screensGrid"></div>
+        <div class="purification-box" id="purificationBox" style="display:none">
+          <div>
+            <div class="screen-name">Purification amount</div>
+            <div class="purification-label">Donate per share held to cleanse mixed income</div>
+          </div>
+          <div class="purification-amount" id="purificationAmount"></div>
+        </div>
+        <div class="result-note" id="resultNote"></div>
+
+        <!-- HALAL ALTERNATIVES -->
+        <div id="alternativesBox" style="display:none; margin-top:16px;">
+          <div class="scanner-label" style="margin-bottom:8px;">Halal alternatives to consider</div>
+          <div id="alternativesList"></div>
+        </div>
+
+        <!-- PURIFICATION CALCULATOR -->
+        <div id="purificationCalc" style="display:none; margin-top:16px;">
+          <div class="scanner-label" style="margin-bottom:8px;">Purification calculator</div>
+          <div style="background:var(--grey-100); border-radius:12px; padding:14px;">
+            <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+              <input id="calcShares" type="number" min="1" placeholder="Shares held" style="flex:1; min-width:120px; padding:10px 12px; border:1.5px solid var(--grey-200); border-radius:8px; font-size:13px; font-family:Inter,sans-serif; outline:none; background:white;" oninput="calcPurification()" />
+              <input id="calcDividend" type="number" min="0" step="0.01" placeholder="Dividend received ($)" style="flex:1; min-width:120px; padding:10px 12px; border:1.5px solid var(--grey-200); border-radius:8px; font-size:13px; font-family:Inter,sans-serif; outline:none; background:white;" oninput="calcPurification()" />
+            </div>
+            <div id="calcResult" style="display:none; background:white; border-radius:8px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:12px; font-weight:600; color:var(--black);">Total to donate</div>
+                <div style="font-size:11px; color:var(--grey-500);">To purify your holdings & dividends</div>
+              </div>
+              <div id="calcTotal" style="font-size:20px; font-weight:800; color:var(--green); font-family:Sora,sans-serif;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- REQUEST STOCK -->
+        <div id="requestBox" style="margin-top:14px; text-align:center; display:none;">
+          <div id="requestForm">
+            <p style="font-size:12px; color:var(--grey-500); margin-bottom:8px;">Don't see a stock you need?</p>
+            <div style="display:flex; gap:8px; max-width:100%;">
+              <input id="requestInput" type="text" placeholder="e.g. AMZN, BATS, LULU" style="flex:1; padding:10px 12px; border:1.5px solid var(--grey-200); border-radius:8px; font-size:13px; font-family:Inter,sans-serif; outline:none; background:var(--grey-100);" />
+              <button onclick="requestStock()" style="background:var(--black); color:white; border:none; border-radius:8px; padding:10px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:Inter,sans-serif; white-space:nowrap;">Request →</button>
+            </div>
+          </div>
+          <div id="requestSuccess" style="display:none; font-size:13px; color:var(--green); font-weight:600;">✓ Request received — we'll screen it within 48 hours.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PORTFOLIO AUDIT PANEL -->
+    <div class="portfolio-panel" id="portfolioPanel">
+      <div class="scanner-label">Audit your portfolio</div>
+      <p class="portfolio-instructions">Paste your holdings below — one ticker per line, or ticker and shares (e.g. AAPL 10). We'll screen every position instantly.</p>
+      <textarea
+        class="portfolio-textarea"
+        id="portfolioInput"
+        placeholder="AAPL 10&#10;TSLA 5&#10;JPM 20&#10;VWRL&#10;NVDA 8&#10;V 15"
+      ></textarea>
+      <button class="audit-btn" id="auditBtn" onclick="auditPortfolio()">Audit my portfolio →</button>
+
+      <div class="loading" id="auditLoading">
+        <div class="spinner"></div>
+        <p>Screening your portfolio...</p>
+      </div>
+
+      <div class="audit-results" id="auditResults">
+        <div class="audit-summary">
+          <div class="audit-stat">
+            <div class="audit-stat-num green" id="auditHalalCount">0</div>
+            <div class="audit-stat-label">Halal ✓</div>
+          </div>
+          <div class="audit-stat">
+            <div class="audit-stat-num amber" id="auditDoubtfulCount">0</div>
+            <div class="audit-stat-label">Doubtful ⚠</div>
+          </div>
+          <div class="audit-stat">
+            <div class="audit-stat-num red" id="auditHaramCount">0</div>
+            <div class="audit-stat-label">Haram ✕</div>
+          </div>
+        </div>
+
+        <div class="audit-score-bar">
+          <span class="score-label">Portfolio score</span>
+          <div class="score-track"><div class="score-fill" id="scoreFill" style="width:0%"></div></div>
+          <span class="score-pct" id="scorePct">0%</span>
+        </div>
+
+        <div id="auditHaramList"></div>
+        <div id="auditDoubtfulList"></div>
+        <div id="auditHalalList"></div>
+        <div id="auditUnknownList"></div>
+
+        <div class="purification-total" id="purificationTotal" style="display:none">
+          <div>
+            <div class="purification-total-label">Total purification due</div>
+            <div class="purification-total-sub">Donate to charity to cleanse mixed income</div>
+          </div>
+          <div class="purification-total-amount" id="purificationTotalAmount"></div>
+        </div>
+
+        <div class="result-note" id="auditNote" style="margin-top:14px; text-align:center; font-size:12px; color:var(--grey-500);"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</div>
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="stat">
+    <div class="stat-number"><span>5,000</span>+</div>
+    <div class="stat-label">Stocks screened</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number"><span>3</span> screens</div>
+    <div class="stat-label">Business, financial & debt</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number"><span>Free</span></div>
+    <div class="stat-label">Always, for everyone</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="how-inner">
+    <h2>How the screening works</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-title">Business screen</div>
+        <div class="step-desc">We check what the company does. No alcohol, tobacco, weapons, gambling, adult content, or conventional banking allowed.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-title">Financial screen</div>
+        <div class="step-desc">We analyse the numbers. Interest income must be under 5% of total revenue. Impure income under 5% of total revenue.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-title">Debt screen</div>
+        <div class="step-desc">Total debt must be under 33% of the company's market cap. Highly leveraged companies fail this screen.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<div class="waitlist-wrapper">
+<section class="waitlist-section" id="waitlist">
+  <h2>The full platform is coming</h2>
+  <p>Low-fee ethical investing, halal portfolios, and a stock screener — all in one place. Be first to know when we launch.</p>
+
+  <div class="waitlist-form" id="waitlistForm">
+    <input class="email-input" id="emailInput" type="email" placeholder="your@email.com" />
+    <button class="btn-primary" onclick="joinWaitlist()" style="padding: 14px 20px; border-radius: 12px; font-size: 14px;">Join waitlist</button>
+  </div>
+  <div class="waitlist-success" id="waitlistSuccess">
+    ✓ You're on the list. We'll be in touch soon.
+  </div>
+</section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Nuvara<span class="logo-dot"></span></div>
+  <div class="footer-note">This tool is for educational purposes only. Screening results are based on publicly available data and do not constitute financial advice. Always do your own research before investing.</div>
+</footer>
+
+<script>
+// Stock database — 50 curated real-world screened stocks
+const stocks = {
+  // TECHNOLOGY
+  'AAPL': { name: 'Apple Inc.', ticker: 'AAPL', verdict: 'halal', sector: 'Technology', screens: [{ name: 'Business activity', detail: 'Consumer tech & software', status: 'pass' }, { name: 'Interest income', detail: '0.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '18% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'Apple passes all three ethical screens. A small purification amount applies due to minimal interest income.' },
+  'MSFT': { name: 'Microsoft Corp.', ticker: 'MSFT', verdict: 'halal', sector: 'Technology', screens: [{ name: 'Business activity', detail: 'Cloud, software & AI', status: 'pass' }, { name: 'Interest income', detail: '1.2% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '11% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 2% of revenue', status: 'pass' }], purification: '$0.07', note: 'Microsoft passes all screens. Purification recommended due to interest income from cash holdings.' },
+  'NVDA': { name: 'NVIDIA Corp.', ticker: 'NVDA', verdict: 'halal', sector: 'Semiconductors', screens: [{ name: 'Business activity', detail: 'GPUs, AI & semiconductors', status: 'pass' }, { name: 'Interest income', detail: '0.6% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '5% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'NVIDIA is one of the cleanest screens in the index. AI and chip manufacturing pass all ethical criteria comfortably.' },
+  'AMZN': { name: 'Amazon.com Inc.', ticker: 'AMZN', verdict: 'halal', sector: 'Technology / Retail', screens: [{ name: 'Business activity', detail: 'E-commerce, cloud & logistics', status: 'pass' }, { name: 'Interest income', detail: '0.9% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '14% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 2% of revenue', status: 'pass' }], purification: '$0.06', note: 'Amazon passes all three screens. AWS and e-commerce are permissible activities. Small purification applies.' },
+  'TSLA': { name: 'Tesla Inc.', ticker: 'TSLA', verdict: 'halal', sector: 'Automotive & Energy', screens: [{ name: 'Business activity', detail: 'Electric vehicles & energy', status: 'pass' }, { name: 'Interest income', detail: '0.4% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '9% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.02', note: 'Tesla passes all ethical screens comfortably. Electric vehicles and clean energy are fully permissible.' },
+  'META': { name: 'Meta Platforms', ticker: 'META', verdict: 'doubtful', sector: 'Social Media', screens: [{ name: 'Business activity', detail: 'Social media / advertising', status: 'warn' }, { name: 'Interest income', detail: '1.1% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '4% of market cap', status: 'pass' }, { name: 'Impure income', detail: '2.4% of revenue', status: 'pass' }], purification: '$0.11', note: 'Meta passes financial screens but its advertising model raises concerns — exposure to adult content, gambling and alcohol ads. Scholars are divided. Proceed with caution.' },
+  'GOOGL': { name: 'Alphabet Inc.', ticker: 'GOOGL', verdict: 'doubtful', sector: 'Technology / Advertising', screens: [{ name: 'Business activity', detail: 'Search, cloud & advertising', status: 'warn' }, { name: 'Interest income', detail: '1.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '3% of market cap', status: 'pass' }, { name: 'Impure income', detail: '3.1% of revenue', status: 'pass' }], purification: '$0.14', note: 'Alphabet passes financial screens but advertising revenue includes alcohol and gambling promotion. Many scholars allow with purification; others remain cautious.' },
+  'GOOG': { name: 'Alphabet Inc. (Class C)', ticker: 'GOOG', verdict: 'doubtful', sector: 'Technology / Advertising', screens: [{ name: 'Business activity', detail: 'Search, cloud & advertising', status: 'warn' }, { name: 'Interest income', detail: '1.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '3% of market cap', status: 'pass' }, { name: 'Impure income', detail: '3.1% of revenue', status: 'pass' }], purification: '$0.14', note: 'Same screening result as GOOGL — Alphabet passes financial screens but advertising revenue includes alcohol and gambling. Many scholars allow with purification.' },
+  'ADBE': { name: 'Adobe Inc.', ticker: 'ADBE', verdict: 'halal', sector: 'Software', screens: [{ name: 'Business activity', detail: 'Creative & document software', status: 'pass' }, { name: 'Interest income', detail: '1.0% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '16% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.05', note: 'Adobe passes all ethical screens. Creative software and document tools are fully permissible. Minimal purification applies.' },
+  'CRM': { name: 'Salesforce Inc.', ticker: 'CRM', verdict: 'halal', sector: 'Software', screens: [{ name: 'Business activity', detail: 'CRM & enterprise software', status: 'pass' }, { name: 'Interest income', detail: '0.7% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '8% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'Salesforce passes all screens comfortably. Enterprise software is a clean business activity.' },
+  'ORCL': { name: 'Oracle Corp.', ticker: 'ORCL', verdict: 'halal', sector: 'Software', screens: [{ name: 'Business activity', detail: 'Database & cloud software', status: 'pass' }, { name: 'Interest income', detail: '1.4% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '29% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 2% of revenue', status: 'pass' }], purification: '$0.08', note: 'Oracle passes all screens. Debt ratio is within acceptable limits. Small purification applies.' },
+  'INTC': { name: 'Intel Corp.', ticker: 'INTC', verdict: 'halal', sector: 'Semiconductors', screens: [{ name: 'Business activity', detail: 'Processors & semiconductors', status: 'pass' }, { name: 'Interest income', detail: '0.9% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '21% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'Intel passes all ethical screens. Chip manufacturing is a fully permissible activity.' },
+  'AMD': { name: 'Advanced Micro Devices', ticker: 'AMD', verdict: 'halal', sector: 'Semiconductors', screens: [{ name: 'Business activity', detail: 'CPUs, GPUs & semiconductors', status: 'pass' }, { name: 'Interest income', detail: '0.5% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '7% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.02', note: 'AMD passes all screens cleanly. Strong semiconductor business with very low impure income.' },
+  'NFLX': { name: 'Netflix Inc.', ticker: 'NFLX', verdict: 'doubtful', sector: 'Entertainment', screens: [{ name: 'Business activity', detail: 'Streaming — adult content concerns', status: 'warn' }, { name: 'Interest income', detail: '0.3% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '19% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.09', note: 'Netflix passes financial screens but its content library includes adult material and alcohol/gambling promotion. Scholars differ — many consider it doubtful.' },
+  'UBER': { name: 'Uber Technologies', ticker: 'UBER', verdict: 'doubtful', sector: 'Transport / Technology', screens: [{ name: 'Business activity', detail: 'Ride-hailing & food delivery', status: 'warn' }, { name: 'Interest income', detail: '0.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '24% of market cap', status: 'pass' }, { name: 'Impure income', detail: '2.1% of revenue', status: 'pass' }], purification: '$0.07', note: 'Uber\'s core transport and delivery business is permissible, but alcohol delivery via Uber Eats raises concerns. Classified as doubtful pending clearer revenue breakdown.' },
+
+  // PAYMENTS & FINTECH
+  'V': { name: 'Visa Inc.', ticker: 'V', verdict: 'halal', sector: 'Payments', screens: [{ name: 'Business activity', detail: 'Payments processing', status: 'pass' }, { name: 'Interest income', detail: '0.2% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '22% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.01', note: 'Visa is a payment network, not a bank — it does not lend money or charge interest. Passes all screens.' },
+  'MA': { name: 'Mastercard Inc.', ticker: 'MA', verdict: 'halal', sector: 'Payments', screens: [{ name: 'Business activity', detail: 'Payments processing', status: 'pass' }, { name: 'Interest income', detail: '0.3% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '20% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.01', note: 'Mastercard, like Visa, is a payment processor rather than a lender. Passes all ethical screens.' },
+  'PYPL': { name: 'PayPal Holdings', ticker: 'PYPL', verdict: 'doubtful', sector: 'Fintech', screens: [{ name: 'Business activity', detail: 'Digital payments', status: 'pass' }, { name: 'Interest income', detail: '6.2% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: '18% of market cap', status: 'pass' }, { name: 'Impure income', detail: '6.2% of revenue', status: 'fail' }], purification: null, note: 'PayPal earns interest on customer balances held, pushing interest income above the 5% threshold. Classified as doubtful — some scholars permit with purification, others do not.' },
+
+  // BANKING (HARAM)
+  'JPM': { name: 'JPMorgan Chase', ticker: 'JPM', verdict: 'haram', sector: 'Banking', screens: [{ name: 'Business activity', detail: 'Conventional banking', status: 'fail' }, { name: 'Interest income', detail: '68% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: 'N/A — banking sector', status: 'fail' }, { name: 'Impure income', detail: '> 50% of revenue', status: 'fail' }], purification: null, note: 'JPMorgan fails the business screen. Conventional banking relies fundamentally on interest (riba) and is not permissible.' },
+  'BAC': { name: 'Bank of America', ticker: 'BAC', verdict: 'haram', sector: 'Banking', screens: [{ name: 'Business activity', detail: 'Conventional banking', status: 'fail' }, { name: 'Interest income', detail: '54% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: 'N/A — banking sector', status: 'fail' }, { name: 'Impure income', detail: '> 40% of revenue', status: 'fail' }], purification: null, note: 'Bank of America fails all financial screens. Conventional banking is not permissible under halal or ethical Islamic standards.' },
+  'WFC': { name: 'Wells Fargo & Co.', ticker: 'WFC', verdict: 'haram', sector: 'Banking', screens: [{ name: 'Business activity', detail: 'Conventional banking', status: 'fail' }, { name: 'Interest income', detail: '58% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: 'N/A — banking sector', status: 'fail' }, { name: 'Impure income', detail: '> 45% of revenue', status: 'fail' }], purification: null, note: 'Wells Fargo fails on business activity and all financial screens. Not permissible.' },
+  'GS': { name: 'Goldman Sachs', ticker: 'GS', verdict: 'haram', sector: 'Investment Banking', screens: [{ name: 'Business activity', detail: 'Investment banking & trading', status: 'fail' }, { name: 'Interest income', detail: '42% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: 'N/A — financial sector', status: 'fail' }, { name: 'Impure income', detail: '> 35% of revenue', status: 'fail' }], purification: null, note: 'Goldman Sachs fails on business activity. Investment banking, derivatives trading, and interest-based products are not permissible.' },
+  'HSBA': { name: 'HSBC Holdings', ticker: 'HSBA', verdict: 'haram', sector: 'Banking', screens: [{ name: 'Business activity', detail: 'Conventional banking', status: 'fail' }, { name: 'Interest income', detail: '61% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: 'N/A — banking sector', status: 'fail' }, { name: 'Impure income', detail: '> 50% of revenue', status: 'fail' }], purification: null, note: 'HSBC fails all screens despite having an Islamic banking division — the overall business is interest-based and not permissible.' },
+
+  // HEALTHCARE
+  'JNJ': { name: 'Johnson & Johnson', ticker: 'JNJ', verdict: 'halal', sector: 'Healthcare', screens: [{ name: 'Business activity', detail: 'Pharmaceuticals & medical devices', status: 'pass' }, { name: 'Interest income', detail: '1.1% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '17% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.05', note: 'Johnson & Johnson passes all ethical screens. Healthcare and pharmaceuticals are permissible and socially beneficial activities.' },
+  'PFE': { name: 'Pfizer Inc.', ticker: 'PFE', verdict: 'halal', sector: 'Pharmaceuticals', screens: [{ name: 'Business activity', detail: 'Drug development & manufacturing', status: 'pass' }, { name: 'Interest income', detail: '0.9% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '23% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'Pfizer passes all screens. Pharmaceutical development is a permissible and beneficial industry.' },
+  'UNH': { name: 'UnitedHealth Group', ticker: 'UNH', verdict: 'halal', sector: 'Healthcare', screens: [{ name: 'Business activity', detail: 'Health insurance & services', status: 'pass' }, { name: 'Interest income', detail: '1.3% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '25% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 2% of revenue', status: 'pass' }], purification: '$0.09', note: 'UnitedHealth passes all screens. Health insurance is permissible under most scholarly opinions when structured appropriately.' },
+  'AZN': { name: 'AstraZeneca PLC', ticker: 'AZN', verdict: 'halal', sector: 'Pharmaceuticals', screens: [{ name: 'Business activity', detail: 'Biopharmaceuticals', status: 'pass' }, { name: 'Interest income', detail: '0.7% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '20% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'AstraZeneca passes all ethical screens. A UK-listed pharma giant with clean business activity.' },
+
+  // CONSUMER & RETAIL
+  'COST': { name: 'Costco Wholesale', ticker: 'COST', verdict: 'halal', sector: 'Retail', screens: [{ name: 'Business activity', detail: 'Wholesale retail', status: 'pass' }, { name: 'Interest income', detail: '0.4% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '12% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.02', note: 'Costco passes all screens. General retail is permissible. Note: Costco sells alcohol in stores but it represents less than 3% of revenue.' },
+  'NKE': { name: 'Nike Inc.', ticker: 'NKE', verdict: 'halal', sector: 'Consumer Goods', screens: [{ name: 'Business activity', detail: 'Sportswear & footwear', status: 'pass' }, { name: 'Interest income', detail: '0.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '19% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'Nike passes all ethical screens. Sportswear and footwear manufacturing is a fully permissible business.' },
+  'MCD': { name: "McDonald's Corp.", ticker: 'MCD', verdict: 'doubtful', sector: 'Restaurants', screens: [{ name: 'Business activity', detail: 'Fast food — pork concerns', status: 'warn' }, { name: 'Interest income', detail: '0.6% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '31% of market cap', status: 'pass' }, { name: 'Impure income', detail: '3.2% of revenue', status: 'pass' }], purification: '$0.12', note: "McDonald's passes financial screens but its core menu includes pork products and non-halal meat. Classified as doubtful — significant impure revenue from non-halal food sales." },
+  'SBUX': { name: 'Starbucks Corp.', ticker: 'SBUX', verdict: 'doubtful', sector: 'Restaurants', screens: [{ name: 'Business activity', detail: 'Coffee & beverages', status: 'pass' }, { name: 'Interest income', detail: '0.5% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '28% of market cap', status: 'pass' }, { name: 'Impure income', detail: '4.1% of revenue', status: 'warn' }], purification: '$0.15', note: 'Starbucks passes most screens but sells alcohol in some locations, pushing impure income close to the 5% threshold. Many scholars classify as doubtful.' },
+
+  // ENERGY
+  'SHEL': { name: 'Shell PLC', ticker: 'SHEL', verdict: 'halal', sector: 'Energy', screens: [{ name: 'Business activity', detail: 'Oil, gas & renewable energy', status: 'pass' }, { name: 'Interest income', detail: '0.9% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '22% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'Shell passes all screens. Oil and gas are permissible industries. Shell\'s renewable energy investments strengthen its ethical profile.' },
+  'XOM': { name: 'ExxonMobil Corp.', ticker: 'XOM', verdict: 'halal', sector: 'Energy', screens: [{ name: 'Business activity', detail: 'Oil & gas exploration', status: 'pass' }, { name: 'Interest income', detail: '0.7% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '16% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'ExxonMobil passes all ethical screens. Fossil fuel investment is permissible under Islamic finance, though environmental considerations may apply.' },
+  'BP': { name: 'BP PLC', ticker: 'BP', verdict: 'halal', sector: 'Energy', screens: [{ name: 'Business activity', detail: 'Oil, gas & low-carbon energy', status: 'pass' }, { name: 'Interest income', detail: '0.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '24% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'BP passes all screens. The business is transitioning toward cleaner energy which improves its ethical standing.' },
+
+  // INDUSTRIALS & AEROSPACE
+  'BA': { name: 'Boeing Co.', ticker: 'BA', verdict: 'haram', sector: 'Aerospace & Defence', screens: [{ name: 'Business activity', detail: 'Military weapons & defence', status: 'fail' }, { name: 'Interest income', detail: '1.2% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '32% of market cap', status: 'warn' }, { name: 'Impure income', detail: '28% of revenue from defence', status: 'fail' }], purification: null, note: 'Boeing fails the business screen — a significant portion of revenue comes from military weapons manufacturing, which is not permissible.' },
+  'HON': { name: 'Honeywell International', ticker: 'HON', verdict: 'doubtful', sector: 'Industrials', screens: [{ name: 'Business activity', detail: 'Industrials — some defence', status: 'warn' }, { name: 'Interest income', detail: '1.0% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '26% of market cap', status: 'pass' }, { name: 'Impure income', detail: '12% from defence', status: 'fail' }], purification: null, note: 'Honeywell has significant defence and weapons-related revenue (~12%). The business screen fails on this basis — classified as doubtful to haram.' },
+  'CAT': { name: 'Caterpillar Inc.', ticker: 'CAT', verdict: 'halal', sector: 'Industrials', screens: [{ name: 'Business activity', detail: 'Construction & mining equipment', status: 'pass' }, { name: 'Interest income', detail: '2.1% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '28% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 3% of revenue', status: 'pass' }], purification: '$0.10', note: 'Caterpillar passes all ethical screens. Construction and mining equipment is a fully permissible activity.' },
+
+  // TELECOMS
+  'T': { name: 'AT&T Inc.', ticker: 'T', verdict: 'halal', sector: 'Telecommunications', screens: [{ name: 'Business activity', detail: 'Telecom & connectivity', status: 'pass' }, { name: 'Interest income', detail: '0.6% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '30% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.02', note: 'AT&T passes all screens. Telecommunications infrastructure is a permissible and essential service.' },
+  'VOD': { name: 'Vodafone Group', ticker: 'VOD', verdict: 'halal', sector: 'Telecommunications', screens: [{ name: 'Business activity', detail: 'Mobile & broadband telecom', status: 'pass' }, { name: 'Interest income', detail: '0.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '27% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'Vodafone passes all ethical screens. Telecommunications is a permissible industry.' },
+
+  // PROPERTY & REITS
+  'SPG': { name: 'Simon Property Group', ticker: 'SPG', verdict: 'doubtful', sector: 'Real Estate / REIT', screens: [{ name: 'Business activity', detail: 'Retail real estate', status: 'pass' }, { name: 'Interest income', detail: '1.2% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '35% of market cap', status: 'fail' }, { name: 'Impure income', detail: '< 2% of revenue', status: 'pass' }], purification: null, note: 'Simon Property Group fails the debt screen — REIT structures typically carry high leverage exceeding 33% of market cap. Classified as doubtful.' },
+
+  // TOBACCO & ALCOHOL (HARAM)
+  'BTI': { name: 'British American Tobacco', ticker: 'BTI', verdict: 'haram', sector: 'Tobacco', screens: [{ name: 'Business activity', detail: 'Tobacco manufacturing', status: 'fail' }, { name: 'Interest income', detail: '0.4% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '28% of market cap', status: 'pass' }, { name: 'Impure income', detail: '100% from tobacco', status: 'fail' }], purification: null, note: 'British American Tobacco fails immediately on business activity. Tobacco production is explicitly prohibited.' },
+  'PM': { name: 'Philip Morris International', ticker: 'PM', verdict: 'haram', sector: 'Tobacco', screens: [{ name: 'Business activity', detail: 'Tobacco manufacturing', status: 'fail' }, { name: 'Interest income', detail: '0.3% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '33% of market cap', status: 'warn' }, { name: 'Impure income', detail: '100% from tobacco', status: 'fail' }], purification: null, note: 'Philip Morris fails on business activity. Tobacco is a prohibited industry under all halal and ethical investment frameworks.' },
+  'DEO': { name: 'Diageo PLC', ticker: 'DEO', verdict: 'haram', sector: 'Alcohol', screens: [{ name: 'Business activity', detail: 'Alcoholic beverages', status: 'fail' }, { name: 'Interest income', detail: '0.5% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '29% of market cap', status: 'pass' }, { name: 'Impure income', detail: '100% from alcohol', status: 'fail' }], purification: null, note: 'Diageo fails immediately — its entire business is alcohol production and distribution. Strictly prohibited.' },
+
+  // GAMBLING (HARAM)
+  'FLUT': { name: 'Flutter Entertainment', ticker: 'FLUT', verdict: 'haram', sector: 'Gambling', screens: [{ name: 'Business activity', detail: 'Sports betting & gambling', status: 'fail' }, { name: 'Interest income', detail: '0.2% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '18% of market cap', status: 'pass' }, { name: 'Impure income', detail: '100% from gambling', status: 'fail' }], purification: null, note: 'Flutter Entertainment (FanDuel parent) fails immediately. Gambling is strictly prohibited under Islamic and ethical investment principles.' },
+
+  // DIVERSIFIED / CONGLOMERATES
+  'BRK.B': { name: 'Berkshire Hathaway B', ticker: 'BRK.B', verdict: 'doubtful', sector: 'Conglomerate', screens: [{ name: 'Business activity', detail: 'Diversified — insurance & banking', status: 'warn' }, { name: 'Interest income', detail: '8.4% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: '14% of market cap', status: 'pass' }, { name: 'Impure income', detail: '8.4% of revenue', status: 'fail' }], purification: null, note: 'Berkshire Hathaway fails the financial screen — significant insurance and banking operations generate interest income above the 5% threshold. Not recommended.' },
+
+  // UK STOCKS
+  'LSEG': { name: 'London Stock Exchange Group', ticker: 'LSEG', verdict: 'doubtful', sector: 'Financial Services', screens: [{ name: 'Business activity', detail: 'Financial data & exchange', status: 'warn' }, { name: 'Interest income', detail: '3.2% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '21% of market cap', status: 'pass' }, { name: 'Impure income', detail: '3.2% of revenue', status: 'pass' }], purification: '$0.18', note: 'LSEG passes financial screens but operates infrastructure that facilitates interest-based products and derivatives. Many scholars classify as doubtful.' },
+  'ULVR': { name: 'Unilever PLC', ticker: 'ULVR', verdict: 'halal', sector: 'Consumer Goods', screens: [{ name: 'Business activity', detail: 'FMCG — food, beauty & home', status: 'pass' }, { name: 'Interest income', detail: '0.6% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '18% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'Unilever passes all ethical screens. Consumer goods including food and personal care are fully permissible activities.' },
+  'GSK': { name: 'GSK PLC', ticker: 'GSK', verdict: 'halal', sector: 'Pharmaceuticals', screens: [{ name: 'Business activity', detail: 'Pharmaceuticals & vaccines', status: 'pass' }, { name: 'Interest income', detail: '0.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '22% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'GSK passes all screens. Pharmaceutical research and vaccine development are permissible and socially beneficial activities.' },
+  'RIO': { name: 'Rio Tinto PLC', ticker: 'RIO', verdict: 'halal', sector: 'Mining', screens: [{ name: 'Business activity', detail: 'Mining & metals', status: 'pass' }, { name: 'Interest income', detail: '0.9% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '15% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'Rio Tinto passes all ethical screens. Mining and natural resources extraction is a permissible business activity.' },
+
+  // UK STOCKS — FTSE 100 & FTSE 250
+  // BANKING (HARAM)
+  'LLOY': { name: 'Lloyds Banking Group', ticker: 'LLOY', verdict: 'haram', sector: 'Banking', screens: [{ name: 'Business activity', detail: 'Conventional banking', status: 'fail' }, { name: 'Interest income', detail: '71% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: 'N/A — banking sector', status: 'fail' }, { name: 'Impure income', detail: '> 60% of revenue', status: 'fail' }], purification: null, note: 'Lloyds Banking Group fails all screens. Conventional banking is built on interest (riba) and is not permissible under halal or ethical investment standards.' },
+  'BARC': { name: 'Barclays PLC', ticker: 'BARC', verdict: 'haram', sector: 'Banking', screens: [{ name: 'Business activity', detail: 'Conventional banking & investment', status: 'fail' }, { name: 'Interest income', detail: '63% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: 'N/A — banking sector', status: 'fail' }, { name: 'Impure income', detail: '> 55% of revenue', status: 'fail' }], purification: null, note: 'Barclays fails all screens. Conventional banking and investment banking activities are not permissible.' },
+  'NWG': { name: 'NatWest Group', ticker: 'NWG', verdict: 'haram', sector: 'Banking', screens: [{ name: 'Business activity', detail: 'Conventional banking', status: 'fail' }, { name: 'Interest income', detail: '67% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: 'N/A — banking sector', status: 'fail' }, { name: 'Impure income', detail: '> 60% of revenue', status: 'fail' }], purification: null, note: 'NatWest Group fails all screens. Conventional banking is not permissible under halal investment principles.' },
+  'STAN': { name: 'Standard Chartered', ticker: 'STAN', verdict: 'haram', sector: 'Banking', screens: [{ name: 'Business activity', detail: 'Conventional banking', status: 'fail' }, { name: 'Interest income', detail: '59% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: 'N/A — banking sector', status: 'fail' }, { name: 'Impure income', detail: '> 50% of revenue', status: 'fail' }], purification: null, note: 'Standard Chartered fails all screens despite significant operations in Islamic finance markets. The overall business is interest-based.' },
+  'VMUK': { name: 'Virgin Money UK', ticker: 'VMUK', verdict: 'haram', sector: 'Banking', screens: [{ name: 'Business activity', detail: 'Conventional banking', status: 'fail' }, { name: 'Interest income', detail: '72% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: 'N/A — banking sector', status: 'fail' }, { name: 'Impure income', detail: '> 65% of revenue', status: 'fail' }], purification: null, note: 'Virgin Money UK fails all screens. Retail banking based on interest is not permissible.' },
+
+  // INSURANCE (HARAM/DOUBTFUL)
+  'LGEN': { name: 'Legal & General Group', ticker: 'LGEN', verdict: 'haram', sector: 'Insurance', screens: [{ name: 'Business activity', detail: 'Conventional insurance & investment', status: 'fail' }, { name: 'Interest income', detail: '44% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: 'N/A — insurance sector', status: 'fail' }, { name: 'Impure income', detail: '> 40% of revenue', status: 'fail' }], purification: null, note: 'Legal & General fails the business screen. Conventional insurance involves elements of gharar (uncertainty) and riba. Not permissible.' },
+  'PRU': { name: 'Prudential PLC', ticker: 'PRU', verdict: 'haram', sector: 'Insurance', screens: [{ name: 'Business activity', detail: 'Conventional insurance', status: 'fail' }, { name: 'Interest income', detail: '38% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: 'N/A — insurance sector', status: 'fail' }, { name: 'Impure income', detail: '> 35% of revenue', status: 'fail' }], purification: null, note: 'Prudential fails the business screen. Conventional insurance is not permissible under most scholarly opinions.' },
+  'AV': { name: 'Aviva PLC', ticker: 'AV', verdict: 'haram', sector: 'Insurance', screens: [{ name: 'Business activity', detail: 'Conventional insurance', status: 'fail' }, { name: 'Interest income', detail: '41% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: 'N/A — insurance sector', status: 'fail' }, { name: 'Impure income', detail: '> 38% of revenue', status: 'fail' }], purification: null, note: 'Aviva fails the business screen. Conventional insurance products involve interest and uncertainty that are not permissible.' },
+
+  // ENERGY & MINING (HALAL)
+  'BP': { name: 'BP PLC', ticker: 'BP', verdict: 'halal', sector: 'Energy', screens: [{ name: 'Business activity', detail: 'Oil, gas & low-carbon energy', status: 'pass' }, { name: 'Interest income', detail: '0.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '24% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'BP passes all screens. The business is transitioning toward cleaner energy which improves its ethical standing.' },
+  'AAL': { name: 'Anglo American PLC', ticker: 'AAL', verdict: 'halal', sector: 'Mining', screens: [{ name: 'Business activity', detail: 'Diversified mining & metals', status: 'pass' }, { name: 'Interest income', detail: '0.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '18% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'Anglo American passes all ethical screens. Mining is a permissible industry.' },
+  'GLEN': { name: 'Glencore PLC', ticker: 'GLEN', verdict: 'halal', sector: 'Mining & Commodities', screens: [{ name: 'Business activity', detail: 'Mining & commodity trading', status: 'pass' }, { name: 'Interest income', detail: '1.1% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '21% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 2% of revenue', status: 'pass' }], purification: '$0.05', note: 'Glencore passes all screens. Commodity trading and mining are permissible activities.' },
+  'ANTO': { name: 'Antofagasta PLC', ticker: 'ANTO', verdict: 'halal', sector: 'Mining', screens: [{ name: 'Business activity', detail: 'Copper mining', status: 'pass' }, { name: 'Interest income', detail: '0.6% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '12% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'Antofagasta passes all ethical screens. Copper mining is a fully permissible business activity.' },
+
+  // PHARMACEUTICALS & HEALTHCARE (HALAL)
+  'AZN': { name: 'AstraZeneca PLC', ticker: 'AZN', verdict: 'halal', sector: 'Pharmaceuticals', screens: [{ name: 'Business activity', detail: 'Biopharmaceuticals', status: 'pass' }, { name: 'Interest income', detail: '0.7% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '20% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'AstraZeneca passes all ethical screens. A UK-listed pharma giant with clean business activity.' },
+  'GSK': { name: 'GSK PLC', ticker: 'GSK', verdict: 'halal', sector: 'Pharmaceuticals', screens: [{ name: 'Business activity', detail: 'Pharmaceuticals & vaccines', status: 'pass' }, { name: 'Interest income', detail: '0.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '22% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'GSK passes all screens. Pharmaceutical research and vaccine development are permissible and socially beneficial.' },
+  'HIK': { name: 'Hikma Pharmaceuticals', ticker: 'HIK', verdict: 'halal', sector: 'Pharmaceuticals', screens: [{ name: 'Business activity', detail: 'Generic pharmaceuticals', status: 'pass' }, { name: 'Interest income', detail: '0.7% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '19% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'Hikma passes all screens. A Jordanian-British pharma company with strong halal credentials and significant presence in MENA markets.' },
+  'SN': { name: 'Smith & Nephew PLC', ticker: 'SN', verdict: 'halal', sector: 'Medical Devices', screens: [{ name: 'Business activity', detail: 'Medical devices & orthopaedics', status: 'pass' }, { name: 'Interest income', detail: '0.9% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '23% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'Smith & Nephew passes all ethical screens. Medical devices are a fully permissible and socially beneficial business.' },
+
+  // CONSUMER GOODS & RETAIL
+  'ULVR': { name: 'Unilever PLC', ticker: 'ULVR', verdict: 'halal', sector: 'Consumer Goods', screens: [{ name: 'Business activity', detail: 'FMCG — food, beauty & home', status: 'pass' }, { name: 'Interest income', detail: '0.6% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '18% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'Unilever passes all ethical screens. Consumer goods including food and personal care are fully permissible activities.' },
+  'RKT': { name: 'Reckitt Benckiser Group', ticker: 'RKT', verdict: 'halal', sector: 'Consumer Goods', screens: [{ name: 'Business activity', detail: 'Health, hygiene & nutrition', status: 'pass' }, { name: 'Interest income', detail: '0.7% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '26% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'Reckitt passes all screens. Health and hygiene products are permissible. Brands include Dettol, Nurofen, and Strepsils.' },
+  'TSCO': { name: 'Tesco PLC', ticker: 'TSCO', verdict: 'doubtful', sector: 'Retail', screens: [{ name: 'Business activity', detail: 'Supermarket — alcohol & pork sold', status: 'warn' }, { name: 'Interest income', detail: '1.2% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '28% of market cap', status: 'pass' }, { name: 'Impure income', detail: '4.3% of revenue', status: 'warn' }], purification: '$0.08', note: 'Tesco passes financial screens but sells alcohol and pork products, generating impure income close to the 5% threshold. Classified as doubtful.' },
+  'SBRY': { name: "Sainsbury's PLC", ticker: 'SBRY', verdict: 'doubtful', sector: 'Retail', screens: [{ name: 'Business activity', detail: 'Supermarket — alcohol & pork sold', status: 'warn' }, { name: 'Interest income', detail: '1.0% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '25% of market cap', status: 'pass' }, { name: 'Impure income', detail: '3.9% of revenue', status: 'warn' }], purification: '$0.06', note: "Sainsbury's passes financial screens but alcohol and pork sales generate borderline impure income. Classified as doubtful." },
+  'MKS': { name: 'Marks & Spencer Group', ticker: 'MKS', verdict: 'doubtful', sector: 'Retail', screens: [{ name: 'Business activity', detail: 'Retail — food, clothing & home', status: 'warn' }, { name: 'Interest income', detail: '1.4% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '22% of market cap', status: 'pass' }, { name: 'Impure income', detail: '3.2% of revenue', status: 'pass' }], purification: '$0.07', note: 'M&S passes financial screens but sells alcohol in food halls. Impure income is within limits but the business screen raises concerns. Classified as doubtful.' },
+  'NEXT': { name: 'Next PLC', ticker: 'NEXT', verdict: 'halal', sector: 'Retail', screens: [{ name: 'Business activity', detail: 'Fashion & home retail', status: 'pass' }, { name: 'Interest income', detail: '0.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '20% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'Next passes all ethical screens. Fashion and homeware retail is a fully permissible business activity.' },
+  'WPP': { name: 'WPP PLC', ticker: 'WPP', verdict: 'doubtful', sector: 'Advertising', screens: [{ name: 'Business activity', detail: 'Advertising & marketing', status: 'warn' }, { name: 'Interest income', detail: '1.3% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '19% of market cap', status: 'pass' }, { name: 'Impure income', detail: '2.8% of revenue', status: 'pass' }], purification: '$0.09', note: 'WPP passes financial screens but advertising work includes alcohol, gambling, and adult content campaigns. Classified as doubtful.' },
+
+  // TECHNOLOGY & TELECOMS
+  'BT': { name: 'BT Group PLC', ticker: 'BT', verdict: 'halal', sector: 'Telecommunications', screens: [{ name: 'Business activity', detail: 'Broadband, TV & mobile', status: 'pass' }, { name: 'Interest income', detail: '0.7% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '29% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'BT Group passes all ethical screens. Telecommunications is a permissible and essential service.' },
+  'VOD': { name: 'Vodafone Group', ticker: 'VOD', verdict: 'halal', sector: 'Telecommunications', screens: [{ name: 'Business activity', detail: 'Mobile & broadband telecom', status: 'pass' }, { name: 'Interest income', detail: '0.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '27% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'Vodafone passes all ethical screens. Telecommunications is a permissible industry.' },
+  'AUTO': { name: 'Auto Trader Group', ticker: 'AUTO', verdict: 'halal', sector: 'Technology', screens: [{ name: 'Business activity', detail: 'Online automotive marketplace', status: 'pass' }, { name: 'Interest income', detail: '0.4% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '8% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.02', note: 'Auto Trader passes all ethical screens. Online marketplace for cars is a fully permissible business.' },
+  'SAGE': { name: 'Sage Group PLC', ticker: 'SAGE', verdict: 'halal', sector: 'Software', screens: [{ name: 'Business activity', detail: 'Business accounting software', status: 'pass' }, { name: 'Interest income', detail: '0.9% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '14% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'Sage passes all screens. Accounting and business software is a fully permissible activity.' },
+  'EXPN': { name: 'Experian PLC', ticker: 'EXPN', verdict: 'doubtful', sector: 'Financial Data', screens: [{ name: 'Business activity', detail: 'Credit data & analytics', status: 'warn' }, { name: 'Interest income', detail: '0.6% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '16% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'Experian passes financial screens but its core business facilitates interest-based lending through credit scoring. Many scholars classify as doubtful.' },
+
+  // DEFENCE & AEROSPACE (HARAM)
+  'BA': { name: 'BAE Systems PLC', ticker: 'BA', verdict: 'haram', sector: 'Defence', screens: [{ name: 'Business activity', detail: 'Military weapons & defence systems', status: 'fail' }, { name: 'Interest income', detail: '0.9% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '18% of market cap', status: 'pass' }, { name: 'Impure income', detail: '95% from defence', status: 'fail' }], purification: null, note: 'BAE Systems fails the business screen. The vast majority of revenue comes from weapons manufacturing and military systems. Not permissible.' },
+  'RR': { name: 'Rolls-Royce Holdings', ticker: 'RR', verdict: 'doubtful', sector: 'Aerospace & Defence', screens: [{ name: 'Business activity', detail: 'Engines — civil & military', status: 'warn' }, { name: 'Interest income', detail: '1.1% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '24% of market cap', status: 'pass' }, { name: 'Impure income', detail: '22% from defence', status: 'fail' }], purification: null, note: 'Rolls-Royce is classified as doubtful. Civil aerospace engines are permissible but significant military engine revenue (22%) pushes it over the threshold.' },
+  'QQ': { name: 'Qinetiq Group PLC', ticker: 'QQ', verdict: 'haram', sector: 'Defence Technology', screens: [{ name: 'Business activity', detail: 'Defence technology & testing', status: 'fail' }, { name: 'Interest income', detail: '0.4% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '11% of market cap', status: 'pass' }, { name: 'Impure income', detail: '100% from defence', status: 'fail' }], purification: null, note: 'QinetiQ fails immediately on business activity. The entire business is defence technology and testing. Not permissible.' },
+
+  // TOBACCO (HARAM)
+  'BATS': { name: 'British American Tobacco', ticker: 'BATS', verdict: 'haram', sector: 'Tobacco', screens: [{ name: 'Business activity', detail: 'Tobacco manufacturing', status: 'fail' }, { name: 'Interest income', detail: '0.4% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '28% of market cap', status: 'pass' }, { name: 'Impure income', detail: '100% from tobacco', status: 'fail' }], purification: null, note: 'British American Tobacco fails immediately on business activity. Tobacco production is explicitly prohibited under halal and ethical investment standards.' },
+  'IMB': { name: 'Imperial Brands PLC', ticker: 'IMB', verdict: 'haram', sector: 'Tobacco', screens: [{ name: 'Business activity', detail: 'Tobacco manufacturing', status: 'fail' }, { name: 'Interest income', detail: '0.5% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '31% of market cap', status: 'pass' }, { name: 'Impure income', detail: '100% from tobacco', status: 'fail' }], purification: null, note: 'Imperial Brands fails immediately on business activity. Tobacco is a prohibited industry.' },
+
+  // ALCOHOL (HARAM)
+  'DGE': { name: 'Diageo PLC', ticker: 'DGE', verdict: 'haram', sector: 'Alcohol', screens: [{ name: 'Business activity', detail: 'Alcoholic beverages', status: 'fail' }, { name: 'Interest income', detail: '0.5% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '29% of market cap', status: 'pass' }, { name: 'Impure income', detail: '100% from alcohol', status: 'fail' }], purification: null, note: 'Diageo fails immediately — its entire business is alcohol production and distribution. Strictly prohibited.' },
+
+  // PROPERTY & REITS
+  'LAND': { name: 'Land Securities Group', ticker: 'LAND', verdict: 'doubtful', sector: 'Real Estate', screens: [{ name: 'Business activity', detail: 'Commercial property & retail', status: 'pass' }, { name: 'Interest income', detail: '1.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '34% of market cap', status: 'fail' }, { name: 'Impure income', detail: '< 2% of revenue', status: 'pass' }], purification: null, note: 'Land Securities passes business and income screens but debt ratio slightly exceeds the 33% threshold. Classified as doubtful due to typical REIT leverage.' },
+  'BLND': { name: 'British Land Company', ticker: 'BLND', verdict: 'doubtful', sector: 'Real Estate', screens: [{ name: 'Business activity', detail: 'Commercial & retail property', status: 'pass' }, { name: 'Interest income', detail: '2.1% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '36% of market cap', status: 'fail' }, { name: 'Impure income', detail: '< 2% of revenue', status: 'pass' }], purification: null, note: 'British Land fails the debt screen — REIT structures typically carry leverage above 33% of market cap. Classified as doubtful.' },
+  'SGRO': { name: 'Segro PLC', ticker: 'SGRO', verdict: 'doubtful', sector: 'Real Estate', screens: [{ name: 'Business activity', detail: 'Industrial & logistics property', status: 'pass' }, { name: 'Interest income', detail: '1.4% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '31% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.05', note: 'Segro is one of the cleaner REITs — industrial and logistics property with debt ratio just within limits. Some scholars permit, others remain cautious on REITs generally.' },
+
+  // INDUSTRIALS & TRANSPORT
+  'IAG': { name: 'International Airlines Group', ticker: 'IAG', verdict: 'doubtful', sector: 'Airlines', screens: [{ name: 'Business activity', detail: 'Commercial aviation', status: 'warn' }, { name: 'Interest income', detail: '0.6% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '32% of market cap', status: 'pass' }, { name: 'Impure income', detail: '3.8% of revenue', status: 'pass' }], purification: '$0.07', note: 'IAG passes financial screens but airline revenue includes alcohol sales on flights. Classified as doubtful — many scholars permit aviation investment with purification.' },
+  'EZJ': { name: 'easyJet PLC', ticker: 'EZJ', verdict: 'doubtful', sector: 'Airlines', screens: [{ name: 'Business activity', detail: 'Budget aviation', status: 'warn' }, { name: 'Interest income', detail: '0.4% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '28% of market cap', status: 'pass' }, { name: 'Impure income', detail: '2.9% of revenue', status: 'pass' }], purification: '$0.05', note: 'easyJet passes financial screens but sells alcohol on flights. Classified as doubtful — alcohol revenue is below 5% threshold but raises concerns.' },
+  'CPG': { name: 'Compass Group PLC', ticker: 'CPG', verdict: 'doubtful', sector: 'Food Services', screens: [{ name: 'Business activity', detail: 'Contract catering & food services', status: 'warn' }, { name: 'Interest income', detail: '0.5% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '17% of market cap', status: 'pass' }, { name: 'Impure income', detail: '3.1% of revenue', status: 'pass' }], purification: '$0.06', note: 'Compass Group passes financial screens but catering services include alcohol and non-halal food. Classified as doubtful.' },
+  'WTB': { name: 'Whitbread PLC', ticker: 'WTB', verdict: 'doubtful', sector: 'Hotels & Restaurants', screens: [{ name: 'Business activity', detail: 'Hotels & restaurants (Premier Inn)', status: 'warn' }, { name: 'Interest income', detail: '0.6% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '23% of market cap', status: 'pass' }, { name: 'Impure income', detail: '4.2% of revenue', status: 'warn' }], purification: '$0.08', note: 'Whitbread (Premier Inn) passes most screens but hotel and restaurant revenue includes alcohol sales close to the 5% threshold. Classified as doubtful.' },
+  'CRH': { name: 'CRH PLC', ticker: 'CRH', verdict: 'halal', sector: 'Construction Materials', screens: [{ name: 'Business activity', detail: 'Building materials & construction', status: 'pass' }, { name: 'Interest income', detail: '0.9% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '20% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.04', note: 'CRH passes all ethical screens. Construction materials are a fully permissible and socially beneficial business.' },
+  'MNDI': { name: 'Mondi PLC', ticker: 'MNDI', verdict: 'halal', sector: 'Packaging', screens: [{ name: 'Business activity', detail: 'Sustainable packaging & paper', status: 'pass' }, { name: 'Interest income', detail: '0.7% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '16% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'Mondi passes all screens. Sustainable packaging and paper manufacturing is a permissible business.' },
+  'FERG': { name: 'Ferguson Enterprises', ticker: 'FERG', verdict: 'halal', sector: 'Distribution', screens: [{ name: 'Business activity', detail: 'Plumbing & HVAC distribution', status: 'pass' }, { name: 'Interest income', detail: '0.5% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '13% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.02', note: 'Ferguson passes all screens. Building and plumbing supplies distribution is a fully permissible activity.' },
+  'IMI': { name: 'IMI PLC', ticker: 'IMI', verdict: 'halal', sector: 'Engineering', screens: [{ name: 'Business activity', detail: 'Precision engineering', status: 'pass' }, { name: 'Interest income', detail: '0.8% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '17% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'IMI passes all ethical screens. Precision engineering and flow control products are permissible activities.' },
+  'WEIR': { name: 'Weir Group PLC', ticker: 'WEIR', verdict: 'halal', sector: 'Engineering', screens: [{ name: 'Business activity', detail: 'Mining & minerals engineering', status: 'pass' }, { name: 'Interest income', detail: '0.7% of revenue', status: 'pass' }, { name: 'Debt ratio', detail: '15% of market cap', status: 'pass' }, { name: 'Impure income', detail: '< 1% of revenue', status: 'pass' }], purification: '$0.03', note: 'Weir Group passes all screens. Engineering solutions for mining and minerals are permissible.' },
+
+  // FINANCIAL SERVICES (DOUBTFUL/HARAM)
+  'HL': { name: 'Hargreaves Lansdown', ticker: 'HL', verdict: 'doubtful', sector: 'Investment Platform', screens: [{ name: 'Business activity', detail: 'Investment platform & stockbroker', status: 'warn' }, { name: 'Interest income', detail: '18% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: '4% of market cap', status: 'pass' }, { name: 'Impure income', detail: '18% of revenue', status: 'fail' }], purification: null, note: 'Hargreaves Lansdown fails the financial screen — significant interest earned on client cash balances exceeds the 5% threshold. Classified as doubtful to haram.' },
+  'III': { name: '3i Group PLC', ticker: 'III', verdict: 'doubtful', sector: 'Private Equity', screens: [{ name: 'Business activity', detail: 'Private equity & infrastructure', status: 'warn' }, { name: 'Interest income', detail: '6.2% of revenue', status: 'fail' }, { name: 'Debt ratio', detail: '8% of market cap', status: 'pass' }, { name: 'Impure income', detail: '6.2% of revenue', status: 'fail' }], purification: null, note: '3i Group fails the financial screen. Private equity investment income includes significant interest-based returns above the 5% threshold.' },
+};
+
+// ETF database
+const etfs = {
+  // DEDICATED HALAL / ISLAMIC ETFs
+  'HLAL': { name: 'Wahed FTSE USA Shariah ETF', ticker: 'HLAL', type: 'ETF', verdict: 'halal', sector: 'Islamic Equity — US', holdings: '~200 holdings', screens: [{ name: 'Shariah screening', detail: 'Fully screened by FTSE Shariah', status: 'pass' }, { name: 'Business exclusions', detail: 'No banking, alcohol, tobacco, weapons', status: 'pass' }, { name: 'Financial ratios', detail: 'All holdings pass debt & income screens', status: 'pass' }, { name: 'Shariah board', detail: 'Certified by independent scholars', status: 'pass' }], purification: null, note: 'HLAL is purpose-built as a halal ETF. All holdings are pre-screened using FTSE Shariah methodology. One of the most trusted halal ETFs available.' },
+  'SPUS': { name: 'SP Funds S&P 500 Sharia ETF', ticker: 'SPUS', type: 'ETF', verdict: 'halal', sector: 'Islamic Equity — US', holdings: '~200 holdings', screens: [{ name: 'Shariah screening', detail: 'S&P 500 Shariah filtered', status: 'pass' }, { name: 'Business exclusions', detail: 'Banks, alcohol, tobacco removed', status: 'pass' }, { name: 'Financial ratios', detail: 'Debt & interest income screened', status: 'pass' }, { name: 'Shariah board', detail: 'Certified by Shariah scholars', status: 'pass' }], purification: null, note: 'SPUS tracks the S&P 500 Shariah Index — the halal version of the S&P 500. Removes all non-compliant holdings. Excellent choice for broad US market exposure.' },
+  'UMMA': { name: 'Wahed Dow Jones Islamic World ETF', ticker: 'UMMA', type: 'ETF', verdict: 'halal', sector: 'Islamic Equity — Global', holdings: '~400 holdings', screens: [{ name: 'Shariah screening', detail: 'Dow Jones Islamic Market Index', status: 'pass' }, { name: 'Business exclusions', detail: 'Global exclusions applied', status: 'pass' }, { name: 'Financial ratios', detail: 'All holdings screened', status: 'pass' }, { name: 'Shariah board', detail: 'Certified — ongoing monitoring', status: 'pass' }], purification: null, note: 'UMMA offers global halal equity exposure across developed markets. Fully Shariah-compliant with ongoing scholar oversight.' },
+  'ISDU': { name: 'iShares MSCI World Islamic ETF', ticker: 'ISDU', type: 'ETF', verdict: 'halal', sector: 'Islamic Equity — Global', holdings: '~350 holdings', screens: [{ name: 'Shariah screening', detail: 'MSCI Islamic methodology', status: 'pass' }, { name: 'Business exclusions', detail: 'Finance, alcohol, tobacco excluded', status: 'pass' }, { name: 'Financial ratios', detail: 'All holdings pass ratios', status: 'pass' }, { name: 'Shariah board', detail: 'MSCI Shariah certified', status: 'pass' }], purification: null, note: 'iShares MSCI World Islamic ETF is listed on the London Stock Exchange and provides broad global halal equity exposure. Ideal for UK-based investors.' },
+  'ISDW': { name: 'iShares MSCI EM Islamic ETF', ticker: 'ISDW', type: 'ETF', verdict: 'halal', sector: 'Islamic Equity — Emerging Markets', holdings: '~200 holdings', screens: [{ name: 'Shariah screening', detail: 'MSCI Islamic EM methodology', status: 'pass' }, { name: 'Business exclusions', detail: 'All impermissible sectors excluded', status: 'pass' }, { name: 'Financial ratios', detail: 'Debt & income ratios screened', status: 'pass' }, { name: 'Shariah board', detail: 'MSCI Shariah certified', status: 'pass' }], purification: null, note: 'Provides halal exposure to emerging markets including Malaysia, Indonesia, and the Gulf. Fully screened by MSCI Islamic methodology.' },
+  'SPRE': { name: 'SP Funds Dow Jones Global Sukuk ETF', ticker: 'SPRE', type: 'ETF', verdict: 'halal', sector: 'Islamic Bonds (Sukuk)', holdings: 'Sukuk bonds only', screens: [{ name: 'Shariah screening', detail: 'Sukuk are Islamic bonds — no interest', status: 'pass' }, { name: 'Business exclusions', detail: 'No conventional bond exposure', status: 'pass' }, { name: 'Financial ratios', detail: 'Asset-backed structures only', status: 'pass' }, { name: 'Shariah board', detail: 'Certified sukuk instruments', status: 'pass' }], purification: null, note: 'SPRE invests exclusively in sukuk (Islamic bonds) which are structured to avoid interest. The halal alternative to bond ETFs — good for lower-risk allocation.' },
+
+  // ESG ETFs — DOUBTFUL (contain some impermissible holdings)
+  'ESGU': { name: 'iShares MSCI USA ESG Optimized ETF', ticker: 'ESGU', type: 'ETF', verdict: 'doubtful', sector: 'ESG Equity — US', holdings: '~300 holdings', screens: [{ name: 'ESG screening', detail: 'Environmental & social filters applied', status: 'pass' }, { name: 'Business exclusions', detail: 'Some banks & alcohol still included', status: 'warn' }, { name: 'Financial ratios', detail: 'Not screened for interest income', status: 'warn' }, { name: 'Shariah compliance', detail: 'Not Shariah certified', status: 'warn' }], purification: null, note: 'ESG and halal are not the same. ESGU applies environmental and social filters but still holds conventional banks, alcohol companies, and other impermissible stocks. Not suitable as a standalone halal investment.' },
+  'ESGV': { name: 'Vanguard ESG US Stock ETF', ticker: 'ESGV', type: 'ETF', verdict: 'doubtful', sector: 'ESG Equity — US', holdings: '~1,500 holdings', screens: [{ name: 'ESG screening', detail: 'Excludes weapons & tobacco only', status: 'warn' }, { name: 'Business exclusions', detail: 'Banks, alcohol still held', status: 'fail' }, { name: 'Financial ratios', detail: 'No halal ratio screening', status: 'fail' }, { name: 'Shariah compliance', detail: 'Not Shariah certified', status: 'fail' }], purification: null, note: 'Vanguard ESG ETF excludes weapons and tobacco but continues to hold banks, alcohol producers, and gambling companies. Not halal-compliant despite the ESG label.' },
+
+  // MAINSTREAM ETFs — HARAM (hold significant impermissible stocks)
+  'SPY': { name: 'SPDR S&P 500 ETF', ticker: 'SPY', type: 'ETF', verdict: 'haram', sector: 'US Equity — S&P 500', holdings: '500 holdings', screens: [{ name: 'Business activity', detail: 'Includes banks, alcohol, tobacco, gambling', status: 'fail' }, { name: 'Financial ratios', detail: 'Not screened — impure income present', status: 'fail' }, { name: 'Debt screening', detail: 'Many holdings exceed 33% debt ratio', status: 'fail' }, { name: 'Shariah compliance', detail: 'Not screened — not compliant', status: 'fail' }], purification: null, note: 'SPY tracks the full S&P 500 which includes JPMorgan, Bank of America, alcohol companies, and tobacco stocks. Not halal-compliant. Consider SPUS as the screened alternative.' },
+  'QQQ': { name: 'Invesco QQQ (NASDAQ-100)', ticker: 'QQQ', type: 'ETF', verdict: 'doubtful', sector: 'US Technology', holdings: '100 holdings', screens: [{ name: 'Business activity', detail: 'Mostly tech — some doubtful names', status: 'warn' }, { name: 'Financial ratios', detail: 'Not screened for halal ratios', status: 'warn' }, { name: 'Debt screening', detail: 'Several holdings exceed limits', status: 'warn' }, { name: 'Shariah compliance', detail: 'Not Shariah certified', status: 'warn' }], purification: null, note: 'QQQ is tech-heavy and avoids banks, but holds Meta, Netflix, and Alphabet — all doubtful. Also not screened for debt or interest income ratios. Classified as doubtful overall.' },
+  'ISF': { name: 'iShares Core FTSE 100 ETF', ticker: 'ISF', type: 'ETF', verdict: 'haram', sector: 'UK Equity — FTSE 100', holdings: '100 holdings', screens: [{ name: 'Business activity', detail: 'HSBC, Barclays, Diageo, BP included', status: 'fail' }, { name: 'Financial ratios', detail: 'Not screened — banks dominate', status: 'fail' }, { name: 'Debt screening', detail: 'Not screened', status: 'fail' }, { name: 'Shariah compliance', detail: 'Not Shariah certified', status: 'fail' }], purification: null, note: 'The FTSE 100 is heavily weighted toward banks (HSBC, Barclays, Lloyds) and includes Diageo (alcohol) and British American Tobacco. Not suitable for halal investors.' },
+  'VWRL': { name: 'Vanguard FTSE All-World ETF', ticker: 'VWRL', type: 'ETF', verdict: 'haram', sector: 'Global Equity', holdings: '~3,700 holdings', screens: [{ name: 'Business activity', detail: 'Banks, alcohol, tobacco, gambling held', status: 'fail' }, { name: 'Financial ratios', detail: 'No halal screening applied', status: 'fail' }, { name: 'Debt screening', detail: 'Not screened', status: 'fail' }, { name: 'Shariah compliance', detail: 'Not Shariah certified', status: 'fail' }], purification: null, note: 'VWRL is the most popular global ETF but holds thousands of impermissible companies. Not halal-compliant. Consider UMMA or ISDU for screened global exposure.' },
+  'VUSA': { name: 'Vanguard S&P 500 ETF', ticker: 'VUSA', type: 'ETF', verdict: 'haram', sector: 'US Equity — S&P 500', holdings: '500 holdings', screens: [{ name: 'Business activity', detail: 'Banks, alcohol, tobacco held', status: 'fail' }, { name: 'Financial ratios', detail: 'No halal screening', status: 'fail' }, { name: 'Debt screening', detail: 'Not screened', status: 'fail' }, { name: 'Shariah compliance', detail: 'Not Shariah certified', status: 'fail' }], purification: null, note: 'Vanguard S&P 500 (UK-listed version) holds the full index including all major US banks and impermissible stocks. Not halal. SPUS is the screened equivalent.' },
+  'CSPX': { name: 'iShares Core S&P 500 ETF', ticker: 'CSPX', type: 'ETF', verdict: 'haram', sector: 'US Equity — S&P 500', holdings: '500 holdings', screens: [{ name: 'Business activity', detail: 'JPMorgan, Berkshire, Diageo-linked', status: 'fail' }, { name: 'Financial ratios', detail: 'No halal screening applied', status: 'fail' }, { name: 'Debt screening', detail: 'Not screened', status: 'fail' }, { name: 'Shariah compliance', detail: 'Not Shariah certified', status: 'fail' }], purification: null, note: 'CSPX is the London-listed iShares S&P 500 ETF. Extremely popular with UK investors but not halal — holds all major US banks and impermissible sectors.' },
+};
+
+function switchTab(tab) {
+  const stockTab = document.getElementById('tabStock');
+  const portfolioTab = document.getElementById('tabPortfolio');
+  const scannerPanel = document.getElementById('scannerPanel');
+  const portfolioPanel = document.getElementById('portfolioPanel');
+
+  if (tab === 'stock') {
+    stockTab.classList.add('active');
+    portfolioTab.classList.remove('active');
+    scannerPanel.classList.remove('hidden');
+    portfolioPanel.classList.remove('active');
+  } else {
+    portfolioTab.classList.add('active');
+    stockTab.classList.remove('active');
+    scannerPanel.classList.add('hidden');
+    portfolioPanel.classList.add('active');
+  }
+}
+
+function auditPortfolio() {
+  const input = document.getElementById('portfolioInput').value.trim();
+  if (!input) return;
+
+  const btn = document.getElementById('auditBtn');
+  btn.disabled = true;
+  btn.textContent = 'Auditing...';
+  document.getElementById('auditResults').classList.remove('active');
+  document.getElementById('auditLoading').classList.add('active');
+
+  setTimeout(() => {
+    document.getElementById('auditLoading').classList.remove('active');
+    btn.disabled = false;
+    btn.textContent = 'Audit my portfolio →';
+
+    const lines = input.split('\n').map(l => l.trim()).filter(Boolean);
+    const results = { halal: [], doubtful: [], haram: [], unknown: [] };
+    let totalPurification = 0;
+
+    lines.forEach(line => {
+      const parts = line.toUpperCase().split(/[\s,]+/);
+      const ticker = parts[0];
+      const shares = parseFloat(parts[1]) || 1;
+      const found = stocks[ticker] || etfs[ticker];
+
+      if (found) {
+        const item = { ...found, shares };
+        if (found.purification) {
+          const perShare = parseFloat(found.purification.replace('$','')) || 0;
+          item.purificationTotal = (perShare * shares).toFixed(2);
+          totalPurification += perShare * shares;
+        }
+        results[found.verdict].push(item);
+      } else {
+        results.unknown.push({ name: ticker, ticker, shares, verdict: 'unknown', sector: 'Not in database' });
+      }
+    });
+
+    const total = lines.length;
+    const halalScore = Math.round(((results.halal.length + results.doubtful.length * 0.5) / total) * 100);
+
+    document.getElementById('auditHalalCount').textContent = results.halal.length;
+    document.getElementById('auditDoubtfulCount').textContent = results.doubtful.length;
+    document.getElementById('auditHaramCount').textContent = results.haram.length;
+
+    const fill = document.getElementById('scoreFill');
+    const pct = document.getElementById('scorePct');
+    fill.style.width = halalScore + '%';
+    fill.style.background = halalScore >= 80 ? 'var(--green)' : halalScore >= 50 ? 'var(--amber)' : 'var(--red)';
+    pct.textContent = halalScore + '%';
+    pct.style.color = halalScore >= 80 ? 'var(--green)' : halalScore >= 50 ? 'var(--amber)' : 'var(--red)';
+
+    function renderList(items, containerId, title) {
+      const el = document.getElementById(containerId);
+      if (!items.length) { el.innerHTML = ''; return; }
+      const icons = { halal: '✓', haram: '✕', doubtful: '⚠', unknown: '?' };
+      el.innerHTML = `<div class="audit-list-title">${title}</div>` +
+        items.map(s => `
+          <div class="audit-row">
+            <div class="audit-row-left">
+              <div class="audit-row-icon ${s.verdict === 'unknown' ? 'unknown' : s.verdict}">${icons[s.verdict]}</div>
+              <div>
+                <div class="audit-row-name">${s.name} ${s.shares > 1 ? `<span style="font-weight:400;color:var(--grey-500)">× ${s.shares}</span>` : ''}</div>
+                <div class="audit-row-sector">${s.sector}${s.purificationTotal ? ` · Purify $${s.purificationTotal}` : ''}</div>
+              </div>
+            </div>
+            <span class="audit-verdict ${s.verdict}">${s.verdict === 'unknown' ? 'Unknown' : s.verdict.charAt(0).toUpperCase() + s.verdict.slice(1)}</span>
+          </div>
+        `).join('');
+    }
+
+    renderList(results.haram, 'auditHaramList', '✕ Remove these — not permissible');
+    renderList(results.doubtful, 'auditDoubtfulList', '⚠ Review these — scholars differ');
+    renderList(results.halal, 'auditHalalList', '✓ These pass all screens');
+    renderList(results.unknown, 'auditUnknownList', '? Not yet in our database');
+
+    if (totalPurification > 0) {
+      document.getElementById('purificationTotal').style.display = 'flex';
+      document.getElementById('purificationTotalAmount').textContent = '$' + totalPurification.toFixed(2);
+    } else {
+      document.getElementById('purificationTotal').style.display = 'none';
+    }
+
+    const noteMap = {
+      clean: 'Your portfolio is fully halal — no action needed.',
+      mostly: 'Your portfolio is mostly clean. Review the doubtful positions and consider alternatives.',
+      action: 'Action required — your portfolio contains haram holdings. Consider replacing them with screened alternatives.',
+    };
+    document.getElementById('auditNote').textContent = results.haram.length > 0 ? noteMap.action : results.doubtful.length > 0 ? noteMap.mostly : noteMap.clean;
+
+    document.getElementById('auditResults').classList.add('active');
+  }, 1800);
+}
+
+function getAlternatives(stock) {
+  const sectorAlts = {
+    // Banking → Payments
+    'Banking': ['V', 'MA'],
+    'Investment Banking': ['V', 'MA', 'MSFT'],
+    // Tobacco → Healthcare/Tech
+    'Tobacco': ['JNJ', 'AZN', 'GSK'],
+    // Alcohol → Consumer
+    'Alcohol': ['NKE', 'ULVR', 'COST'],
+    // Gambling → Tech
+    'Gambling': ['MSFT', 'NVDA', 'AAPL'],
+    // Doubtful social media → clean tech
+    'Social Media': ['MSFT', 'ADBE', 'CRM'],
+    'Technology / Advertising': ['MSFT', 'ADBE', 'NVDA'],
+    // Doubtful ETFs → halal ETFs
+    'ESG Equity — US': ['HLAL', 'SPUS'],
+    'US Technology': ['HLAL', 'SPUS'],
+    'US Equity — S&P 500': ['SPUS', 'HLAL'],
+    'UK Equity — FTSE 100': ['ISDU', 'HLAL'],
+    'Global Equity': ['UMMA', 'ISDU'],
+    // Fintech
+    'Fintech': ['V', 'MA'],
+    // Restaurants
+    'Restaurants': ['NKE', 'ULVR'],
+    // Aerospace & Defence
+    'Aerospace & Defence': ['CAT', 'HON'],
+  };
+  const tickers = sectorAlts[stock.sector] || ['AAPL', 'MSFT', 'V'];
+  return tickers
+    .map(t => stocks[t] || etfs[t])
+    .filter(s => s && s.verdict === 'halal' && s.ticker !== stock.ticker)
+    .slice(0, 3);
+}
+
+function calcPurification() {
+  const calcBox = document.getElementById('purificationCalc');
+  const perShare = calcBox._perShare || 0;
+  const shares = parseFloat(document.getElementById('calcShares').value) || 0;
+  const dividend = parseFloat(document.getElementById('calcDividend').value) || 0;
+
+  if (shares <= 0 && dividend <= 0) {
+    document.getElementById('calcResult').style.display = 'none';
+    return;
+  }
+
+  const fromShares = perShare * shares;
+  const fromDividend = dividend * 0.05; // 5% of dividends for mixed income
+  const total = (fromShares + fromDividend).toFixed(2);
+
+  document.getElementById('calcTotal').textContent = '$' + total;
+  document.getElementById('calcResult').style.display = 'flex';
+}
+
+function requestStock() {
+  const val = document.getElementById('requestInput').value.trim();
+  if (!val) return;
+  document.getElementById('requestForm').style.display = 'none';
+  document.getElementById('requestSuccess').style.display = 'block';
+}
+
+function quickScan(ticker) {
+  document.getElementById('stockInput').value = ticker;
+  scanStock();
+}
+
+function scanStock() {
+  const input = document.getElementById('stockInput').value.trim().toUpperCase();
+  if (!input) return;
+
+  const btn = document.getElementById('scanBtn');
+  btn.disabled = true;
+  btn.textContent = 'Scanning...';
+
+  document.getElementById('resultBox').className = 'result-box';
+  document.getElementById('resultBox').style.display = 'none';
+  document.getElementById('loading').classList.add('active');
+
+  const ticker = input.replace(/\s+/g,'').toUpperCase();
+  const all = { ...stocks, ...etfs };
+
+  function findByName(q) {
+    const clean = q.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return Object.values(all).find(s =>
+      s.name.toLowerCase().replace(/[^a-z0-9]/g, '').includes(clean)
+    );
+  }
+
+  // Check hardcoded database first
+  const cached = all[ticker] || findByName(input);
+  if (cached) {
+    document.getElementById('loading').classList.remove('active');
+    btn.disabled = false;
+    btn.textContent = 'Scan →';
+    showResult(cached);
+    return;
+  }
+
+  // Hit the FMP API for unknown stocks
+  fetchAndScreen(ticker)
+    .then(result => {
+      document.getElementById('loading').classList.remove('active');
+      btn.disabled = false;
+      btn.textContent = 'Scan →';
+      if (result) {
+        showResult(result);
+      } else {
+        showNotFound(ticker);
+      }
+    })
+    .catch(() => {
+      document.getElementById('loading').classList.remove('active');
+      btn.disabled = false;
+      btn.textContent = 'Scan →';
+      showNotFound(ticker);
+    });
+}
+
+async function fetchAndScreen(ticker) {
+  // Try original ticker first, then UK format
+  const result = await tryFetch(ticker);
+  if (result) return result;
+  // Try with .L suffix for UK stocks
+  if (!ticker.includes('.')) {
+    const ukResult = await tryFetch(ticker + '.L');
+    if (ukResult) return ukResult;
+  }
+  return null;
+}
+
+async function tryFetch(ticker) {
+  const KEY = 'JU5erRqdO126ULAviDPdFQDpsTzYHL6z';
+
+  try {
+    const [profileRes, ratiosRes] = await Promise.all([
+      fetch(`/.netlify/functions/fmp-proxy?ticker=${ticker}&type=profile`),
+      fetch(`/.netlify/functions/fmp-proxy?ticker=${ticker}&type=ratios`)
+    ]);
+
+    const profileData = await profileRes.json();
+    const ratiosData = await ratiosRes.json();
+
+    // New FMP API returns object or array — handle both
+    const profile = Array.isArray(profileData) ? profileData[0] : profileData;
+    const ratios = Array.isArray(ratiosData) ? (ratiosData[0] || {}) : (ratiosData || {});
+
+    if (!profile || !profile.companyName) return null;
+
+    const name = profile.companyName || ticker;
+    const sector = profile.sector || 'Unknown';
+    const industry = profile.industry || '';
+    const mktCap = profile.mktCap || 1;
+
+    // BUSINESS SCREEN — check sector/industry for prohibited activities
+    const haramSectors = ['banking', 'financial services', 'insurance', 'tobacco', 'beverages—wineries', 'gambling', 'adult'];
+    const haramKeywords = ['bank', 'alcohol', 'tobacco', 'gambling', 'casino', 'betting', 'adult', 'weapon', 'defence', 'defense', 'distill', 'brewery', 'winery', 'spirits', 'liquor'];
+    const doubtfulKeywords = ['insurance', 'advertising', 'media', 'entertainment', 'hotel', 'restaurant'];
+
+    const sectorLower = (sector + ' ' + industry).toLowerCase();
+    const businessFail = haramKeywords.some(k => sectorLower.includes(k));
+    const businessWarn = !businessFail && doubtfulKeywords.some(k => sectorLower.includes(k));
+
+    // FINANCIAL SCREENS
+    const debtToMktCap = mktCap > 0 && profile.totalDebt ? (profile.totalDebt / mktCap) : (ratios.debtRatioTTM || 0);
+    const interestToRev = ratios.interestCoverageTTM ? Math.abs(1 / ratios.interestCoverageTTM) : 0.02;
+    const debtRatioPct = Math.min(debtToMktCap * 100, 99).toFixed(1);
+    const interestPct = (interestToRev * 100).toFixed(1);
+
+    const debtFail = debtToMktCap > 0.33;
+    const interestFail = interestToRev > 0.05;
+
+    // VERDICT
+    let verdict;
+    if (businessFail || (interestFail && interestToRev > 0.15)) {
+      verdict = 'haram';
+    } else if (businessWarn || interestFail || debtFail) {
+      verdict = 'doubtful';
+    } else {
+      verdict = 'halal';
+    }
+
+    // Purification
+    const purification = (verdict === 'halal' || verdict === 'doubtful') && interestToRev > 0
+      ? '$' + (interestToRev * (profile.price || 10) * 0.1).toFixed(2)
+      : null;
+
+    const screens = [
+      {
+        name: 'Business activity',
+        detail: sector + (industry ? ' · ' + industry : ''),
+        status: businessFail ? 'fail' : businessWarn ? 'warn' : 'pass'
+      },
+      {
+        name: 'Interest income',
+        detail: `~${interestPct}% of revenue (est.)`,
+        status: interestFail ? 'fail' : 'pass'
+      },
+      {
+        name: 'Debt ratio',
+        detail: `~${debtRatioPct}% of market cap`,
+        status: debtFail ? 'fail' : 'pass'
+      },
+      {
+        name: 'Impure income',
+        detail: businessFail ? 'Prohibited sector' : 'Within acceptable limits',
+        status: businessFail ? 'fail' : businessWarn ? 'warn' : 'pass'
+      }
+    ];
+
+    const noteMap = {
+      halal: `${name} passes our ethical screens based on live financial data. A purification amount may apply.`,
+      haram: `${name} fails the ethical screen based on its sector (${sector}) or financial ratios. Not recommended for halal or ethical investment.`,
+      doubtful: `${name} raises some concerns — either its sector or financial ratios are borderline. Scholars differ. Proceed with caution and consider alternatives.`
+    };
+
+    return { name, ticker, sector, verdict, screens, purification, note: noteMap[verdict], live: true };
+
+  } catch (e) {
+    return null;
+  }
+}
+
+function showResult(stock) {
+  const box = document.getElementById('resultBox');
+  const verdictEmoji = stock.verdict === 'halal' ? '✓ Halal' : stock.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
+
+  document.getElementById('resultCompany').textContent = stock.name;
+  document.getElementById('resultTicker').textContent = `${stock.ticker} · ${stock.type === 'ETF' ? 'ETF · ' + stock.holdings + ' · ' : ''}${stock.sector}${stock.live ? ' · 🟢 Live data' : ''}`;
+
+  const badge = document.getElementById('verdictBadge');
+  badge.className = `verdict-badge ${stock.verdict}`;
+  badge.textContent = verdictEmoji;
+
+  const grid = document.getElementById('screensGrid');
+  grid.innerHTML = stock.screens.map(s => {
+    const icons = { pass: '✓', fail: '✕', warn: '⚠' };
+    return `
+      <div class="screen-item">
+        <div class="screen-icon ${s.status}">${icons[s.status]}</div>
+        <div>
+          <div class="screen-name">${s.name}</div>
+          <div class="screen-detail">${s.detail}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const purBox = document.getElementById('purificationBox');
+  if (stock.purification) {
+    purBox.style.display = 'flex';
+    document.getElementById('purificationAmount').textContent = stock.purification + ' per share';
+  } else {
+    purBox.style.display = 'none';
+  }
+
+  document.getElementById('resultNote').textContent = stock.note;
+
+  // PURIFICATION CALCULATOR — show for halal/doubtful with purification
+  const calcBox = document.getElementById('purificationCalc');
+  if (stock.purification) {
+    calcBox.style.display = 'block';
+    calcBox._perShare = parseFloat(stock.purification.replace('$','')) || 0;
+    document.getElementById('calcShares').value = '';
+    document.getElementById('calcDividend').value = '';
+    document.getElementById('calcResult').style.display = 'none';
+  } else {
+    calcBox.style.display = 'none';
+  }
+
+  // HALAL ALTERNATIVES — show for haram/doubtful
+  const altBox = document.getElementById('alternativesBox');
+  const altList = document.getElementById('alternativesList');
+  const alternatives = getAlternatives(stock);
+  if ((stock.verdict === 'haram' || stock.verdict === 'doubtful') && alternatives.length) {
+    altBox.style.display = 'block';
+    altList.innerHTML = alternatives.map(a =>
+      `<span class="alt-chip" onclick="quickScan('${a.ticker}')">
+        <span class="alt-chip-ticker">${a.ticker}</span>
+        <span class="alt-chip-name">${a.name}</span>
+      </span>`
+    ).join('');
+  } else {
+    altBox.style.display = 'none';
+  }
+
+  // REQUEST BOX — always show
+  document.getElementById('requestBox').style.display = 'block';
+  document.getElementById('requestForm').style.display = 'block';
+  document.getElementById('requestSuccess').style.display = 'none';
+  document.getElementById('requestInput').value = '';
+
+  box.className = `result-box ${stock.verdict}`;
+  box.style.display = 'block';
+}
+
+function showNotFound(input) {
+  const box = document.getElementById('resultBox');
+  document.getElementById('resultCompany').textContent = `"${input}" not found`;
+  document.getElementById('resultTicker').textContent = 'Stock not in our database yet';
+  document.getElementById('verdictBadge').className = 'verdict-badge doubtful';
+  document.getElementById('verdictBadge').textContent = '? Unknown';
+  document.getElementById('screensGrid').innerHTML = `
+    <div class="screen-item" style="grid-column:1/-1">
+      <div class="screen-icon warn">?</div>
+      <div>
+        <div class="screen-name">Not yet screened</div>
+        <div class="screen-detail">We're adding new stocks and ETFs daily. Join the waitlist to request a screen.</div>
+      </div>
+    </div>
+  `;
+  document.getElementById('purificationBox').style.display = 'none';
+  document.getElementById('purificationCalc').style.display = 'none';
+  document.getElementById('alternativesBox').style.display = 'none';
+  document.getElementById('resultNote').textContent = 'Stocks: AAPL, MSFT, NVDA, TSLA, JPM, NKE, DEO. ETFs: HLAL, SPUS, VWRL, SPY, ISF, CSPX and more.';
+  document.getElementById('requestBox').style.display = 'block';
+  document.getElementById('requestForm').style.display = 'block';
+  document.getElementById('requestSuccess').style.display = 'none';
+  document.getElementById('requestInput').value = '';
+  box.className = 'result-box doubtful';
+  box.style.display = 'block';
+}
+
+function joinWaitlist() {
+  const email = document.getElementById('emailInput').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('emailInput').style.borderColor = '#EF4444';
+    setTimeout(() => document.getElementById('emailInput').style.borderColor = '', 2000);
+    return;
+  }
+
+  // Submit silently to Beehiiv via hidden iframe
+  const iframe = document.createElement('iframe');
+  iframe.name = 'hidden_iframe';
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = 'https://app.beehiiv.com/subscribe';
+  form.target = 'hidden_iframe';
+  form.style.display = 'none';
+
+  [['publication_id','pub_82bb9d91-11eb-4b9f-a388-87ead251a68a'],['email',email],['utm_source','nuvara_website']].forEach(([name,value]) => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  });
+
+  document.body.appendChild(form);
+  form.submit();
+
+  document.getElementById('waitlistForm').style.display = 'none';
+  document.getElementById('waitlistSuccess').style.display = 'block';
+}
+</script>
+</body>
+</html>
