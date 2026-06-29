@@ -1014,7 +1014,7 @@
   </div>
   <div class="stat">
     <div class="stat-number"><span>Free</span></div>
-    <div class="stat-label">Always, for everyone</div>
+    <div class="stat-label">For everyone</div>
   </div>
 </div>
 
@@ -1061,8 +1061,23 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">Nuvara<span class="logo-dot"></span></div>
-  <div class="footer-note">This tool is for educational purposes only. Screening results are based on publicly available data and do not constitute financial advice. Always do your own research before investing.</div>
+  <div class="footer-links" style="display:flex; gap:20px; flex-wrap:wrap; margin: 8px 0;">
+    <a href="/terms.html" style="font-size:12px; color:rgba(255,255,255,0.5); text-decoration:none;">Terms & Conditions</a>
+    <a href="/privacy.html" style="font-size:12px; color:rgba(255,255,255,0.5); text-decoration:none;">Privacy Policy</a>
+    <a href="/disclaimer.html" style="font-size:12px; color:rgba(255,255,255,0.5); text-decoration:none;">Disclaimer</a>
+    <a href="mailto:hello@nuvara.co.uk" style="font-size:12px; color:rgba(255,255,255,0.5); text-decoration:none;">hello@nuvara.co.uk</a>
+  </div>
+  <div class="footer-note">© 2026 Nuvara. All rights reserved. This tool is for educational purposes only and does not constitute financial advice. Screening results are based on publicly available data. Always consult a qualified financial adviser before making investment decisions.</div>
 </footer>
+
+<!-- COOKIE CONSENT BANNER -->
+<div id="cookieBanner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#0F172A; border-top:1px solid rgba(255,255,255,0.1); padding:16px 24px; z-index:1000; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+  <p style="font-size:13px; color:rgba(255,255,255,0.75); margin:0; flex:1; min-width:200px;">We use cookies to improve your experience. By continuing to use Nuvara you accept our <a href="/privacy.html" style="color:var(--green); text-decoration:none;">cookie policy</a>.</p>
+  <div style="display:flex; gap:10px; flex-shrink:0;">
+    <button onclick="rejectCookies()" style="background:none; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.7); padding:8px 16px; border-radius:8px; font-size:13px; cursor:pointer; font-family:Inter,sans-serif;">Reject</button>
+    <button onclick="acceptCookies()" style="background:var(--green); border:none; color:white; padding:8px 16px; border-radius:8px; font-size:13px; cursor:pointer; font-family:Inter,sans-serif; font-weight:600;">Accept</button>
+  </div>
+</div>
 
 <script>
 // Stock database — 50 curated real-world screened stocks
@@ -1707,6 +1722,21 @@ function joinWaitlist() {
   document.getElementById('waitlistForm').style.display = 'none';
   document.getElementById('waitlistSuccess').style.display = 'block';
 }
+
+// COOKIE CONSENT
+function acceptCookies() {
+  localStorage.setItem('nuvara_cookies', 'accepted');
+  document.getElementById('cookieBanner').style.display = 'none';
+}
+function rejectCookies() {
+  localStorage.setItem('nuvara_cookies', 'rejected');
+  document.getElementById('cookieBanner').style.display = 'none';
+}
+window.addEventListener('load', function() {
+  if (!localStorage.getItem('nuvara_cookies')) {
+    document.getElementById('cookieBanner').style.display = 'flex';
+  }
+});
 </script>
 </body>
 </html>
