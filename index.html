@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Nuvara — Invest in what matters</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -826,6 +827,75 @@
   .alt-chip:hover { background: var(--green-light); border-color: var(--green); }
   .alt-chip-ticker { font-size: 13px; font-weight: 700; color: var(--green-dark); }
   .alt-chip-name { font-size: 11px; color: var(--grey-500); }
+
+  /* AUTH MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 24px; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: white; border-radius: 20px; padding: 32px; width: 100%; max-width: 400px; animation: fadeUp 0.3s ease; }
+  .modal h2 { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 6px; color: var(--black); }
+  .modal p { font-size: 14px; color: var(--grey-500); margin-bottom: 24px; }
+  .modal-input { width: 100%; padding: 12px 16px; border: 1.5px solid var(--grey-200); border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; margin-bottom: 12px; outline: none; transition: border-color 0.15s; }
+  .modal-input:focus { border-color: var(--green); }
+  .modal-btn { width: 100%; background: var(--green); color: white; border: none; border-radius: 10px; padding: 13px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; margin-bottom: 12px; transition: background 0.15s; }
+  .modal-btn:hover { background: var(--green-dark); }
+  .modal-switch { font-size: 13px; color: var(--grey-500); text-align: center; }
+  .modal-switch a { color: var(--green); cursor: pointer; text-decoration: none; font-weight: 600; }
+  .modal-error { font-size: 13px; color: var(--red); margin-bottom: 10px; display: none; }
+  .modal-close { float: right; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--grey-500); margin-top: -8px; }
+
+  /* USER MENU */
+  .user-menu { position: relative; }
+  .user-avatar { width: 36px; height: 36px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .user-dropdown { display: none; position: absolute; right: 0; top: 44px; background: white; border: 1.5px solid var(--grey-200); border-radius: 12px; padding: 8px; min-width: 180px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); z-index: 200; }
+  .user-dropdown.active { display: block; }
+  .user-dropdown a { display: block; padding: 10px 14px; font-size: 14px; color: var(--black); text-decoration: none; border-radius: 8px; cursor: pointer; }
+  .user-dropdown a:hover { background: var(--grey-100); }
+  .user-dropdown a.danger { color: var(--red); }
+
+  /* DASHBOARD */
+  .dashboard-section { max-width: 600px; margin: 40px auto; padding: 0 24px; display: none; }
+  .dashboard-section.active { display: block; }
+  .dash-tabs { display: flex; gap: 6px; padding: 4px; background: var(--grey-100); border-radius: 12px; margin-bottom: 20px; }
+  .dash-tab { flex: 1; padding: 9px; border: none; border-radius: 9px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; color: var(--grey-500); background: none; transition: all 0.15s; }
+  .dash-tab.active { background: white; color: var(--black); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .dash-panel { display: none; }
+  .dash-panel.active { display: block; }
+
+  /* WATCHLIST */
+  .watchlist-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--grey-100); border-radius: 10px; margin-bottom: 8px; }
+  .watchlist-ticker { font-weight: 700; font-size: 14px; color: var(--black); }
+  .watchlist-name { font-size: 12px; color: var(--grey-500); }
+  .watchlist-verdict { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
+  .watchlist-verdict.halal { background: var(--green-light); color: var(--green-dark); }
+  .watchlist-verdict.haram { background: #FEE2E2; color: var(--red); }
+  .watchlist-verdict.doubtful { background: #FEF3C7; color: #92400E; }
+  .watchlist-remove { background: none; border: none; color: var(--grey-500); cursor: pointer; font-size: 16px; padding: 4px; }
+
+  /* PAPER TRADING */
+  .trade-balance { background: linear-gradient(135deg, var(--green), var(--green-dark)); border-radius: 14px; padding: 20px; color: white; margin-bottom: 16px; }
+  .trade-balance-label { font-size: 12px; opacity: 0.8; margin-bottom: 4px; }
+  .trade-balance-amount { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; }
+  .trade-form { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .trade-input { flex: 1; min-width: 100px; padding: 10px 12px; border: 1.5px solid var(--grey-200); border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; }
+  .trade-input:focus { border-color: var(--green); }
+  .trade-btn-buy { background: var(--green); color: white; border: none; border-radius: 8px; padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .trade-btn-sell { background: var(--red); color: white; border: none; border-radius: 8px; padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .holding-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--grey-100); border-radius: 10px; margin-bottom: 6px; }
+  .holding-gain { font-size: 12px; font-weight: 600; }
+  .holding-gain.pos { color: var(--green); }
+  .holding-gain.neg { color: var(--red); }
+
+  /* PORTFOLIO MODEL */
+  .model-card { border: 1.5px solid var(--grey-200); border-radius: 14px; padding: 20px; margin-bottom: 12px; cursor: pointer; transition: border-color 0.15s; }
+  .model-card:hover { border-color: var(--green); }
+  .model-card.selected { border-color: var(--green); background: var(--green-subtle); }
+  .model-name { font-weight: 700; font-size: 15px; color: var(--black); margin-bottom: 4px; }
+  .model-desc { font-size: 12px; color: var(--grey-500); margin-bottom: 10px; }
+  .model-stocks { display: flex; gap: 6px; flex-wrap: wrap; }
+  .model-stock-chip { background: var(--green-light); color: var(--green-dark); font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
+  .model-return { font-size: 13px; font-weight: 700; color: var(--green); margin-top: 10px; }
+  .invest-result { background: var(--green-subtle); border: 1.5px solid var(--green-light); border-radius: 12px; padding: 16px; margin-top: 16px; display: none; }
+  .invest-result.active { display: block; }
 </style>
 </head>
 <body>
@@ -835,9 +905,22 @@
   <div class="logo">
     Nuvara<span class="logo-dot"></span>
   </div>
-  <div class="nav-right">
-    <button class="btn-ghost" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Join waitlist</button>
-    <button class="btn-primary" onclick="document.getElementById('scanner').scrollIntoView({behavior:'smooth'})">Scan a stock →</button>
+  <div class="nav-right" id="navGuest">
+    <button class="btn-ghost" onclick="showAuth('login')">Sign in</button>
+    <button class="btn-primary" onclick="showAuth('signup')">Sign up free →</button>
+  </div>
+  <div class="nav-right" id="navUser" style="display:none;">
+    <button class="btn-ghost" onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'})">My Dashboard</button>
+    <div class="user-menu">
+      <div class="user-avatar" id="userAvatar" onclick="toggleUserMenu()">T</div>
+      <div class="user-dropdown" id="userDropdown">
+        <a onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'}); toggleUserMenu()">📊 Dashboard</a>
+        <a onclick="switchDashTab('watchlist'); document.getElementById('dashboard').scrollIntoView({behavior:'smooth'}); toggleUserMenu()">⭐ Watchlist</a>
+        <a onclick="switchDashTab('trading'); document.getElementById('dashboard').scrollIntoView({behavior:'smooth'}); toggleUserMenu()">📈 Paper Trading</a>
+        <a onclick="switchDashTab('model'); document.getElementById('dashboard').scrollIntoView({behavior:'smooth'}); toggleUserMenu()">💼 Portfolio Model</a>
+        <a class="danger" onclick="signOut()">Sign out</a>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -904,6 +987,11 @@
           <div class="purification-amount" id="purificationAmount"></div>
         </div>
         <div class="result-note" id="resultNote"></div>
+
+        <!-- ADD TO WATCHLIST -->
+        <div id="watchlistBtn" style="display:none; margin-top:12px; text-align:center;">
+          <button onclick="addToWatchlist()" style="background:none; border:1.5px solid var(--green); color:var(--green); border-radius:10px; padding:10px 20px; font-size:13px; font-weight:600; cursor:pointer; font-family:Inter,sans-serif;">⭐ Add to watchlist</button>
+        </div>
 
         <!-- HALAL ALTERNATIVES -->
         <div id="alternativesBox" style="display:none; margin-top:16px;">
@@ -1042,6 +1130,58 @@
   </div>
 </section>
 
+<!-- FEATURES SECTION -->
+<section style="padding:72px 24px; background:white;">
+  <div style="max-width:900px; margin:0 auto; text-align:center;">
+    <div style="display:inline-flex; align-items:center; gap:6px; background:#D1FAE5; color:#065F46; font-size:12px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; padding:5px 12px; border-radius:100px; margin-bottom:20px;">✦ Free & Premium</div>
+    <h2 style="font-family:'Sora',sans-serif; font-size:clamp(26px,4vw,38px); font-weight:800; letter-spacing:-1px; color:#0F172A; margin-bottom:12px;">Everything you need to invest with confidence</h2>
+    <p style="font-size:16px; color:#64748B; margin-bottom:48px;">Start free. Upgrade when you're ready.</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:20px; text-align:left;">
+      <div style="background:#F8FAFC; border-radius:16px; padding:24px; border:1.5px solid #E2E8F0;">
+        <div style="font-size:28px; margin-bottom:12px;">🔍</div>
+        <div style="font-weight:700; font-size:15px; color:#0F172A; margin-bottom:8px;">Stock & ETF Scanner</div>
+        <div style="font-size:13px; color:#64748B; line-height:1.7;">Screen any stock or ETF instantly. UK and global markets covered.</div>
+        <div style="margin-top:12px; font-size:12px; font-weight:700; color:#0A7C5C;">FREE</div>
+      </div>
+      <div style="background:#F8FAFC; border-radius:16px; padding:24px; border:1.5px solid #E2E8F0;">
+        <div style="font-size:28px; margin-bottom:12px;">📋</div>
+        <div style="font-weight:700; font-size:15px; color:#0F172A; margin-bottom:8px;">Portfolio Audit</div>
+        <div style="font-size:13px; color:#64748B; line-height:1.7;">Paste your holdings and get a full halal audit in seconds.</div>
+        <div style="margin-top:12px; font-size:12px; font-weight:700; color:#0A7C5C;">FREE</div>
+      </div>
+      <div style="background:#F8FAFC; border-radius:16px; padding:24px; border:1.5px solid #E2E8F0;">
+        <div style="font-size:28px; margin-bottom:12px;">⭐</div>
+        <div style="font-weight:700; font-size:15px; color:#0F172A; margin-bottom:8px;">Watchlist</div>
+        <div style="font-size:13px; color:#64748B; line-height:1.7;">Save stocks you're watching and track halal opportunities.</div>
+        <div style="margin-top:12px; font-size:12px; font-weight:700; color:#0A7C5C;">FREE</div>
+      </div>
+      <div style="background:#F8FAFC; border-radius:16px; padding:24px; border:1.5px solid #E2E8F0;">
+        <div style="font-size:28px; margin-bottom:12px;">📈</div>
+        <div style="font-weight:700; font-size:15px; color:#0F172A; margin-bottom:8px;">Paper Trading</div>
+        <div style="font-size:13px; color:#64748B; line-height:1.7;">Practice with £10,000 virtual cash. Only halal stocks allowed.</div>
+        <div style="margin-top:12px; font-size:12px; font-weight:700; color:#0A7C5C;">FREE</div>
+      </div>
+      <div style="background:#F8FAFC; border-radius:16px; padding:24px; border:1.5px solid #E2E8F0;">
+        <div style="font-size:28px; margin-bottom:12px;">💷</div>
+        <div style="font-weight:700; font-size:15px; color:#0F172A; margin-bottom:8px;">£10k Simulator</div>
+        <div style="font-size:13px; color:#64748B; line-height:1.7;">See how £10,000 would look invested across halal stocks or ETFs.</div>
+        <div style="margin-top:12px; font-size:12px; font-weight:700; color:#0A7C5C;">FREE</div>
+      </div>
+      <div style="background:#0F172A; border-radius:16px; padding:24px; position:relative; overflow:hidden;">
+        <div style="position:absolute; top:12px; right:12px; background:#0A7C5C; color:white; font-size:10px; font-weight:700; padding:3px 8px; border-radius:100px;">COMING SOON</div>
+        <div style="font-size:28px; margin-bottom:12px;">🚀</div>
+        <div style="font-weight:700; font-size:15px; color:white; margin-bottom:8px;">Nuvara Plus</div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.6); line-height:1.7;">Weekly halal stock picks, advanced screening, unlimited portfolio analysis.</div>
+        <div style="margin-top:12px; font-size:12px; font-weight:700; color:#0A7C5C;">£4.99/month</div>
+      </div>
+    </div>
+    <div style="margin-top:32px;">
+      <button onclick="showAuth('signup')" style="background:#0A7C5C; color:white; border:none; border-radius:12px; padding:14px 32px; font-size:15px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">Get started free →</button>
+      <p style="font-size:13px; color:#94A3B8; margin-top:12px;">No credit card required.</p>
+    </div>
+  </div>
+</section>
+
 <!-- WAITLIST -->
 <div class="waitlist-wrapper">
 <section class="waitlist-section" id="waitlist">
@@ -1056,6 +1196,126 @@
     ✓ You're on the list. We'll be in touch soon.
   </div>
 </section>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuth()">×</button>
+    <div id="loginForm">
+      <h2>Welcome back</h2>
+      <p>Sign in to your Nuvara account</p>
+      <div class="modal-error" id="loginError"></div>
+      <input class="modal-input" id="loginEmail" type="email" placeholder="Email address" />
+      <input class="modal-input" id="loginPassword" type="password" placeholder="Password" />
+      <button class="modal-btn" onclick="signIn()">Sign in</button>
+      <p class="modal-switch">Don't have an account? <a onclick="showAuthForm('signup')">Sign up free</a></p>
+    </div>
+    <div id="signupForm" style="display:none;">
+      <h2>Create account</h2>
+      <p>Free forever. No credit card needed.</p>
+      <div class="modal-error" id="signupError"></div>
+      <input class="modal-input" id="signupEmail" type="email" placeholder="Email address" />
+      <input class="modal-input" id="signupPassword" type="password" placeholder="Password (min 6 characters)" />
+      <button class="modal-btn" onclick="signUp()">Create free account</button>
+      <p class="modal-switch">Already have an account? <a onclick="showAuthForm('login')">Sign in</a></p>
+    </div>
+    <div id="verifyForm" style="display:none;">
+      <h2>Check your email</h2>
+      <p>We've sent a verification link to your email. Click it to activate your account then come back and sign in.</p>
+      <button class="modal-btn" onclick="closeAuth()">Got it</button>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard-section" id="dashboard">
+  <h2 style="font-family:'Sora',sans-serif; font-size:24px; font-weight:800; margin-bottom:20px; color:var(--black);">My Dashboard</h2>
+  <div class="dash-tabs">
+    <button class="dash-tab active" id="dashTabWatchlist" onclick="switchDashTab('watchlist')">⭐ Watchlist</button>
+    <button class="dash-tab" id="dashTabTrading" onclick="switchDashTab('trading')">📈 Paper Trading</button>
+    <button class="dash-tab" id="dashTabModel" onclick="switchDashTab('model')">💼 Portfolio Model</button>
+  </div>
+
+  <!-- WATCHLIST PANEL -->
+  <div class="dash-panel active" id="panelWatchlist">
+    <div id="watchlistEmpty" style="text-align:center; padding:32px; color:var(--grey-500);">
+      <p style="font-size:14px;">Your watchlist is empty.</p>
+      <p style="font-size:13px; margin-top:8px;">Search for a stock above and click "Add to watchlist" to save it here.</p>
+    </div>
+    <div id="watchlistItems"></div>
+  </div>
+
+  <!-- PAPER TRADING PANEL -->
+  <div class="dash-panel" id="panelTrading">
+    <div class="trade-balance">
+      <div class="trade-balance-label">Virtual Portfolio Value</div>
+      <div class="trade-balance-amount" id="tradePortfolioValue">£10,000.00</div>
+      <div class="trade-balance-label" style="margin-top:8px;">Cash Available</div>
+      <div style="font-size:18px; font-weight:700;" id="tradeCash">£10,000.00</div>
+    </div>
+    <div class="scanner-label" style="margin-bottom:8px;">Make a trade</div>
+    <div class="trade-form">
+      <input class="trade-input" id="tradeTickerInput" placeholder="Ticker (e.g. AAPL)" />
+      <input class="trade-input" id="tradeShares" type="number" min="1" placeholder="Shares" />
+      <input class="trade-input" id="tradePrice" type="number" min="0" step="0.01" placeholder="Price £" />
+      <button class="trade-btn-buy" onclick="executeTrade('buy')">Buy</button>
+      <button class="trade-btn-sell" onclick="executeTrade('sell')">Sell</button>
+    </div>
+    <div class="scanner-label" style="margin-bottom:8px;">Holdings</div>
+    <div id="tradeHoldings"><p style="font-size:14px; color:var(--grey-500); text-align:center; padding:16px;">No positions yet. Make your first trade above.</p></div>
+    <div style="text-align:center; margin-top:16px;">
+      <button onclick="resetPortfolio()" style="background:none; border:none; font-size:13px; color:var(--grey-500); cursor:pointer; text-decoration:underline;">Reset portfolio to £10,000</button>
+    </div>
+  </div>
+
+  <!-- PORTFOLIO MODEL PANEL -->
+  <div class="dash-panel" id="panelModel">
+    <p style="font-size:14px; color:var(--grey-500); margin-bottom:16px;">Choose a pre-built halal portfolio and see what your investment would look like.</p>
+    <div class="model-card" onclick="selectModel('conservative')" id="modelConservative">
+      <div class="model-name">🛡 Conservative</div>
+      <div class="model-desc">Low risk. Stable halal blue chips. Ideal for capital preservation.</div>
+      <div class="model-stocks">
+        <span class="model-stock-chip">AZN 30%</span>
+        <span class="model-stock-chip">ULVR 25%</span>
+        <span class="model-stock-chip">GSK 25%</span>
+        <span class="model-stock-chip">RKT 20%</span>
+      </div>
+      <div class="model-return">Est. annual return: 6-9%</div>
+    </div>
+    <div class="model-card" onclick="selectModel('balanced')" id="modelBalanced">
+      <div class="model-name">⚖️ Balanced</div>
+      <div class="model-desc">Mix of growth and stability. Diversified across sectors.</div>
+      <div class="model-stocks">
+        <span class="model-stock-chip">AAPL 20%</span>
+        <span class="model-stock-chip">MSFT 20%</span>
+        <span class="model-stock-chip">AZN 20%</span>
+        <span class="model-stock-chip">NVDA 15%</span>
+        <span class="model-stock-chip">V 15%</span>
+        <span class="model-stock-chip">ULVR 10%</span>
+      </div>
+      <div class="model-return">Est. annual return: 10-15%</div>
+    </div>
+    <div class="model-card" onclick="selectModel('growth')" id="modelGrowth">
+      <div class="model-name">🚀 Growth</div>
+      <div class="model-desc">Higher risk, higher potential. Tech-focused halal stocks.</div>
+      <div class="model-stocks">
+        <span class="model-stock-chip">NVDA 30%</span>
+        <span class="model-stock-chip">AAPL 25%</span>
+        <span class="model-stock-chip">MSFT 25%</span>
+        <span class="model-stock-chip">AMD 20%</span>
+      </div>
+      <div class="model-return">Est. annual return: 15-25%</div>
+    </div>
+    <div style="margin-top:16px;">
+      <div class="scanner-label" style="margin-bottom:8px;">If I invested...</div>
+      <div style="display:flex; gap:8px;">
+        <input id="modelAmount" type="number" placeholder="£10,000" style="flex:1; padding:12px; border:1.5px solid var(--grey-200); border-radius:10px; font-size:14px; font-family:Inter,sans-serif; outline:none;" />
+        <button onclick="calcModel()" style="background:var(--green); color:white; border:none; border-radius:10px; padding:12px 20px; font-size:14px; font-weight:600; cursor:pointer; font-family:Inter,sans-serif;">Calculate</button>
+      </div>
+      <div class="invest-result" id="modelResult"></div>
+    </div>
+  </div>
 </div>
 
 <!-- FOOTER -->
@@ -1080,6 +1340,225 @@
 </div>
 
 <script>
+// SUPABASE INIT
+const SUPABASE_URL = 'https://eqrdewqhhrxjfvqofhkw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_8UyAx69uJ8_3XB5BRoE7mg_vgVt4Jb-';
+const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let currentStock = null;
+let selectedModel = null;
+let portfolio = { cash: 10000, holdings: {} };
+let watchlist = [];
+
+_supabase.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user || null;
+  updateNav();
+  if (currentUser) {
+    loadUserData();
+    document.getElementById('dashboard').style.display = 'block';
+  } else {
+    document.getElementById('dashboard').style.display = 'none';
+  }
+});
+
+function updateNav() {
+  if (currentUser) {
+    document.getElementById('navGuest').style.display = 'none';
+    document.getElementById('navUser').style.display = 'flex';
+    document.getElementById('userAvatar').textContent = currentUser.email[0].toUpperCase();
+  } else {
+    document.getElementById('navGuest').style.display = 'flex';
+    document.getElementById('navUser').style.display = 'none';
+  }
+}
+
+function showAuth(mode) {
+  document.getElementById('authModal').classList.add('active');
+  showAuthForm(mode);
+}
+function closeAuth() { document.getElementById('authModal').classList.remove('active'); }
+function showAuthForm(mode) {
+  document.getElementById('loginForm').style.display = mode === 'login' ? 'block' : 'none';
+  document.getElementById('signupForm').style.display = mode === 'signup' ? 'block' : 'none';
+  document.getElementById('verifyForm').style.display = 'none';
+}
+
+async function signIn() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+  const { error } = await _supabase.auth.signInWithPassword({ email, password });
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeAuth();
+}
+
+async function signUp() {
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const errEl = document.getElementById('signupError');
+  errEl.style.display = 'none';
+  if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters'; errEl.style.display = 'block'; return; }
+  const { error } = await _supabase.auth.signUp({ email, password });
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+
+  // Auto-subscribe to Beehiiv newsletter
+  try {
+    const iframe = document.createElement('iframe');
+    iframe.name = 'beehiiv_signup';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://app.beehiiv.com/subscribe';
+    form.target = 'beehiiv_signup';
+    form.style.display = 'none';
+    [['publication_id','pub_82bb9d91-11eb-4b9f-a388-87ead251a68a'],['email',email],['utm_source','nuvara_signup']].forEach(([n,v]) => {
+      const i = document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; form.appendChild(i);
+    });
+    document.body.appendChild(form);
+    form.submit();
+  } catch(e) {}
+
+  document.getElementById('signupForm').style.display = 'none';
+  document.getElementById('verifyForm').style.display = 'block';
+}
+
+async function signOut() {
+  await _supabase.auth.signOut();
+  currentUser = null; watchlist = []; portfolio = { cash: 10000, holdings: {} };
+  updateNav(); toggleUserMenu();
+}
+
+function toggleUserMenu() { document.getElementById('userDropdown').classList.toggle('active'); }
+
+async function loadUserData() {
+  if (!currentUser) return;
+  const { data } = await _supabase.from('user_data').select('*').eq('user_id', currentUser.id).single().catch(() => ({ data: null }));
+  if (data) { watchlist = data.watchlist || []; portfolio = data.portfolio || { cash: 10000, holdings: {} }; }
+  renderWatchlist(); renderHoldings(); updatePortfolioValue();
+}
+
+async function saveUserData() {
+  if (!currentUser) return;
+  await _supabase.from('user_data').upsert({ user_id: currentUser.id, watchlist, portfolio, updated_at: new Date().toISOString() });
+}
+
+function addToWatchlist() {
+  if (!currentUser) { showAuth('signup'); return; }
+  if (!currentStock) return;
+  if (watchlist.find(w => w.ticker === currentStock.ticker)) { alert('Already in your watchlist!'); return; }
+  if (watchlist.length >= 10) { alert('Free plan: up to 10 stocks. Premium coming soon!'); return; }
+  watchlist.push({ ticker: currentStock.ticker, name: currentStock.name, verdict: currentStock.verdict, sector: currentStock.sector });
+  saveUserData(); renderWatchlist();
+  document.getElementById('watchlistBtn').querySelector('button').textContent = '✅ Added to watchlist';
+}
+
+function removeFromWatchlist(ticker) {
+  watchlist = watchlist.filter(w => w.ticker !== ticker);
+  saveUserData(); renderWatchlist();
+}
+
+function renderWatchlist() {
+  const container = document.getElementById('watchlistItems');
+  const empty = document.getElementById('watchlistEmpty');
+  if (!watchlist.length) { empty.style.display = 'block'; container.innerHTML = ''; return; }
+  empty.style.display = 'none';
+  container.innerHTML = watchlist.map(w => `
+    <div class="watchlist-item">
+      <div><div class="watchlist-ticker">${w.ticker}</div><div class="watchlist-name">${w.name}</div></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="watchlist-verdict ${w.verdict}">${w.verdict.charAt(0).toUpperCase()+w.verdict.slice(1)}</span>
+        <button class="watchlist-remove" onclick="removeFromWatchlist('${w.ticker}')">×</button>
+      </div>
+    </div>`).join('');
+}
+
+function executeTrade(action) {
+  if (!currentUser) { showAuth('signup'); return; }
+  const ticker = document.getElementById('tradeTickerInput').value.trim().toUpperCase();
+  const shares = parseFloat(document.getElementById('tradeShares').value);
+  const price = parseFloat(document.getElementById('tradePrice').value);
+  if (!ticker || !shares || !price) { alert('Please fill in all fields'); return; }
+  const all = { ...stocks, ...etfs };
+  const stock = all[ticker];
+  if (stock && stock.verdict === 'haram') { alert(`${ticker} is haram — only halal stocks can be traded on Nuvara.`); return; }
+  const cost = shares * price;
+  if (action === 'buy') {
+    if (cost > portfolio.cash) { alert('Insufficient cash'); return; }
+    portfolio.cash -= cost;
+    if (!portfolio.holdings[ticker]) portfolio.holdings[ticker] = { shares: 0, avgPrice: 0, name: stock?.name || ticker };
+    const h = portfolio.holdings[ticker];
+    const total = h.shares + shares;
+    h.avgPrice = ((h.shares * h.avgPrice) + cost) / total;
+    h.shares = total;
+  } else {
+    if (!portfolio.holdings[ticker] || portfolio.holdings[ticker].shares < shares) { alert('Insufficient shares'); return; }
+    portfolio.cash += cost;
+    portfolio.holdings[ticker].shares -= shares;
+    if (portfolio.holdings[ticker].shares <= 0) delete portfolio.holdings[ticker];
+  }
+  document.getElementById('tradeTickerInput').value = '';
+  document.getElementById('tradeShares').value = '';
+  document.getElementById('tradePrice').value = '';
+  saveUserData(); renderHoldings(); updatePortfolioValue();
+}
+
+function renderHoldings() {
+  const container = document.getElementById('tradeHoldings');
+  const holdings = Object.entries(portfolio.holdings);
+  if (!holdings.length) { container.innerHTML = '<p style="font-size:14px;color:var(--grey-500);text-align:center;padding:16px;">No positions yet.</p>'; return; }
+  container.innerHTML = holdings.map(([ticker, h]) => `
+    <div class="holding-item">
+      <div><div style="font-weight:700;font-size:14px;">${ticker}</div><div style="font-size:12px;color:var(--grey-500);">${h.name} · ${h.shares} shares @ £${h.avgPrice.toFixed(2)}</div></div>
+      <div style="font-weight:700;font-size:14px;">£${(h.shares*h.avgPrice).toFixed(2)}</div>
+    </div>`).join('');
+}
+
+function updatePortfolioValue() {
+  const hVal = Object.values(portfolio.holdings).reduce((s,h) => s+(h.shares*h.avgPrice), 0);
+  document.getElementById('tradePortfolioValue').textContent = '£'+(portfolio.cash+hVal).toFixed(2);
+  document.getElementById('tradeCash').textContent = '£'+portfolio.cash.toFixed(2);
+}
+
+function resetPortfolio() {
+  if (!confirm('Reset portfolio to £10,000?')) return;
+  portfolio = { cash: 10000, holdings: {} };
+  saveUserData(); renderHoldings(); updatePortfolioValue();
+}
+
+const modelData = {
+  conservative: { minReturn: 0.06, maxReturn: 0.09 },
+  balanced: { minReturn: 0.10, maxReturn: 0.15 },
+  growth: { minReturn: 0.15, maxReturn: 0.25 }
+};
+
+function selectModel(model) {
+  selectedModel = model;
+  document.querySelectorAll('.model-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('model'+model.charAt(0).toUpperCase()+model.slice(1)).classList.add('selected');
+}
+
+function calcModel() {
+  if (!selectedModel) { alert('Please select a portfolio first'); return; }
+  const amount = parseFloat(document.getElementById('modelAmount').value);
+  if (!amount || amount <= 0) { alert('Please enter an amount'); return; }
+  const m = modelData[selectedModel];
+  const minVal = (amount*(1+m.minReturn)).toLocaleString('en-GB',{maximumFractionDigits:0});
+  const maxVal = (amount*(1+m.maxReturn)).toLocaleString('en-GB',{maximumFractionDigits:0});
+  const result = document.getElementById('modelResult');
+  result.innerHTML = `<div style="font-weight:700;font-size:14px;color:var(--black);margin-bottom:8px;">£${amount.toLocaleString()} invested for 1 year</div><div style="font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:var(--green);">£${minVal} – £${maxVal}</div><div style="font-size:12px;color:var(--grey-500);margin-top:8px;">Estimated range. Not financial advice. Past performance is not indicative of future results.</div>`;
+  result.classList.add('active');
+}
+
+function switchDashTab(tab) {
+  document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('dashTab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+  document.getElementById('panel'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+}
+
 // Stock database — 50 curated real-world screened stocks
 const stocks = {
   // TECHNOLOGY
@@ -1589,6 +2068,7 @@ async function tryFetch(ticker) {
 }
 
 function showResult(stock) {
+  currentStock = stock;
   const box = document.getElementById('resultBox');
   const verdictEmoji = stock.verdict === 'halal' ? '✓ Halal' : stock.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
 
@@ -1659,6 +2139,11 @@ function showResult(stock) {
 
   box.className = `result-box ${stock.verdict}`;
   box.style.display = 'block';
+
+  // Show watchlist button
+  const wBtn = document.getElementById('watchlistBtn');
+  wBtn.style.display = 'block';
+  wBtn.querySelector('button').textContent = '⭐ Add to watchlist';
 }
 
 function showNotFound(input) {
