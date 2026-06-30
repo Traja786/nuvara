@@ -1130,6 +1130,277 @@
   </div>
 </section>
 
+<!-- LEARN SECTION -->
+<section style="padding:72px 24px; background:white;">
+  <div style="max-width:860px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:48px;">
+      <div style="display:inline-flex; align-items:center; gap:6px; background:#D1FAE5; color:#065F46; font-size:12px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; padding:5px 12px; border-radius:100px; margin-bottom:20px;">✦ Education</div>
+      <h2 style="font-family:'Sora',sans-serif; font-size:clamp(24px,4vw,36px); font-weight:800; letter-spacing:-1px; color:#0F172A; margin-bottom:12px;">New to halal investing?</h2>
+      <p style="font-size:16px; color:#64748B;">Everything you need to know to get started.</p>
+    </div>
+
+    <!-- LEARN TABS -->
+    <div style="display:flex; gap:4px; background:#F1F5F9; border-radius:12px; padding:4px; margin-bottom:28px; flex-wrap:wrap;">
+      <button onclick="switchLearnTab('what', this)" class="learn-tab active-learn" style="flex:1; min-width:120px; padding:10px; border:none; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; background:white; color:#0F172A; box-shadow:0 1px 4px rgba(0,0,0,0.08);">What is halal investing?</button>
+      <button onclick="switchLearnTab('screens', this)" class="learn-tab" style="flex:1; min-width:120px; padding:10px; border:none; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; background:none; color:#64748B;">The 3 screens explained</button>
+      <button onclick="switchLearnTab('purification', this)" class="learn-tab" style="flex:1; min-width:120px; padding:10px; border:none; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; background:none; color:#64748B;">Purification</button>
+      <button onclick="switchLearnTab('etfs', this)" class="learn-tab" style="flex:1; min-width:120px; padding:10px; border:none; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; background:none; color:#64748B;">Halal ETFs</button>
+      <button onclick="switchLearnTab('guide', this)" class="learn-tab" style="flex:1; min-width:120px; padding:10px; border:none; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; background:none; color:#64748B;">Using Nuvara</button>
+    </div>
+
+    <!-- WHAT IS HALAL INVESTING -->
+    <div id="learn-what" style="display:block;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div style="background:#F8FAFC; border-radius:16px; padding:24px;">
+          <div style="font-size:28px; margin-bottom:12px;">🚫</div>
+          <div style="font-weight:700; font-size:15px; color:#0F172A; margin-bottom:8px;">What's not allowed</div>
+          <div style="font-size:14px; color:#64748B; line-height:1.8;">
+            <div style="margin-bottom:6px;">• Interest (riba) — any income from lending money</div>
+            <div style="margin-bottom:6px;">• Alcohol production or distribution</div>
+            <div style="margin-bottom:6px;">• Tobacco manufacturing</div>
+            <div style="margin-bottom:6px;">• Gambling and betting</div>
+            <div style="margin-bottom:6px;">• Weapons manufacturing</div>
+            <div style="margin-bottom:6px;">• Adult entertainment</div>
+            <div>• Conventional banking and insurance</div>
+          </div>
+        </div>
+        <div style="background:#F8FAFC; border-radius:16px; padding:24px;">
+          <div style="font-size:28px; margin-bottom:12px;">✅</div>
+          <div style="font-weight:700; font-size:15px; color:#0F172A; margin-bottom:8px;">What is allowed</div>
+          <div style="font-size:14px; color:#64748B; line-height:1.8;">
+            <div style="margin-bottom:6px;">• Technology companies (Apple, Microsoft, NVIDIA)</div>
+            <div style="margin-bottom:6px;">• Pharmaceuticals and healthcare</div>
+            <div style="margin-bottom:6px;">• Consumer goods and retail</div>
+            <div style="margin-bottom:6px;">• Energy (oil, gas, renewables)</div>
+            <div style="margin-bottom:6px;">• Mining and materials</div>
+            <div style="margin-bottom:6px;">• Payment processors (Visa, Mastercard)</div>
+            <div>• Halal-certified ETFs</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#F0FDF9; border:1.5px solid #D1FAE5; border-radius:14px; padding:20px; margin-top:20px;">
+        <div style="font-weight:700; font-size:14px; color:#0F172A; margin-bottom:8px;">The key principle</div>
+        <div style="font-size:14px; color:#64748B; line-height:1.7;">Halal investing means putting your money into businesses that earn their income through permissible activities. The screening process looks at what a company does and how it makes money — not just what sector it's in.</div>
+      </div>
+    </div>
+
+    <!-- THE 3 SCREENS -->
+    <div id="learn-screens" style="display:none;">
+      <div style="display:grid; gap:16px;">
+        <div style="background:#F8FAFC; border-radius:16px; padding:24px; border-left:4px solid #0A7C5C;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+            <div style="width:36px; height:36px; background:#0A7C5C; border-radius:10px; display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-family:'Sora',sans-serif;">1</div>
+            <div style="font-weight:700; font-size:16px; color:#0F172A;">Business Screen</div>
+          </div>
+          <div style="font-size:14px; color:#64748B; line-height:1.8; margin-bottom:10px;">The most important screen. We look at what the company actually does for a living. If its core business involves alcohol, tobacco, gambling, weapons, adult content, or conventional banking — it fails immediately, regardless of the financials.</div>
+          <div style="font-size:13px; font-weight:600; color:#0A7C5C;">Example: JPMorgan fails here because its entire business is conventional banking (interest-based lending).</div>
+        </div>
+        <div style="background:#F8FAFC; border-radius:16px; padding:24px; border-left:4px solid #0A7C5C;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+            <div style="width:36px; height:36px; background:#0A7C5C; border-radius:10px; display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-family:'Sora',sans-serif;">2</div>
+            <div style="font-weight:700; font-size:16px; color:#0F172A;">Financial Screen</div>
+          </div>
+          <div style="font-size:14px; color:#64748B; line-height:1.8; margin-bottom:10px;">Even halal businesses may earn some interest on their cash holdings. We check that interest income and other impure income stays below 5% of total revenue. Above 5% and the stock fails this screen.</div>
+          <div style="font-size:13px; font-weight:600; color:#0A7C5C;">Example: Apple earns minimal interest on its cash — well below 5% — so it passes this screen.</div>
+        </div>
+        <div style="background:#F8FAFC; border-radius:16px; padding:24px; border-left:4px solid #0A7C5C;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+            <div style="width:36px; height:36px; background:#0A7C5C; border-radius:10px; display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-family:'Sora',sans-serif;">3</div>
+            <div style="font-weight:700; font-size:16px; color:#0F172A;">Debt Screen</div>
+          </div>
+          <div style="font-size:14px; color:#64748B; line-height:1.8; margin-bottom:10px;">Companies that are heavily funded by interest-bearing debt are considered less permissible. We check that total debt stays below 33% of the company's market capitalisation.</div>
+          <div style="font-size:13px; font-weight:600; color:#0A7C5C;">Example: Most large tech companies have very low debt ratios and pass this screen comfortably.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PURIFICATION -->
+    <div id="learn-purification" style="display:none;">
+      <div style="background:#F8FAFC; border-radius:16px; padding:28px; margin-bottom:20px;">
+        <div style="font-weight:700; font-size:18px; color:#0F172A; margin-bottom:12px;">What is purification?</div>
+        <div style="font-size:14px; color:#64748B; line-height:1.8; margin-bottom:16px;">Even halal companies earn a small amount of interest on their cash reserves. When you own shares in these companies, a tiny portion of your returns technically comes from this impure income. Purification is the process of donating that small amount to charity to cleanse your investment returns.</div>
+        <div style="font-size:14px; color:#64748B; line-height:1.8;">It's not about the stock being haram — it's a voluntary act of financial hygiene to ensure your returns are fully halal.</div>
+      </div>
+      <div style="background:#F0FDF9; border:1.5px solid #D1FAE5; border-radius:14px; padding:20px; margin-bottom:20px;">
+        <div style="font-weight:700; font-size:14px; color:#0F172A; margin-bottom:8px;">How to calculate it</div>
+        <div style="font-size:14px; color:#64748B; line-height:1.8;">Nuvara calculates your purification amount automatically. For each halal stock you scan, we show you the exact amount to donate per share you hold. Use our purification calculator to enter your shares and we'll tell you the total amount to give to charity.</div>
+      </div>
+      <div style="background:#F8FAFC; border-radius:14px; padding:20px;">
+        <div style="font-weight:700; font-size:14px; color:#0F172A; margin-bottom:8px;">Example</div>
+        <div style="font-size:14px; color:#64748B; line-height:1.8;">Apple's purification amount is approximately $0.04 per share per year. If you own 100 shares, you'd donate $4 to charity annually. A small amount — but it completes your halal investment practice.</div>
+      </div>
+    </div>
+
+    <!-- HALAL ETFs -->
+    <div id="learn-etfs" style="display:none;">
+      <div style="background:#FEF2F2; border:1.5px solid #FECACA; border-radius:14px; padding:20px; margin-bottom:20px;">
+        <div style="font-weight:700; font-size:14px; color:#0F172A; margin-bottom:8px;">⚠️ ESG does not mean halal</div>
+        <div style="font-size:14px; color:#64748B; line-height:1.8;">Many investors assume ESG (Environmental, Social, Governance) funds are halal. They are not. ESG funds still hold conventional banks, alcohol companies, and other impermissible stocks. Always check the specific ETF — not just the label.</div>
+      </div>
+      <div style="display:grid; gap:14px;">
+        <div style="background:#F0FDF9; border:1.5px solid #D1FAE5; border-radius:14px; padding:20px;">
+          <div style="font-weight:700; font-size:15px; color:#0F172A; margin-bottom:6px;">✓ Halal ETFs — what to look for</div>
+          <div style="font-size:14px; color:#64748B; line-height:1.8; margin-bottom:12px;">A genuine halal ETF will be certified by a Shariah board, screened using AAOIFI or Dow Jones Islamic Market methodology, and will explicitly exclude banks, alcohol, tobacco, gambling and weapons.</div>
+          <div style="font-size:13px; color:#64748B; line-height:1.8;">
+            <div style="margin-bottom:6px;"><strong style="color:#0F172A;">HLAL</strong> — Wahed FTSE USA Shariah ETF. US halal stocks. Fully certified.</div>
+            <div style="margin-bottom:6px;"><strong style="color:#0F172A;">SPUS</strong> — SP Funds S&P 500 Sharia ETF. Halal version of the S&P 500.</div>
+            <div style="margin-bottom:6px;"><strong style="color:#0F172A;">ISDU</strong> — iShares MSCI World Islamic ETF. Global halal exposure. Listed in London.</div>
+            <div><strong style="color:#0F172A;">UMMA</strong> — Wahed Dow Jones Islamic World ETF. Global diversification.</div>
+          </div>
+        </div>
+        <div style="background:#F8FAFC; border-radius:14px; padding:20px;">
+          <div style="font-weight:700; font-size:15px; color:#0F172A; margin-bottom:6px;">✕ Popular ETFs that are NOT halal</div>
+          <div style="font-size:14px; color:#64748B; line-height:1.8;">
+            <div style="margin-bottom:6px;"><strong style="color:#0F172A;">VWRL</strong> — Vanguard All-World. Holds banks, alcohol, tobacco. Not halal.</div>
+            <div style="margin-bottom:6px;"><strong style="color:#0F172A;">SPY / VUSA / CSPX</strong> — S&P 500 funds. Include JPMorgan, Berkshire. Not halal.</div>
+            <div><strong style="color:#0F172A;">ISF</strong> — FTSE 100. Heavily weighted toward UK banks and Diageo. Not halal.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USING NUVARA -->
+    <div id="learn-guide" style="display:none;">
+      <div style="display:grid; gap:16px;">
+
+        <div style="background:#F8FAFC; border-radius:16px; padding:24px;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="font-size:24px;">🔍</div>
+            <div style="font-weight:700; font-size:16px; color:#0F172A;">Using the Stock & ETF Scanner</div>
+          </div>
+          <div style="display:grid; gap:10px;">
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">1</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">Type a stock ticker (e.g. AAPL) or company name (e.g. Lloyds) into the search box and click Scan.</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">2</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">Read the verdict — <strong style="color:#0A7C5C;">Halal ✓</strong>, <strong style="color:#EF4444;">Haram ✕</strong>, or <strong style="color:#92400E;">⚠ Doubtful</strong>. Each verdict comes with a full breakdown of which screens it passed or failed.</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">3</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">For halal stocks, check the purification amount — this is a small amount to donate to charity per share you hold.</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">4</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">If a stock fails, we suggest halal alternatives in the same sector so you know where to look next.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#F8FAFC; border-radius:16px; padding:24px;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="font-size:24px;">📋</div>
+            <div style="font-weight:700; font-size:16px; color:#0F172A;">Using the Portfolio Audit</div>
+          </div>
+          <div style="display:grid; gap:10px;">
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">1</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">Click the Portfolio Audit tab next to the scanner.</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">2</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">Type your stock tickers separated by commas — for example: AAPL, TSLA, LLOY, VWRL</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">3</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">Click Audit Portfolio — you'll get an instant halal breakdown of every stock in your list.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#F8FAFC; border-radius:16px; padding:24px;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="font-size:24px;">⭐</div>
+            <div style="font-weight:700; font-size:16px; color:#0F172A;">Using the Watchlist</div>
+          </div>
+          <div style="display:grid; gap:10px;">
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">1</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">Create a free account and sign in to access your personal watchlist.</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">2</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">After scanning a stock, click "Add to watchlist" to save it. Or add tickers directly in the Watchlist section of your dashboard.</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">3</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">Your watchlist shows the halal verdict for each stock so you always know where you stand.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#F8FAFC; border-radius:16px; padding:24px;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="font-size:24px;">📊</div>
+            <div style="font-weight:700; font-size:16px; color:#0F172A;">Using Paper Trading</div>
+          </div>
+          <div style="background:#F0FDF9; border-radius:10px; padding:12px 14px; margin-bottom:14px; font-size:13px; color:#065F46; font-weight:600;">Paper trading uses virtual money — you can't lose real money. It's a safe way to practice before investing.</div>
+          <div style="display:grid; gap:10px;">
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">1</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">Sign in and go to Portfolio in your dashboard. You start with £10,000 virtual cash.</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">2</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">Enter a ticker, the number of shares, and the price per share. Nuvara will only allow halal stocks — haram stocks are blocked automatically.</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">3</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">Track your virtual portfolio over time. Buy and sell to practice building a halal investment strategy.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#F8FAFC; border-radius:16px; padding:24px;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="font-size:24px;">💷</div>
+            <div style="font-weight:700; font-size:16px; color:#0F172A;">Using the £10k Simulator</div>
+          </div>
+          <div style="display:grid; gap:10px;">
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">1</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">Go to Simulator in your dashboard and enter a stock ticker and an amount you're thinking of investing.</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">2</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">We'll show you exactly how many shares you'd own, the price per share, and the purification amount due.</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:24px; height:24px; background:#0A7C5C; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:1px;">3</div>
+              <div style="font-size:14px; color:#64748B; line-height:1.7;">Or choose one of our preset halal portfolios to see how £10,000 might be spread across different halal strategies.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#0F172A; border-radius:16px; padding:24px; text-align:center;">
+          <div style="font-family:'Sora',sans-serif; font-size:18px; font-weight:800; color:white; margin-bottom:8px;">Ready to get started?</div>
+          <div style="font-size:14px; color:rgba(255,255,255,0.6); margin-bottom:20px;">Create your free account and start investing with a clear conscience.</div>
+          <button onclick="showAuth('signup')" style="background:#0A7C5C; color:white; border:none; border-radius:10px; padding:12px 28px; font-size:14px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">Sign up free →</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+<div id="signupPopup" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:500; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:white; border-radius:20px; padding:32px; max-width:420px; width:100%; position:relative; animation:fadeUp 0.3s ease;">
+    <button onclick="closePopup()" style="position:absolute; top:16px; right:16px; background:none; border:none; font-size:20px; color:#94A3B8; cursor:pointer;">×</button>
+    <div style="font-size:32px; margin-bottom:12px;">🔒</div>
+    <h3 style="font-family:'Sora',sans-serif; font-size:22px; font-weight:800; color:#0F172A; margin-bottom:8px; letter-spacing:-0.5px;">Save your results</h3>
+    <p style="font-size:14px; color:#64748B; line-height:1.7; margin-bottom:20px;">Create your free account to save stocks to your watchlist, paper trade with £10,000 virtual cash, and audit your full portfolio.</p>
+    <div style="display:grid; gap:8px; margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:#334155;"><span style="color:#0A7C5C;">✓</span> Save stocks to your watchlist</div>
+      <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:#334155;"><span style="color:#0A7C5C;">✓</span> Paper trade with £10,000 virtual cash</div>
+      <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:#334155;"><span style="color:#0A7C5C;">✓</span> Full portfolio halal audit</div>
+      <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:#334155;"><span style="color:#0A7C5C;">✓</span> £10k investment simulator</div>
+    </div>
+    <button onclick="closePopup(); showAuth('signup')" style="width:100%; background:#0A7C5C; color:white; border:none; border-radius:12px; padding:14px; font-size:15px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; margin-bottom:10px;">Sign up free →</button>
+    <button onclick="closePopup(); showAuth('login')" style="width:100%; background:none; border:1.5px solid #E2E8F0; color:#64748B; border-radius:12px; padding:12px; font-size:14px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">Already have an account? Sign in</button>
+  </div>
+</div>
+
 <!-- FEATURES SECTION -->
 <section style="padding:72px 24px; background:white;">
   <div style="max-width:900px; margin:0 auto; text-align:center;">
@@ -2143,6 +2414,12 @@ function showResult(stock) {
   const wBtn = document.getElementById('watchlistBtn');
   wBtn.style.display = 'block';
   wBtn.querySelector('button').textContent = '⭐ Add to watchlist';
+
+  // Show signup popup for non-logged-in users after first scan
+  if (!currentUser && !sessionStorage.getItem('popup_shown')) {
+    sessionStorage.setItem('popup_shown', '1');
+    setTimeout(() => showSignupPopup(), 2000);
+  }
 }
 
 function showNotFound(input) {
@@ -2205,6 +2482,30 @@ function joinWaitlist() {
 
   document.getElementById('waitlistForm').style.display = 'none';
   document.getElementById('waitlistSuccess').style.display = 'block';
+}
+
+// SIGNUP POPUP
+function showSignupPopup() {
+  const popup = document.getElementById('signupPopup');
+  popup.style.display = 'flex';
+}
+function closePopup() {
+  document.getElementById('signupPopup').style.display = 'none';
+}
+
+// LEARN TABS
+function switchLearnTab(tab, el) {
+  ['what','screens','purification','etfs','guide'].forEach(t => {
+    document.getElementById('learn-' + t).style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.learn-tab').forEach(t => {
+    t.style.background = 'none';
+    t.style.color = '#64748B';
+    t.style.boxShadow = 'none';
+  });
+  el.style.background = 'white';
+  el.style.color = '#0F172A';
+  el.style.boxShadow = '0 1px 4px rgba(0,0,0,0.08)';
 }
 
 // COOKIE CONSENT
