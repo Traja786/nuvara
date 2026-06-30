@@ -1354,10 +1354,9 @@ let watchlist = [];
 _supabase.auth.onAuthStateChange((event, session) => {
   currentUser = session?.user || null;
   updateNav();
-  if (currentUser) {
-    loadUserData();
-    document.getElementById('dashboard').style.display = 'block';
-  } else {
+  if (currentUser && event === 'SIGNED_IN') {
+    window.location.href = '/app.html';
+  } else if (!currentUser) {
     document.getElementById('dashboard').style.display = 'none';
   }
 });

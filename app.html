@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nuvara — My Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --green: #0A7C5C; --green-dark: #065F46; --green-light: #D1FAE5; --green-subtle: #F0FDF9;
+  --black: #0F172A; --grey-700: #334155; --grey-500: #64748B; --grey-200: #E2E8F0;
+  --grey-100: #F1F5F9; --white: #FFFFFF; --red: #EF4444; --navy: #0F172A;
+  --sidebar-w: 240px; --sidebar-collapsed: 64px;
+}
+body { font-family: 'Inter', sans-serif; background: var(--grey-100); color: var(--black); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+/* SIDEBAR */
+.sidebar { width: var(--sidebar-w); background: var(--navy); min-height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; transition: width 0.25s ease; display: flex; flex-direction: column; overflow: hidden; }
+.sidebar.collapsed { width: var(--sidebar-collapsed); }
+.sidebar-header { padding: 20px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.08); min-height: 64px; flex-shrink: 0; }
+.logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 20px; color: white; display: flex; align-items: center; gap: 8px; text-decoration: none; white-space: nowrap; }
+.logo-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.logo-text { opacity: 1; transition: opacity 0.2s; }
+.sidebar.collapsed .logo-text { opacity: 0; width: 0; overflow: hidden; }
+.toggle-btn { background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer; padding: 6px; border-radius: 6px; display: flex; align-items: center; flex-shrink: 0; }
+.toggle-btn:hover { color: white; background: rgba(255,255,255,0.08); }
+.toggle-icon { font-size: 18px; transition: transform 0.25s; }
+.sidebar.collapsed .toggle-icon { transform: rotate(180deg); }
+
+.sidebar-nav { flex: 1; padding: 12px 8px; overflow-y: auto; }
+.nav-section-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 1px; padding: 8px 8px 4px; white-space: nowrap; overflow: hidden; transition: opacity 0.2s; }
+.sidebar.collapsed .nav-section-label { opacity: 0; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-radius: 10px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.55); cursor: pointer; border: none; background: none; font-family: 'Inter', sans-serif; width: 100%; text-align: left; transition: all 0.15s; margin-bottom: 2px; white-space: nowrap; position: relative; }
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.9); }
+.nav-item.active { background: rgba(10,124,92,0.2); color: white; }
+.nav-item.active .nav-icon { color: var(--green); }
+.nav-item.disabled { opacity: 0.35; cursor: not-allowed; }
+.nav-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+.nav-label { transition: opacity 0.2s; overflow: hidden; }
+.sidebar.collapsed .nav-label { opacity: 0; width: 0; overflow: hidden; }
+.coming-badge { font-size: 9px; font-weight: 700; background: rgba(10,124,92,0.3); color: var(--green); padding: 2px 6px; border-radius: 100px; margin-left: auto; white-space: nowrap; transition: opacity 0.2s; }
+.sidebar.collapsed .coming-badge { opacity: 0; }
+
+/* TOOLTIP for collapsed state */
+.nav-item .tooltip { position: absolute; left: calc(var(--sidebar-collapsed) - 4px); background: #1E293B; color: white; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 6px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s; z-index: 300; }
+.sidebar.collapsed .nav-item:hover .tooltip { opacity: 1; }
+
+.sidebar-footer { padding: 12px 8px; border-top: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
+.user-row { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; overflow: hidden; }
+.user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0; }
+.user-details { overflow: hidden; transition: opacity 0.2s, width 0.2s; }
+.sidebar.collapsed .user-details { opacity: 0; width: 0; }
+.user-email-text { font-size: 12px; color: rgba(255,255,255,0.45); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px; }
+.btn-signout { background: none; border: none; color: rgba(255,255,255,0.35); font-size: 11px; cursor: pointer; font-family: 'Inter', sans-serif; padding: 2px 0; display: block; transition: color 0.15s; }
+.btn-signout:hover { color: rgba(255,255,255,0.7); }
+
+/* MAIN */
+.main { margin-left: var(--sidebar-w); transition: margin-left 0.25s ease; min-height: 100vh; }
+.main.collapsed { margin-left: var(--sidebar-collapsed); }
+
+/* PAGE HEADER */
+.page-header { background: white; padding: 18px 28px; border-bottom: 1px solid var(--grey-200); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.page-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--black); }
+.page-subtitle { font-size: 13px; color: var(--grey-500); margin-top: 2px; }
+
+/* CONTENT */
+.page-content { padding: 24px 28px; max-width: 960px; }
+
+/* STATS */
+.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 20px; }
+.stat-card { background: white; border-radius: 14px; padding: 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.stat-label { font-size: 12px; color: var(--grey-500); font-weight: 500; margin-bottom: 6px; }
+.stat-value { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: var(--black); }
+.stat-value.green { color: var(--green); }
+
+/* CARD */
+.card { background: white; border-radius: 16px; padding: 22px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); margin-bottom: 16px; }
+.card-title { font-size: 15px; font-weight: 700; color: var(--black); margin-bottom: 16px; }
+
+/* INPUTS */
+.input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.app-input { flex: 1; min-width: 120px; padding: 11px 14px; border: 1.5px solid var(--grey-200); border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; outline: none; background: var(--grey-100); transition: all 0.15s; }
+.app-input:focus { border-color: var(--green); background: white; }
+.btn-green { background: var(--green); color: white; border: none; border-radius: 10px; padding: 11px 20px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; transition: background 0.15s; }
+.btn-green:hover { background: var(--green-dark); }
+
+/* VERDICT */
+.verdict-pill { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
+.halal-pill { background: var(--green-light); color: var(--green-dark); }
+.haram-pill { background: #FEE2E2; color: var(--red); }
+.doubtful-pill { background: #FEF3C7; color: #92400E; }
+
+/* WATCHLIST */
+.watch-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 10px; background: var(--grey-100); margin-bottom: 8px; }
+.btn-remove { background: none; border: none; color: var(--grey-500); font-size: 20px; cursor: pointer; line-height: 1; padding: 2px 6px; border-radius: 4px; }
+.btn-remove:hover { color: var(--red); background: #FEE2E2; }
+
+/* TABLE */
+table { width: 100%; border-collapse: collapse; }
+th { font-size: 11px; font-weight: 600; color: var(--grey-500); text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--grey-200); }
+td { padding: 12px; font-size: 14px; border-bottom: 1px solid var(--grey-100); }
+tr:last-child td { border-bottom: none; }
+.btn-sell { background: none; border: 1px solid var(--grey-200); color: var(--grey-500); padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif; }
+.btn-sell:hover { border-color: var(--red); color: var(--red); }
+
+/* SCANNER RESULT */
+.scan-result { border-radius: 14px; padding: 20px; margin-top: 16px; display: none; animation: fadeUp 0.3s ease; }
+.scan-result.halal { background: var(--green-subtle); border: 1.5px solid var(--green-light); display: block; }
+.scan-result.haram { background: #FEF2F2; border: 1.5px solid #FECACA; display: block; }
+.scan-result.doubtful { background: #FFFBEB; border: 1.5px solid #FDE68A; display: block; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+.screens-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+.screen-item { background: white; border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; }
+.screen-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.screen-icon.pass { background: var(--green-light); color: var(--green); }
+.screen-icon.fail { background: #FEE2E2; color: var(--red); }
+.screen-icon.warn { background: #FEF3C7; color: #92400E; }
+
+/* SIMULATOR */
+.sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.sim-item { background: white; border-radius: 10px; padding: 14px; }
+.sim-label { font-size: 12px; color: var(--grey-500); margin-bottom: 4px; }
+.sim-value { font-size: 18px; font-weight: 800; color: var(--black); font-family: 'Sora', sans-serif; }
+.sim-value.green { color: var(--green); }
+
+/* PRESET CARDS */
+.preset-card { background: var(--grey-100); border-radius: 12px; padding: 16px; margin-bottom: 12px; cursor: pointer; border: 1.5px solid transparent; transition: border-color 0.15s; }
+.preset-card:hover { border-color: var(--green); }
+
+/* EMPTY */
+.empty { text-align: center; padding: 32px; color: var(--grey-500); font-size: 14px; }
+
+/* SPINNER */
+.spinner { width: 24px; height: 24px; border: 2px solid var(--green-light); border-top-color: var(--green); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 16px auto; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* MOBILE BOTTOM NAV */
+.mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--navy); border-top: 1px solid rgba(255,255,255,0.1); z-index: 200; padding: 6px 0 10px; }
+.mobile-nav-items { display: flex; }
+.mobile-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px; font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.45); cursor: pointer; border: none; background: none; font-family: 'Inter', sans-serif; letter-spacing: 0.3px; }
+.mobile-nav-btn.active { color: var(--green); }
+.mobile-nav-btn span:first-child { font-size: 20px; }
+
+/* LOADING OVERLAY */
+#loadingOverlay { position: fixed; inset: 0; background: var(--navy); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+.loading-logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 28px; color: white; display: flex; align-items: center; gap: 8px; }
+
+/* MESSAGE */
+.msg { font-size: 13px; margin-top: 8px; padding: 8px 12px; border-radius: 8px; display: none; }
+.msg.error { background: #FEF2F2; color: var(--red); display: block; }
+.msg.success { background: var(--green-subtle); color: var(--green-dark); display: block; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0 !important; padding-bottom: 72px; }
+  .mobile-nav { display: block; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .page-content { padding: 16px; }
+  .page-header { padding: 14px 16px; }
+  .screens-grid { grid-template-columns: 1fr; }
+  .sim-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="loadingOverlay">
+  <div class="loading-logo">Nuvara<span style="width:8px;height:8px;border-radius:50%;background:#0A7C5C;display:inline-block;margin-left:4px;"></span></div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="/" class="logo">
+      <span class="logo-dot"></span>
+      <span class="logo-text">Nuvara</span>
+    </a>
+    <button class="toggle-btn" onclick="toggleSidebar()">
+      <span class="toggle-icon">◀</span>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Tools</div>
+    <button class="nav-item active" onclick="switchPage('scanner', this)">
+      <span class="nav-icon">🔍</span>
+      <span class="nav-label">Scanner</span>
+      <span class="tooltip">Scanner</span>
+    </button>
+    <button class="nav-item" onclick="switchPage('portfolio', this)">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">Portfolio</span>
+      <span class="tooltip">Portfolio</span>
+    </button>
+    <button class="nav-item" onclick="switchPage('watchlist', this)">
+      <span class="nav-icon">⭐</span>
+      <span class="nav-label">Watchlist</span>
+      <span class="tooltip">Watchlist</span>
+    </button>
+    <button class="nav-item" onclick="switchPage('simulator', this)">
+      <span class="nav-icon">💷</span>
+      <span class="nav-label">Simulator</span>
+      <span class="tooltip">Simulator</span>
+    </button>
+
+    <div class="nav-section-label" style="margin-top:16px;">Coming soon</div>
+    <button class="nav-item disabled">
+      <span class="nav-icon">📰</span>
+      <span class="nav-label">Weekly Picks</span>
+      <span class="coming-badge">Soon</span>
+      <span class="tooltip">Coming soon</span>
+    </button>
+    <button class="nav-item disabled">
+      <span class="nav-icon">🏦</span>
+      <span class="nav-label">Invest</span>
+      <span class="coming-badge">Soon</span>
+      <span class="tooltip">Coming soon</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-avatar" id="userAvatar">?</div>
+      <div class="user-details">
+        <div class="user-email-text" id="userEmailText">Loading...</div>
+        <button class="btn-signout" onclick="signOut()">Sign out</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main">
+
+  <!-- SCANNER PAGE -->
+  <div id="page-scanner">
+    <div class="page-header">
+      <div>
+        <div class="page-title">🔍 Stock & ETF Scanner</div>
+        <div class="page-subtitle">Screen any stock or ETF for halal and ethical compliance</div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="card">
+        <div class="input-row">
+          <input class="app-input" id="scanInput" type="text" placeholder="Enter ticker or company name (e.g. AAPL, Lloyds, VWRL)" onkeydown="if(event.key==='Enter') runScan()" />
+          <button class="btn-green" onclick="runScan()">Scan →</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
+          <span style="font-size:12px;color:var(--grey-500);">Try:</span>
+          <span onclick="quickScan('AAPL')" style="background:var(--grey-100);border:1px solid var(--grey-200);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;">AAPL</span>
+          <span onclick="quickScan('LLOY')" style="background:var(--grey-100);border:1px solid var(--grey-200);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;">LLOY</span>
+          <span onclick="quickScan('BARC')" style="background:var(--grey-100);border:1px solid var(--grey-200);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;">BARC</span>
+          <span onclick="quickScan('VWRL')" style="background:var(--grey-100);border:1px solid var(--grey-200);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;">VWRL ETF</span>
+          <span onclick="quickScan('HLAL')" style="background:var(--grey-100);border:1px solid var(--grey-200);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;">HLAL ETF</span>
+        </div>
+        <div id="scanLoading" style="display:none;"><div class="spinner"></div></div>
+        <div id="scanResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PORTFOLIO PAGE -->
+  <div id="page-portfolio" style="display:none;">
+    <div class="page-header">
+      <div>
+        <div class="page-title">📊 Paper Portfolio</div>
+        <div class="page-subtitle">Practice halal investing with £10,000 virtual cash</div>
+      </div>
+      <button onclick="resetPortfolio()" style="background:none;border:1px solid var(--grey-200);color:var(--grey-500);padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;">Reset to £10k</button>
+    </div>
+    <div class="page-content">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Portfolio value</div><div class="stat-value green" id="pfValue">£0.00</div></div>
+        <div class="stat-card"><div class="stat-label">Cash balance</div><div class="stat-value" id="pfCash">£10,000.00</div></div>
+        <div class="stat-card"><div class="stat-label">Total invested</div><div class="stat-value" id="pfInvested">£0.00</div></div>
+        <div class="stat-card"><div class="stat-label">Holdings</div><div class="stat-value" id="pfCount">0</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Buy a stock</div>
+        <div class="input-row">
+          <input class="app-input" id="buyTicker" type="text" placeholder="Ticker (e.g. AAPL)" />
+          <input class="app-input" id="buyShares" type="number" min="1" placeholder="Shares" style="max-width:100px;" />
+          <input class="app-input" id="buyPrice" type="number" min="0.01" step="0.01" placeholder="Price £" style="max-width:130px;" />
+          <button class="btn-green" onclick="buyStock()">Buy →</button>
+        </div>
+        <div id="buyMsg" class="msg"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Your holdings</div>
+        <div id="holdingsContainer"><div class="empty">No holdings yet. Buy your first halal stock above.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WATCHLIST PAGE -->
+  <div id="page-watchlist" style="display:none;">
+    <div class="page-header">
+      <div>
+        <div class="page-title">⭐ Watchlist</div>
+        <div class="page-subtitle">Save and track stocks you're interested in</div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="card">
+        <div class="input-row" style="margin-bottom:16px;">
+          <input class="app-input" id="watchInput" type="text" placeholder="Add ticker (e.g. TSLA, HLAL)" onkeydown="if(event.key==='Enter') addWatch()" />
+          <button class="btn-green" onclick="addWatch()">Add →</button>
+        </div>
+        <div id="watchMsg" class="msg"></div>
+        <div id="watchlistContainer"><div class="empty">Your watchlist is empty. Add a stock above.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIMULATOR PAGE -->
+  <div id="page-simulator" style="display:none;">
+    <div class="page-header">
+      <div>
+        <div class="page-title">💷 £10k Simulator</div>
+        <div class="page-subtitle">See how £10,000 would look invested in any halal stock or ETF</div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="card">
+        <div class="input-row">
+          <input class="app-input" id="simTicker" type="text" placeholder="Ticker (e.g. AAPL)" />
+          <input class="app-input" id="simAmount" type="number" placeholder="Amount £" style="max-width:140px;" value="10000" />
+          <button class="btn-green" onclick="runSim()">Simulate →</button>
+        </div>
+        <div id="simResult" style="display:none; margin-top:16px;">
+          <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:14px;padding:20px;">
+            <div style="font-weight:700;font-size:16px;margin-bottom:4px;" id="simName"></div>
+            <div style="font-size:13px;color:var(--grey-500);margin-bottom:16px;" id="simStatus"></div>
+            <div class="sim-grid">
+              <div class="sim-item"><div class="sim-label">Amount invested</div><div class="sim-value" id="simInvested"></div></div>
+              <div class="sim-item"><div class="sim-label">Shares you'd own</div><div class="sim-value" id="simShares"></div></div>
+              <div class="sim-item"><div class="sim-label">Price per share</div><div class="sim-value" id="simPrice"></div></div>
+              <div class="sim-item"><div class="sim-label">Purification due</div><div class="sim-value green" id="simPurif"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Preset halal portfolios</div>
+        <div class="preset-card"><div style="font-weight:700;font-size:14px;margin-bottom:6px;">🌍 Global Tech (Halal)</div><div style="font-size:13px;color:var(--grey-500);">AAPL 30% · MSFT 25% · NVDA 25% · TSLA 20%</div><div style="font-size:12px;color:var(--green);margin-top:6px;font-weight:600;">All pass halal screens ✓</div></div>
+        <div class="preset-card"><div style="font-weight:700;font-size:14px;margin-bottom:6px;">🇬🇧 UK Halal</div><div style="font-size:13px;color:var(--grey-500);">AZN 30% · GSK 20% · ULVR 20% · RIO 15% · NEXT 15%</div><div style="font-size:12px;color:var(--green);margin-top:6px;font-weight:600;">All pass halal screens ✓</div></div>
+        <div class="preset-card"><div style="font-weight:700;font-size:14px;margin-bottom:6px;">📈 Halal ETF Portfolio</div><div style="font-size:13px;color:var(--grey-500);">HLAL 40% · SPUS 35% · ISDU 25%</div><div style="font-size:12px;color:var(--green);margin-top:6px;font-weight:600;">All Shariah certified ✓</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-nav">
+  <div class="mobile-nav-items">
+    <button class="mobile-nav-btn active" onclick="switchPage('scanner',this)"><span>🔍</span><span>Scanner</span></button>
+    <button class="mobile-nav-btn" onclick="switchPage('portfolio',this)"><span>📊</span><span>Portfolio</span></button>
+    <button class="mobile-nav-btn" onclick="switchPage('watchlist',this)"><span>⭐</span><span>Watchlist</span></button>
+    <button class="mobile-nav-btn" onclick="switchPage('simulator',this)"><span>💷</span><span>Simulator</span></button>
+  </div>
+</div>
+
+<script>
+// SUPABASE
+const SUPABASE_URL = 'https://eqrdewqhhrxjfvqofhkw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_8UyAx69uJ8_3XB5BRoE7mg_vgVt4Jb-';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let holdings = [];
+let watchlist = [];
+let sidebarCollapsed = false;
+
+// STOCK DATA
+const stocks = {
+  'AAPL':{ name:'Apple Inc.', verdict:'halal', sector:'Technology', purif:0.04, screens:[{n:'Business activity',d:'Consumer tech & software',s:'pass'},{n:'Interest income',d:'0.8% of revenue',s:'pass'},{n:'Debt ratio',d:'18% of market cap',s:'pass'},{n:'Impure income',d:'< 1% of revenue',s:'pass'}], note:'Apple passes all three ethical screens.' },
+  'MSFT':{ name:'Microsoft', verdict:'halal', sector:'Technology', purif:0.07, screens:[{n:'Business activity',d:'Cloud & software',s:'pass'},{n:'Interest income',d:'1.2% of revenue',s:'pass'},{n:'Debt ratio',d:'11% of market cap',s:'pass'},{n:'Impure income',d:'< 2% of revenue',s:'pass'}], note:'Microsoft passes all screens.' },
+  'NVDA':{ name:'NVIDIA Corp.', verdict:'halal', sector:'Semiconductors', purif:0.03, screens:[{n:'Business activity',d:'GPUs & AI chips',s:'pass'},{n:'Interest income',d:'0.6% of revenue',s:'pass'},{n:'Debt ratio',d:'5% of market cap',s:'pass'},{n:'Impure income',d:'< 1% of revenue',s:'pass'}], note:'NVIDIA passes all screens cleanly.' },
+  'TSLA':{ name:'Tesla Inc.', verdict:'halal', sector:'Automotive', purif:0.02, screens:[{n:'Business activity',d:'Electric vehicles',s:'pass'},{n:'Interest income',d:'0.4% of revenue',s:'pass'},{n:'Debt ratio',d:'9% of market cap',s:'pass'},{n:'Impure income',d:'< 1% of revenue',s:'pass'}], note:'Tesla passes all ethical screens.' },
+  'V':{ name:'Visa Inc.', verdict:'halal', sector:'Payments', purif:0.01, screens:[{n:'Business activity',d:'Payments processing',s:'pass'},{n:'Interest income',d:'0.2% of revenue',s:'pass'},{n:'Debt ratio',d:'22% of market cap',s:'pass'},{n:'Impure income',d:'< 1% of revenue',s:'pass'}], note:'Visa is a payment processor, not a lender. Passes all screens.' },
+  'AZN':{ name:'AstraZeneca', verdict:'halal', sector:'Pharmaceuticals', purif:0.04, screens:[{n:'Business activity',d:'Biopharmaceuticals',s:'pass'},{n:'Interest income',d:'0.7% of revenue',s:'pass'},{n:'Debt ratio',d:'20% of market cap',s:'pass'},{n:'Impure income',d:'< 1% of revenue',s:'pass'}], note:'AstraZeneca passes all ethical screens.' },
+  'GSK':{ name:'GSK PLC', verdict:'halal', sector:'Pharmaceuticals', purif:0.04, screens:[{n:'Business activity',d:'Pharmaceuticals & vaccines',s:'pass'},{n:'Interest income',d:'0.8% of revenue',s:'pass'},{n:'Debt ratio',d:'22% of market cap',s:'pass'},{n:'Impure income',d:'< 1% of revenue',s:'pass'}], note:'GSK passes all screens.' },
+  'ULVR':{ name:'Unilever PLC', verdict:'halal', sector:'Consumer Goods', purif:0.03, screens:[{n:'Business activity',d:'FMCG products',s:'pass'},{n:'Interest income',d:'0.6% of revenue',s:'pass'},{n:'Debt ratio',d:'18% of market cap',s:'pass'},{n:'Impure income',d:'< 1% of revenue',s:'pass'}], note:'Unilever passes all ethical screens.' },
+  'NEXT':{ name:'Next PLC', verdict:'halal', sector:'Retail', purif:0.04, screens:[{n:'Business activity',d:'Fashion retail',s:'pass'},{n:'Interest income',d:'0.8% of revenue',s:'pass'},{n:'Debt ratio',d:'20% of market cap',s:'pass'},{n:'Impure income',d:'< 1% of revenue',s:'pass'}], note:'Next passes all screens.' },
+  'JPM':{ name:'JPMorgan Chase', verdict:'haram', sector:'Banking', purif:0, screens:[{n:'Business activity',d:'Conventional banking',s:'fail'},{n:'Interest income',d:'68% of revenue',s:'fail'},{n:'Debt ratio',d:'N/A — banking',s:'fail'},{n:'Impure income',d:'> 50% of revenue',s:'fail'}], note:'JPMorgan fails all screens. Conventional banking relies on interest (riba).' },
+  'LLOY':{ name:'Lloyds Banking Group', verdict:'haram', sector:'Banking', purif:0, screens:[{n:'Business activity',d:'Conventional banking',s:'fail'},{n:'Interest income',d:'71% of revenue',s:'fail'},{n:'Debt ratio',d:'N/A — banking',s:'fail'},{n:'Impure income',d:'> 60% of revenue',s:'fail'}], note:'Lloyds fails all screens. Not permissible.' },
+  'BARC':{ name:'Barclays PLC', verdict:'haram', sector:'Banking', purif:0, screens:[{n:'Business activity',d:'Conventional banking',s:'fail'},{n:'Interest income',d:'63% of revenue',s:'fail'},{n:'Debt ratio',d:'N/A — banking',s:'fail'},{n:'Impure income',d:'> 55% of revenue',s:'fail'}], note:'Barclays fails all screens. Not permissible.' },
+  'BATS':{ name:'British American Tobacco', verdict:'haram', sector:'Tobacco', purif:0, screens:[{n:'Business activity',d:'Tobacco manufacturing',s:'fail'},{n:'Interest income',d:'0.4% of revenue',s:'pass'},{n:'Debt ratio',d:'28% of market cap',s:'pass'},{n:'Impure income',d:'100% from tobacco',s:'fail'}], note:'Tobacco is explicitly prohibited.' },
+  'META':{ name:'Meta Platforms', verdict:'doubtful', sector:'Social Media', purif:0.11, screens:[{n:'Business activity',d:'Social media / advertising',s:'warn'},{n:'Interest income',d:'1.1% of revenue',s:'pass'},{n:'Debt ratio',d:'4% of market cap',s:'pass'},{n:'Impure income',d:'2.4% of revenue',s:'pass'}], note:'Meta passes financial screens but advertising model raises concerns.' },
+  'HLAL':{ name:'Wahed FTSE USA Shariah ETF', verdict:'halal', sector:'Islamic ETF', purif:0, screens:[{n:'Shariah screening',d:'FTSE Shariah certified',s:'pass'},{n:'Business exclusions',d:'No banks, alcohol, tobacco',s:'pass'},{n:'Financial ratios',d:'All holdings screened',s:'pass'},{n:'Shariah board',d:'Certified by scholars',s:'pass'}], note:'HLAL is purpose-built as a halal ETF.' },
+  'SPUS':{ name:'SP Funds S&P 500 Sharia ETF', verdict:'halal', sector:'Islamic ETF', purif:0, screens:[{n:'Shariah screening',d:'S&P 500 Shariah filtered',s:'pass'},{n:'Business exclusions',d:'Banks, alcohol removed',s:'pass'},{n:'Financial ratios',d:'All holdings screened',s:'pass'},{n:'Shariah board',d:'Shariah certified',s:'pass'}], note:'SPUS tracks the halal version of the S&P 500.' },
+  'VWRL':{ name:'Vanguard FTSE All-World ETF', verdict:'haram', sector:'Global Equity ETF', purif:0, screens:[{n:'Business activity',d:'Banks, alcohol, tobacco held',s:'fail'},{n:'Financial ratios',d:'Not screened',s:'fail'},{n:'Debt screening',d:'Not screened',s:'fail'},{n:'Shariah compliance',d:'Not certified',s:'fail'}], note:'VWRL holds thousands of impermissible companies. Not halal. Consider UMMA or ISDU instead.' },
+  'RIO':{ name:'Rio Tinto PLC', verdict:'halal', sector:'Mining', purif:0.04, screens:[{n:'Business activity',d:'Mining & metals',s:'pass'},{n:'Interest income',d:'0.9% of revenue',s:'pass'},{n:'Debt ratio',d:'15% of market cap',s:'pass'},{n:'Impure income',d:'< 1% of revenue',s:'pass'}], note:'Rio Tinto passes all ethical screens.' },
+};
+
+const prices = { 'AAPL':213,'MSFT':415,'NVDA':950,'TSLA':265,'V':275,'AZN':115,'GSK':17,'ULVR':42,'NEXT':90,'LLOY':0.58,'BARC':2.15,'BATS':27,'JPM':198,'META':488,'HLAL':45,'SPUS':52,'VWRL':98,'RIO':52 };
+
+// AUTH CHECK
+async function init() {
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) { window.location.href = '/'; return; }
+  currentUser = session.user;
+  document.getElementById('userAvatar').textContent = currentUser.email[0].toUpperCase();
+  document.getElementById('userEmailText').textContent = currentUser.email;
+  document.getElementById('loadingOverlay').style.display = 'none';
+  await loadData();
+}
+
+async function signOut() {
+  await db.auth.signOut();
+  window.location.href = '/';
+}
+
+// SIDEBAR TOGGLE
+function toggleSidebar() {
+  sidebarCollapsed = !sidebarCollapsed;
+  document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed);
+  document.getElementById('main').classList.toggle('collapsed', sidebarCollapsed);
+  localStorage.setItem('sidebar_collapsed', sidebarCollapsed);
+}
+
+// PAGE SWITCHING
+function switchPage(page, el) {
+  ['scanner','portfolio','watchlist','simulator'].forEach(p => {
+    document.getElementById('page-' + p).style.display = p === page ? 'block' : 'none';
+  });
+  document.querySelectorAll('.nav-item:not(.disabled), .mobile-nav-btn').forEach(i => i.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.nav-item:not(.disabled)').forEach(i => {
+    if (i.getAttribute('onclick') && i.getAttribute('onclick').includes("'" + page + "'")) i.classList.add('active');
+  });
+}
+
+// SCANNER
+function quickScan(ticker) { document.getElementById('scanInput').value = ticker; runScan(); }
+
+function runScan() {
+  const input = document.getElementById('scanInput').value.trim().toUpperCase();
+  if (!input) return;
+  document.getElementById('scanLoading').style.display = 'block';
+  document.getElementById('scanResult').innerHTML = '';
+  setTimeout(() => {
+    document.getElementById('scanLoading').style.display = 'none';
+    const stock = findStock(input);
+    if (stock) showScanResult(stock, input);
+    else document.getElementById('scanResult').innerHTML = '<div class="empty">Stock not found. Try a different ticker.</div>';
+  }, 900);
+}
+
+function findStock(input) {
+  if (stocks[input]) return { ...stocks[input], ticker: input };
+  const q = input.toLowerCase();
+  const found = Object.entries(stocks).find(([k, v]) => v.name.toLowerCase().includes(q));
+  if (found) return { ...found[1], ticker: found[0] };
+  return null;
+}
+
+function showScanResult(stock, ticker) {
+  const icons = { pass:'✓', fail:'✕', warn:'⚠' };
+  const verdictText = stock.verdict === 'halal' ? '✓ Halal' : stock.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
+  const screensHtml = stock.screens.map(s => `
+    <div class="screen-item">
+      <div class="screen-icon ${s.s}">${icons[s.s]}</div>
+      <div><div style="font-size:12px;font-weight:600;">${s.n}</div><div style="font-size:11px;color:var(--grey-500);">${s.d}</div></div>
+    </div>`).join('');
+
+  const purif = stock.purif > 0 ? `<div style="background:white;border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><div><div style="font-size:12px;font-weight:600;">Purification amount</div><div style="font-size:11px;color:var(--grey-500);">Donate per share held</div></div><div style="font-size:16px;font-weight:800;color:var(--green);">£${stock.purif.toFixed(2)} / share</div></div>` : '';
+
+  document.getElementById('scanResult').innerHTML = `
+    <div class="scan-result ${stock.verdict}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+        <div><div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:800;">${stock.name}</div><div style="font-size:12px;color:var(--grey-500);">${ticker} · ${stock.sector}</div></div>
+        <span class="${stock.verdict}-pill verdict-pill" style="padding:7px 14px;font-size:13px;">${verdictText}</span>
+      </div>
+      <div class="screens-grid">${screensHtml}</div>
+      ${purif}
+      <div style="font-size:13px;color:var(--grey-500);margin-bottom:14px;">${stock.note}</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="addWatchFromScan('${ticker}')" class="btn-green" style="font-size:13px;padding:8px 14px;">⭐ Add to watchlist</button>
+        ${stock.verdict !== 'haram' ? `<button onclick="goToBuy('${ticker}')" style="background:none;border:1.5px solid var(--green);color:var(--green);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;">📈 Paper trade</button>` : ''}
+      </div>
+    </div>`;
+}
+
+function addWatchFromScan(ticker) { addWatchTicker(ticker); switchPage('watchlist'); }
+function goToBuy(ticker) { document.getElementById('buyTicker').value = ticker; switchPage('portfolio'); }
+
+// PORTFOLIO
+async function loadData() {
+  const { data: pf } = await db.from('profiles').select('cash_balance').eq('user_id', currentUser.id).maybeSingle();
+  const cash = pf ? pf.cash_balance : 10000;
+  const { data: h } = await db.from('holdings').select('*').eq('user_id', currentUser.id);
+  const { data: w } = await db.from('watchlist').select('*').eq('user_id', currentUser.id);
+  holdings = h || [];
+  watchlist = w || [];
+  updatePortfolioStats(cash);
+  renderHoldings();
+  renderWatchlist();
+}
+
+function updatePortfolioStats(cash) {
+  const invested = holdings.reduce((s, h) => s + (h.shares * h.avg_price), 0);
+  document.getElementById('pfValue').textContent = '£' + invested.toFixed(2);
+  document.getElementById('pfCash').textContent = '£' + (cash || 10000).toFixed(2);
+  document.getElementById('pfInvested').textContent = '£' + invested.toFixed(2);
+  document.getElementById('pfCount').textContent = holdings.length;
+}
+
+async function buyStock() {
+  const ticker = document.getElementById('buyTicker').value.trim().toUpperCase();
+  const shares = parseFloat(document.getElementById('buyShares').value);
+  const price = parseFloat(document.getElementById('buyPrice').value);
+  const msg = document.getElementById('buyMsg');
+  msg.className = 'msg'; msg.style.display = 'none';
+
+  if (!ticker || !shares || !price) { msg.textContent = 'Please fill in all fields.'; msg.className = 'msg error'; return; }
+
+  const stock = stocks[ticker];
+  if (stock && stock.verdict === 'haram') { msg.textContent = ticker + ' is haram — paper trading only allows halal stocks.'; msg.className = 'msg error'; return; }
+
+  const { data: pf } = await db.from('profiles').select('cash_balance').eq('user_id', currentUser.id).maybeSingle();
+  const cash = pf ? parseFloat(pf.cash_balance) : 10000;
+  const cost = shares * price;
+  if (cost > cash) { msg.textContent = 'Insufficient balance. You have £' + cash.toFixed(2) + '.'; msg.className = 'msg error'; return; }
+
+  const existing = holdings.find(h => h.ticker === ticker);
+  if (existing) {
+    const newShares = existing.shares + shares;
+    const newAvg = ((existing.shares * existing.avg_price) + cost) / newShares;
+    await db.from('holdings').update({ shares: newShares, avg_price: newAvg }).eq('id', existing.id);
+  } else {
+    await db.from('holdings').insert({ user_id: currentUser.id, ticker, shares, avg_price: price });
+  }
+
+  const newCash = cash - cost;
+  await db.from('profiles').upsert({ user_id: currentUser.id, cash_balance: newCash });
+
+  msg.textContent = '✓ Bought ' + shares + ' shares of ' + ticker + ' at £' + price.toFixed(2);
+  msg.className = 'msg success';
+  document.getElementById('buyTicker').value = '';
+  document.getElementById('buyShares').value = '';
+  document.getElementById('buyPrice').value = '';
+  await loadData();
+}
+
+function renderHoldings() {
+  const c = document.getElementById('holdingsContainer');
+  if (!holdings.length) { c.innerHTML = '<div class="empty">No holdings yet. Buy your first halal stock above.</div>'; return; }
+  c.innerHTML = `<table><thead><tr><th>Stock</th><th>Shares</th><th>Avg price</th><th>Value</th><th>Status</th><th></th></tr></thead><tbody>` +
+    holdings.map(h => {
+      const s = stocks[h.ticker] || {};
+      const pillClass = s.verdict === 'halal' ? 'halal-pill' : s.verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
+      const verdictText = s.verdict === 'halal' ? '✓ Halal' : s.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
+      return `<tr><td><strong>${h.ticker}</strong></td><td>${h.shares}</td><td>£${parseFloat(h.avg_price).toFixed(2)}</td><td>£${(h.shares * h.avg_price).toFixed(2)}</td><td><span class="verdict-pill ${pillClass}">${verdictText}</span></td><td><button class="btn-sell" onclick="sellStock('${h.id}')">Sell</button></td></tr>`;
+    }).join('') + `</tbody></table>`;
+}
+
+async function sellStock(id) {
+  await db.from('holdings').delete().eq('id', id);
+  await loadData();
+}
+
+async function resetPortfolio() {
+  if (!confirm('Reset portfolio to £10,000? This will delete all holdings.')) return;
+  await db.from('holdings').delete().eq('user_id', currentUser.id);
+  await db.from('profiles').upsert({ user_id: currentUser.id, cash_balance: 10000 });
+  await loadData();
+}
+
+// WATCHLIST
+async function addWatch() {
+  const ticker = document.getElementById('watchInput').value.trim().toUpperCase();
+  await addWatchTicker(ticker);
+  document.getElementById('watchInput').value = '';
+}
+
+async function addWatchTicker(ticker) {
+  const msg = document.getElementById('watchMsg');
+  if (!ticker) return;
+  if (watchlist.find(w => w.ticker === ticker)) { msg.textContent = ticker + ' is already on your watchlist.'; msg.className = 'msg error'; return; }
+  await db.from('watchlist').insert({ user_id: currentUser.id, ticker });
+  await loadData();
+  msg.textContent = '✓ ' + ticker + ' added to watchlist.'; msg.className = 'msg success';
+}
+
+function renderWatchlist() {
+  const c = document.getElementById('watchlistContainer');
+  if (!watchlist.length) { c.innerHTML = '<div class="empty">Your watchlist is empty. Add a stock above.</div>'; return; }
+  c.innerHTML = watchlist.map(w => {
+    const s = stocks[w.ticker] || { name: w.ticker, verdict: 'unknown' };
+    const pillClass = s.verdict === 'halal' ? 'halal-pill' : s.verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
+    const verdictText = s.verdict === 'halal' ? '✓ Halal' : s.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
+    return `<div class="watch-item">
+      <div>
+        <div style="font-weight:700;font-size:14px;">${w.ticker} <span class="verdict-pill ${pillClass}" style="margin-left:6px;">${verdictText}</span></div>
+        <div style="font-size:12px;color:var(--grey-500);margin-top:2px;">${s.name}</div>
+      </div>
+      <button class="btn-remove" onclick="removeWatch('${w.id}')">×</button>
+    </div>`;
+  }).join('');
+}
+
+async function removeWatch(id) {
+  await db.from('watchlist').delete().eq('id', id);
+  await loadData();
+}
+
+// SIMULATOR
+function runSim() {
+  const ticker = document.getElementById('simTicker').value.trim().toUpperCase();
+  const amount = parseFloat(document.getElementById('simAmount').value) || 10000;
+  const stock = findStock(ticker);
+  const resultEl = document.getElementById('simResult');
+  if (!ticker) return;
+
+  const price = prices[ticker] || 100;
+  const shares = Math.floor(amount / price);
+  const invested = shares * price;
+  const purif = stock ? (stock.purif * shares).toFixed(2) : '0.00';
+  const name = stock ? stock.name : ticker;
+  const status = stock ? (stock.verdict === 'halal' ? '✓ Passes halal screens' : stock.verdict === 'haram' ? '✕ Fails halal screens — not recommended' : '⚠ Doubtful — proceed with caution') : 'Unknown stock';
+
+  document.getElementById('simName').textContent = name;
+  document.getElementById('simStatus').textContent = status;
+  document.getElementById('simInvested').textContent = '£' + invested.toFixed(2);
+  document.getElementById('simShares').textContent = shares + ' shares';
+  document.getElementById('simPrice').textContent = '£' + price.toFixed(2) + ' per share';
+  document.getElementById('simPurif').textContent = '£' + purif;
+  resultEl.style.display = 'block';
+}
+
+// INIT
+const savedCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+if (savedCollapsed) {
+  document.getElementById('sidebar').classList.add('collapsed');
+  document.getElementById('main').classList.add('collapsed');
+  sidebarCollapsed = true;
+}
+init();
+</script>
+</body>
+</html>
