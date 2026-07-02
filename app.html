@@ -61,23 +61,23 @@ body { font-family: 'Inter', sans-serif; background: var(--grey-100); color: var
 .main.collapsed { margin-left: var(--sidebar-collapsed); }
 
 /* PAGE HEADER */
-.page-header { background: white; padding: 18px 28px; border-bottom: 1px solid var(--grey-200); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-.page-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--black); }
-.page-subtitle { font-size: 13px; color: var(--grey-500); margin-top: 2px; }
+.page-header { background: var(--navy); padding: 18px 28px; border-bottom: 3px solid var(--green); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.page-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: white; }
+.page-subtitle { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; }
 
 /* CONTENT */
 .page-content { padding: 24px 28px; max-width: 960px; }
 
 /* STATS */
 .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 20px; }
-.stat-card { background: white; border-radius: 14px; padding: 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.stat-card { background: white; border-radius: 14px; padding: 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); border: 1px solid var(--grey-200); }
 .stat-label { font-size: 12px; color: var(--grey-500); font-weight: 500; margin-bottom: 6px; }
 .stat-value { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: var(--black); }
 .stat-value.green { color: var(--green); }
 
 /* CARD */
-.card { background: white; border-radius: 16px; padding: 22px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); margin-bottom: 16px; }
-.card-title { font-size: 15px; font-weight: 700; color: var(--black); margin-bottom: 16px; }
+.card { background: white; border-radius: 16px; padding: 22px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); margin-bottom: 16px; border: 1px solid var(--grey-200); }
+.card-title { font-size: 15px; font-weight: 700; color: var(--black); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--grey-100); }
 
 /* INPUTS */
 .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -331,147 +331,90 @@ tr:last-child td { border-bottom: none; }
     <div class="page-header">
       <div>
         <div class="page-title">💷 Investment Simulator</div>
-        <div class="page-subtitle">Historical returns + portfolio builder for halal stocks</div>
+        <div class="page-subtitle">Returns, zakat and purification — all in one place</div>
       </div>
     </div>
     <div class="page-content">
 
-      <!-- TABS -->
-      <div style="display:flex;gap:4px;background:white;border-radius:12px;padding:4px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.05);flex-wrap:wrap;">
-        <button class="sim-tab active-sim" onclick="switchSimTab('historical',this)" style="flex:1;min-width:120px;padding:10px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:var(--green);color:white;">📈 Historical Returns</button>
-        <button class="sim-tab" onclick="switchSimTab('builder',this)" style="flex:1;min-width:120px;padding:10px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">🏗️ Portfolio Builder</button>
-        <button class="sim-tab" onclick="switchSimTab('presets',this)" style="flex:1;min-width:120px;padding:10px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">⭐ Preset Portfolios</button>
-        <button class="sim-tab" onclick="switchSimTab('zakat',this)" style="flex:1;min-width:120px;padding:10px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">☪️ Zakat Calculator</button>
-      </div>
-
-      <!-- HISTORICAL RETURNS -->
-      <div id="sim-historical">
-        <div class="card">
-          <div class="card-title">If I invested £10,000 in... when would it be worth?</div>
-          <div class="input-row" style="margin-bottom:16px;">
-            <input class="app-input" id="histTicker" type="text" placeholder="Ticker (e.g. AAPL, NVDA)" />
-            <input class="app-input" id="histAmount" type="number" placeholder="Amount £" style="max-width:130px;" value="10000" />
-            <button class="btn-green" onclick="runHistorical()">Calculate →</button>
+      <div class="card">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+          <div>
+            <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:6px;">Stock or ETF ticker</label>
+            <input class="app-input" id="simTicker" type="text" placeholder="e.g. AAPL, NVDA, HLAL" style="width:100%;" />
           </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:6px;">Amount to invest (£)</label>
+            <input class="app-input" id="simAmount" type="number" value="10000" style="width:100%;" />
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:8px;">Time period</label>
+          <div style="display:flex;gap:8px;">
+            <button onclick="setSimPeriod('1y',this)" class="period-btn" style="flex:1;padding:10px;border:1.5px solid var(--grey-200);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:none;color:var(--grey-500);">1 Year</button>
+            <button onclick="setSimPeriod('3y',this)" class="period-btn" style="flex:1;padding:10px;border:1.5px solid var(--green);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:var(--green);color:white;">3 Years</button>
+            <button onclick="setSimPeriod('5y',this)" class="period-btn" style="flex:1;padding:10px;border:1.5px solid var(--grey-200);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:none;color:var(--grey-500);">5 Years</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:8px;">Or pick a preset portfolio</label>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <span style="font-size:12px;color:var(--grey-500);">Try:</span>
-            <span onclick="quickHist('AAPL')" style="background:var(--grey-100);border:1px solid var(--grey-200);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;">AAPL</span>
-            <span onclick="quickHist('NVDA')" style="background:var(--grey-100);border:1px solid var(--grey-200);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;">NVDA</span>
-            <span onclick="quickHist('MSFT')" style="background:var(--grey-100);border:1px solid var(--grey-200);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;">MSFT</span>
-            <span onclick="quickHist('TSLA')" style="background:var(--grey-100);border:1px solid var(--grey-200);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;">TSLA</span>
-            <span onclick="quickHist('AZN')" style="background:var(--grey-100);border:1px solid var(--grey-200);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;">AZN</span>
+            <button onclick="loadSimPreset('AAPL,MSFT,NVDA,TSLA',[30,25,25,20],this)" class="preset-btn" style="flex:1;min-width:130px;padding:9px 12px;border:1.5px solid var(--grey-200);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:none;color:var(--grey-500);">🌍 Global Tech</button>
+            <button onclick="loadSimPreset('AZN,GSK,ULVR,RIO,NEXT',[30,20,20,15,15],this)" class="preset-btn" style="flex:1;min-width:130px;padding:9px 12px;border:1.5px solid var(--grey-200);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:none;color:var(--grey-500);">🇬🇧 UK Halal</button>
+            <button onclick="loadSimPreset('HLAL,SPUS,ISDU',[40,35,25],this)" class="preset-btn" style="flex:1;min-width:130px;padding:9px 12px;border:1.5px solid var(--grey-200);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:none;color:var(--grey-500);">📈 Halal ETFs</button>
           </div>
-          <div id="histLoading" style="display:none;"><div class="spinner"></div></div>
-          <div id="histResult" style="display:none; margin-top:16px;"></div>
         </div>
+
+        <button onclick="runSimulator()" class="btn-green" style="width:100%;padding:14px;font-size:15px;">Simulate →</button>
       </div>
 
-      <!-- PORTFOLIO BUILDER -->
-      <div id="sim-builder" style="display:none;">
+      <div id="simResults" style="display:none;">
         <div class="card">
-          <div class="card-title">Build your halal portfolio</div>
-          <p style="font-size:13px;color:var(--grey-500);margin-bottom:16px;">Add up to 10 stocks and allocate your investment across them. We'll show you the full breakdown.</p>
-          <div class="input-row" style="margin-bottom:12px;">
-            <input class="app-input" id="builderAmount" type="number" placeholder="Total amount £" value="10000" style="max-width:160px;" />
-            <span style="font-size:14px;color:var(--grey-500);align-self:center;">to invest across:</span>
-          </div>
-          <div id="builderRows">
-            <div class="builder-row" style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
-              <input class="app-input" type="text" placeholder="Ticker" style="max-width:100px;" />
-              <input class="app-input" type="number" placeholder="%" min="1" max="100" style="max-width:80px;" />
-              <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--grey-500);font-size:20px;cursor:pointer;padding:4px;">×</button>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;">
+            <div>
+              <div style="font-family:Sora,sans-serif;font-size:18px;font-weight:800;color:var(--black);" id="simResultTitle"></div>
+              <div style="font-size:13px;color:var(--grey-500);margin-top:2px;" id="simResultSubtitle"></div>
             </div>
-            <div class="builder-row" style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
-              <input class="app-input" type="text" placeholder="Ticker" style="max-width:100px;" />
-              <input class="app-input" type="number" placeholder="%" min="1" max="100" style="max-width:80px;" />
-              <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--grey-500);font-size:20px;cursor:pointer;padding:4px;">×</button>
-            </div>
-            <div class="builder-row" style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
-              <input class="app-input" type="text" placeholder="Ticker" style="max-width:100px;" />
-              <input class="app-input" type="number" placeholder="%" min="1" max="100" style="max-width:80px;" />
-              <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--grey-500);font-size:20px;cursor:pointer;padding:4px;">×</button>
-            </div>
+            <span id="simVerdictPill" class="verdict-pill" style="padding:7px 14px;font-size:13px;"></span>
           </div>
-          <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
-            <button onclick="addBuilderRow()" style="background:none;border:1.5px solid var(--grey-200);color:var(--grey-500);border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">+ Add stock</button>
-            <button onclick="runBuilder()" class="btn-green">Build portfolio →</button>
-          </div>
-          <div id="builderMsg" class="msg"></div>
-          <div id="builderResult" style="display:none;margin-top:16px;"></div>
-        </div>
-      </div>
 
-      <!-- PRESET PORTFOLIOS -->
-      <div id="sim-presets" style="display:none;">
-        <div class="card">
-          <div class="card-title">Preset halal portfolios</div>
-          <p style="font-size:13px;color:var(--grey-500);margin-bottom:16px;">Click any portfolio to see a full £10,000 breakdown.</p>
-          <div class="preset-card" onclick="loadPreset('AAPL,MSFT,NVDA,TSLA', [30,25,25,20])"><div style="font-weight:700;font-size:14px;margin-bottom:6px;">🌍 Global Tech (Halal)</div><div style="font-size:13px;color:var(--grey-500);">AAPL 30% · MSFT 25% · NVDA 25% · TSLA 20%</div><div style="font-size:12px;color:var(--green);margin-top:6px;font-weight:600;">All pass halal screens ✓ — Click to simulate →</div></div>
-          <div class="preset-card" onclick="loadPreset('AZN,GSK,ULVR,RIO,NEXT', [30,20,20,15,15])"><div style="font-weight:700;font-size:14px;margin-bottom:6px;">🇬🇧 UK Halal</div><div style="font-size:13px;color:var(--grey-500);">AZN 30% · GSK 20% · ULVR 20% · RIO 15% · NEXT 15%</div><div style="font-size:12px;color:var(--green);margin-top:6px;font-weight:600;">All pass halal screens ✓ — Click to simulate →</div></div>
-          <div class="preset-card" onclick="loadPreset('HLAL,SPUS,ISDU', [40,35,25])"><div style="font-weight:700;font-size:14px;margin-bottom:6px;">📈 Halal ETF Portfolio</div><div style="font-size:13px;color:var(--grey-500);">HLAL 40% · SPUS 35% · ISDU 25%</div><div style="font-size:12px;color:var(--green);margin-top:6px;font-weight:600;">All Shariah certified ✓ — Click to simulate →</div></div>
-          <div id="presetResult" style="display:none;margin-top:16px;"></div>
-        </div>
-      </div>
+          <canvas id="simChart" style="width:100%;height:200px;margin-bottom:20px;"></canvas>
 
-      <!-- ZAKAT CALCULATOR -->
-      <div id="sim-zakat" style="display:none;">
-        <div class="card">
-          <div class="card-title">☪️ Zakat on Investments</div>
-          <div style="background:#F0FDF9;border:1.5px solid #D1FAE5;border-radius:12px;padding:16px;margin-bottom:20px;font-size:13px;color:#065F46;line-height:1.8;">
-            <strong>How zakat on investments works:</strong> Zakat is 2.5% of the total value of your halal investments, payable once per lunar year (hawl) if your total wealth exceeds the nisab threshold. The nisab is based on the value of 85g of gold or 595g of silver — whichever is lower.
-          </div>
-          <div class="input-row" style="flex-wrap:wrap;margin-bottom:16px;">
-            <div style="flex:1;min-width:200px;">
-              <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:6px;">Total halal investment value (£)</label>
-              <input class="app-input" id="zakatPortfolio" type="number" placeholder="e.g. 10000" style="width:100%;" oninput="calcZakat()" />
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;">
+            <div style="background:var(--green-subtle);border-radius:12px;padding:16px;">
+              <div style="font-size:12px;color:var(--grey-500);margin-bottom:4px;">Value after <span id="simPeriodLabel"></span></div>
+              <div style="font-family:Sora,sans-serif;font-size:22px;font-weight:800;color:var(--green);" id="simFinalValue"></div>
             </div>
-            <div style="flex:1;min-width:200px;">
-              <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:6px;">Other savings & assets (£)</label>
-              <input class="app-input" id="zakatSavings" type="number" placeholder="e.g. 5000" style="width:100%;" oninput="calcZakat()" />
+            <div style="background:var(--grey-100);border-radius:12px;padding:16px;">
+              <div style="font-size:12px;color:var(--grey-500);margin-bottom:4px;">Total return</div>
+              <div style="font-family:Sora,sans-serif;font-size:22px;font-weight:800;" id="simTotalReturn"></div>
             </div>
-            <div style="flex:1;min-width:200px;">
-              <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:6px;">Debts owed by you (£)</label>
-              <input class="app-input" id="zakatDebts" type="number" placeholder="e.g. 2000" style="width:100%;" oninput="calcZakat()" />
+            <div style="background:#FEF3C7;border:1.5px solid #FDE68A;border-radius:12px;padding:16px;">
+              <div style="font-size:12px;color:#92400E;margin-bottom:4px;">☪️ Zakat due this year</div>
+              <div style="font-family:Sora,sans-serif;font-size:22px;font-weight:800;color:#92400E;" id="simZakat"></div>
+              <div style="font-size:11px;color:#92400E;margin-top:4px;">2.5% of current value</div>
             </div>
-          </div>
-          <div style="margin-bottom:16px;">
-            <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:8px;">Have you held these assets for one full lunar year (hawl)?</label>
-            <div style="display:flex;gap:10px;">
-              <button onclick="setHawl(true, this)" id="hawlYes" style="flex:1;padding:10px;border:1.5px solid var(--grey-200);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">Yes</button>
-              <button onclick="setHawl(false, this)" id="hawlNo" style="flex:1;padding:10px;border:1.5px solid var(--grey-200);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">No — still building up</button>
+            <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:12px;padding:16px;">
+              <div style="font-size:12px;color:var(--grey-500);margin-bottom:4px;">🌿 Purification due</div>
+              <div style="font-family:Sora,sans-serif;font-size:22px;font-weight:800;color:var(--green);" id="simPurification"></div>
+              <div style="font-size:11px;color:var(--grey-500);margin-top:4px;">Donate to charity</div>
             </div>
           </div>
 
-          <div id="zakatResult" style="display:none;">
-            <div id="zakatBelowNisab" style="display:none;background:#FEF3C7;border:1.5px solid #FDE68A;border-radius:12px;padding:20px;text-align:center;">
-              <div style="font-size:24px;margin-bottom:8px;">📊</div>
-              <div style="font-weight:700;font-size:16px;color:#92400E;margin-bottom:6px;">Below nisab threshold</div>
-              <div style="font-size:13px;color:#92400E;">Your total zakatable wealth is below the nisab threshold (approx. £4,500). No zakat is due at this time.</div>
-            </div>
-            <div id="zakatNoHawl" style="display:none;background:#F0FDF9;border:1.5px solid #D1FAE5;border-radius:12px;padding:20px;text-align:center;">
-              <div style="font-size:24px;margin-bottom:8px;">⏳</div>
-              <div style="font-weight:700;font-size:16px;color:#065F46;margin-bottom:6px;">Hawl not yet complete</div>
-              <div style="font-size:13px;color:#065F46;">Zakat only becomes due after you have held these assets above the nisab for one full lunar year. Note the date your wealth first exceeded the nisab and pay on that anniversary.</div>
-            </div>
-            <div id="zakatDue" style="display:none;">
-              <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:14px;padding:24px;text-align:center;margin-bottom:16px;">
-                <div style="font-size:13px;color:var(--grey-500);margin-bottom:8px;">Zakat due this year</div>
-                <div style="font-family:'Sora',sans-serif;font-size:42px;font-weight:800;color:var(--green);" id="zakatAmount"></div>
-                <div style="font-size:13px;color:var(--grey-500);margin-top:8px;">2.5% of zakatable wealth</div>
-              </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                <div class="sim-item"><div class="sim-label">Total zakatable wealth</div><div class="sim-value" id="zakatTotal" style="font-size:18px;"></div></div>
-                <div class="sim-item"><div class="sim-label">Nisab threshold (est.)</div><div class="sim-value" style="font-size:18px;">~£4,500</div></div>
-                <div class="sim-item"><div class="sim-label">Investments</div><div class="sim-value" id="zakatPfDisplay" style="font-size:18px;"></div></div>
-                <div class="sim-item"><div class="sim-label">Savings & assets</div><div class="sim-value" id="zakatSavDisplay" style="font-size:18px;"></div></div>
-              </div>
-              <div style="background:#FEF3C7;border-radius:10px;padding:14px;margin-top:14px;font-size:12px;color:#92400E;line-height:1.7;">
-                <strong>Important:</strong> This is an estimate based on standard Hanafi methodology. Zakat calculations can vary by madhab and personal circumstances. Always consult a qualified Islamic scholar for your specific situation. Zakat should be paid to eligible recipients — the eight categories mentioned in the Quran (Surah At-Tawbah 9:60).
-              </div>
-            </div>
+          <div id="simBreakdown" style="display:none;margin-bottom:16px;">
+            <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:10px;">Portfolio breakdown</div>
+            <div id="simBreakdownContent"></div>
           </div>
+
+          <p style="font-size:11px;color:var(--grey-500);line-height:1.7;">Past performance does not guarantee future returns. Returns are based on historical data for illustrative purposes only. Zakat calculations are estimates — consult a qualified Islamic scholar for your situation. This does not constitute financial advice.</p>
         </div>
       </div>
+
+    </div>
+  </div>
+
+</div>
 <div class="mobile-nav">
   <div class="mobile-nav-items">
     <button class="mobile-nav-btn active" onclick="switchPage('scanner',this)"><span>🔍</span><span>Scanner</span></button>
@@ -629,11 +572,18 @@ function updatePortfolioStats(cash) {
 }
 
 async function buyStock() {
-  const ticker = document.getElementById('buyTicker').value.trim().toUpperCase();
+  let ticker = document.getElementById('buyTicker').value.trim().toUpperCase();
   const shares = parseFloat(document.getElementById('buyShares').value);
   const price = parseFloat(document.getElementById('buyPrice').value);
   const msg = document.getElementById('buyMsg');
   msg.className = 'msg'; msg.style.display = 'none';
+
+  // Name to ticker lookup
+  if (!stocks[ticker]) {
+    const input = document.getElementById('buyTicker').value.trim().toLowerCase();
+    const found = Object.entries(stocks).find(([k, v]) => v.name.toLowerCase().includes(input));
+    if (found) { ticker = found[0]; document.getElementById('buyTicker').value = ticker; }
+  }
 
   if (!ticker || !shares || !price) { msg.textContent = 'Please fill in all fields.'; msg.className = 'msg error'; return; }
 
@@ -668,12 +618,29 @@ async function buyStock() {
 function renderHoldings() {
   const c = document.getElementById('holdingsContainer');
   if (!holdings.length) { c.innerHTML = '<div class="empty">No holdings yet. Buy your first halal stock above.</div>'; return; }
-  c.innerHTML = `<table><thead><tr><th>Stock</th><th>Shares</th><th>Avg price</th><th>Value</th><th>Status</th><th></th></tr></thead><tbody>` +
+  c.innerHTML = `<table><thead><tr><th>Stock</th><th>Shares</th><th>Avg price</th><th>Current price</th><th>Value</th><th>P&L</th><th>Status</th><th></th></tr></thead><tbody>` +
     holdings.map(h => {
       const s = stocks[h.ticker] || {};
       const pillClass = s.verdict === 'halal' ? 'halal-pill' : s.verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
       const verdictText = s.verdict === 'halal' ? '✓ Halal' : s.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
-      return `<tr><td><strong>${h.ticker}</strong></td><td>${h.shares}</td><td>£${parseFloat(h.avg_price).toFixed(2)}</td><td>£${(h.shares * h.avg_price).toFixed(2)}</td><td><span class="verdict-pill ${pillClass}">${verdictText}</span></td><td><button class="btn-sell" onclick="sellStock('${h.id}')">Sell</button></td></tr>`;
+      const avgPrice = parseFloat(h.avg_price);
+      const currentPrice = prices[h.ticker] || avgPrice;
+      const currentValue = h.shares * currentPrice;
+      const costBasis = h.shares * avgPrice;
+      const pnl = currentValue - costBasis;
+      const pnlPct = ((pnl / costBasis) * 100).toFixed(1);
+      const pnlColor = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+      const pnlSign = pnl >= 0 ? '+' : '';
+      return `<tr>
+        <td><strong>${h.ticker}</strong><div style="font-size:11px;color:var(--grey-500);">${s.name || ''}</div></td>
+        <td>${h.shares}</td>
+        <td>£${avgPrice.toFixed(2)}</td>
+        <td>£${currentPrice.toFixed(2)}</td>
+        <td>£${currentValue.toFixed(2)}</td>
+        <td style="color:${pnlColor};font-weight:700;">${pnlSign}£${Math.abs(pnl).toFixed(2)}<div style="font-size:11px;">${pnlSign}${pnlPct}%</div></td>
+        <td><span class="verdict-pill ${pillClass}">${verdictText}</span></td>
+        <td><button class="btn-sell" onclick="sellStock('${h.id}')">Sell</button></td>
+      </tr>`;
     }).join('') + `</tbody></table>`;
 }
 
@@ -747,61 +714,32 @@ async function removeWatch(id) {
   await loadData();
 }
 
-// SIMULATOR TAB SWITCHING
-function switchSimTab(tab, el) {
-  ['historical','builder','presets','zakat'].forEach(t => {
-    document.getElementById('sim-' + t).style.display = t === tab ? 'block' : 'none';
-  });
-  document.querySelectorAll('.sim-tab').forEach(t => {
-    t.style.background = 'none';
-    t.style.color = 'var(--grey-500)';
-  });
-  el.style.background = 'var(--green)';
-  el.style.color = 'white';
-}
 
-// AUTO PRICE FETCH
-async function fetchBuyPrice() {
-  const ticker = document.getElementById('buyTicker').value.trim().toUpperCase();
-  if (!ticker) return;
+// SIMULATOR
+let simPeriod = '3y';
+let simPresetTickers = null;
+let simPresetAllocations = null;
 
-  // Check local prices first
-  if (prices[ticker]) {
-    document.getElementById('buyPrice').value = prices[ticker].toFixed(2);
-    updateBuyTotal();
-    return;
-  }
+const historicalReturns = {
+  'AAPL': {'1y':1.23,'3y':2.15,'5y':3.89, name:'Apple Inc.'},
+  'MSFT': {'1y':1.18,'3y':1.95,'5y':3.42, name:'Microsoft'},
+  'NVDA': {'1y':2.10,'3y':8.50,'5y':22.40, name:'NVIDIA'},
+  'TSLA': {'1y':0.85,'3y':1.45,'5y':7.20, name:'Tesla'},
+  'AMZN': {'1y':1.32,'3y':1.65,'5y':2.90, name:'Amazon'},
+  'V':    {'1y':1.15,'3y':1.55,'5y':2.20, name:'Visa'},
+  'AZN':  {'1y':1.08,'3y':1.45,'5y':1.95, name:'AstraZeneca'},
+  'GSK':  {'1y':1.05,'3y':1.22,'5y':1.48, name:'GSK'},
+  'ULVR': {'1y':1.02,'3y':0.98,'5y':1.15, name:'Unilever'},
+  'RIO':  {'1y':1.09,'3y':1.38,'5y':1.72, name:'Rio Tinto'},
+  'NEXT': {'1y':1.14,'3y':1.52,'5y':2.10, name:'Next PLC'},
+  'HLAL': {'1y':1.21,'3y':1.82,'5y':null, name:'Wahed FTSE Shariah ETF'},
+  'SPUS': {'1y':1.24,'3y':1.90,'5y':null, name:'SP Funds S&P 500 Sharia'},
+  'ISDU': {'1y':1.18,'3y':1.75,'5y':null, name:'iShares MSCI World Islamic'},
+};
 
-  document.getElementById('priceFetching').style.display = 'block';
-  try {
-    const res = await fetch('/.netlify/functions/fmp-proxy?ticker=' + ticker + '&type=profile');
-    const data = await res.json();
-    if (data && data.price) {
-      document.getElementById('buyPrice').value = parseFloat(data.price).toFixed(2);
-      updateBuyTotal();
-    }
-  } catch(e) {}
-  document.getElementById('priceFetching').style.display = 'none';
-}
-
-function updateBuyTotal() {
-  const shares = parseFloat(document.getElementById('buyShares').value);
-  const price = parseFloat(document.getElementById('buyPrice').value);
-  const totalEl = document.getElementById('buyTotal');
-  if (shares && price) {
-    document.getElementById('buyTotalAmount').textContent = '£' + (shares * price).toFixed(2);
-    totalEl.style.display = 'block';
-  } else {
-    totalEl.style.display = 'none';
-  }
-}
-
-// ZAKAT CALCULATOR
-let hawlComplete = null;
-
-function setHawl(val, el) {
-  hawlComplete = val;
-  document.querySelectorAll('#hawlYes, #hawlNo').forEach(b => {
+function setSimPeriod(period, el) {
+  simPeriod = period;
+  document.querySelectorAll('.period-btn').forEach(b => {
     b.style.background = 'none';
     b.style.color = 'var(--grey-500)';
     b.style.borderColor = 'var(--grey-200)';
@@ -809,220 +747,203 @@ function setHawl(val, el) {
   el.style.background = 'var(--green)';
   el.style.color = 'white';
   el.style.borderColor = 'var(--green)';
-  calcZakat();
 }
 
-function calcZakat() {
-  const portfolio = parseFloat(document.getElementById('zakatPortfolio').value) || 0;
-  const savings = parseFloat(document.getElementById('zakatSavings').value) || 0;
-  const debts = parseFloat(document.getElementById('zakatDebts').value) || 0;
-  const nisab = 4500;
+function loadSimPreset(tickers, allocations, el) {
+  simPresetTickers = tickers.split(',');
+  simPresetAllocations = allocations;
+  document.getElementById('simTicker').value = tickers.replace(/,/g, ', ');
+  document.querySelectorAll('.preset-btn').forEach(b => {
+    b.style.background = 'none';
+    b.style.color = 'var(--grey-500)';
+    b.style.borderColor = 'var(--grey-200)';
+  });
+  el.style.background = 'var(--green)';
+  el.style.color = 'white';
+  el.style.borderColor = 'var(--green)';
+}
 
-  if (!portfolio && !savings) { document.getElementById('zakatResult').style.display = 'none'; return; }
+function runSimulator() {
+  const amount = parseFloat(document.getElementById('simAmount').value) || 10000;
+  const years = simPeriod === '1y' ? 1 : simPeriod === '3y' ? 3 : 5;
+  const periodLabel = simPeriod === '1y' ? '1 year' : simPeriod === '3y' ? '3 years' : '5 years';
 
-  const zakatableWealth = Math.max(0, portfolio + savings - debts);
-  document.getElementById('zakatResult').style.display = 'block';
-  document.getElementById('zakatBelowNisab').style.display = 'none';
-  document.getElementById('zakatNoHawl').style.display = 'none';
-  document.getElementById('zakatDue').style.display = 'none';
+  let finalValue, name, verdict, purification, breakdown = null;
 
-  if (zakatableWealth < nisab) {
-    document.getElementById('zakatBelowNisab').style.display = 'block';
-    return;
+  if (simPresetTickers) {
+    // Portfolio mode
+    const tickers = simPresetTickers;
+    const allocations = simPresetAllocations;
+    let totalReturn = 0;
+    let totalPurif = 0;
+    let breakdownHtml = '';
+    let validCount = 0;
+
+    tickers.forEach((ticker, i) => {
+      const pct = allocations[i] / 100;
+      const invested = amount * pct;
+      const hist = historicalReturns[ticker];
+      const multiplier = hist && hist[simPeriod] ? hist[simPeriod] : 1.15;
+      const endValue = invested * multiplier;
+      const s = stocks[ticker] || { purif: 0, verdict: 'halal', name: ticker };
+      const purif = (s.purif || 0) * Math.floor(invested / (prices[ticker] || 100));
+      totalPurif += purif;
+      totalReturn += endValue;
+      validCount++;
+      breakdownHtml += '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--grey-100);">' +
+        '<div><strong>' + ticker + '</strong> <span style="font-size:12px;color:var(--grey-500);">' + (hist ? hist.name : ticker) + '</span></div>' +
+        '<div style="text-align:right;font-size:13px;">' +
+        '<div style="font-weight:700;color:var(--green);">£' + endValue.toFixed(0) + '</div>' +
+        '<div style="color:var(--grey-500);">' + allocations[i] + '% · ' + (((multiplier-1)*100).toFixed(0)) + '% return</div>' +
+        '</div></div>';
+    });
+
+    finalValue = totalReturn;
+    purification = totalPurif;
+    name = document.getElementById('simTicker').value;
+    verdict = 'halal';
+    breakdown = breakdownHtml;
+
+  } else {
+    // Single stock mode
+    const ticker = document.getElementById('simTicker').value.trim().toUpperCase();
+    if (!ticker) { alert('Please enter a ticker or select a preset portfolio'); return; }
+    const hist = historicalReturns[ticker];
+    const multiplier = hist && hist[simPeriod] ? hist[simPeriod] : 1.15;
+    finalValue = amount * multiplier;
+    name = hist ? hist.name + ' (' + ticker + ')' : ticker;
+    const s = stocks[ticker] || { purif: 0, verdict: 'unknown' };
+    verdict = s.verdict;
+    purification = (s.purif || 0) * Math.floor(amount / (prices[ticker] || 100));
+    simPresetTickers = null;
   }
 
-  if (hawlComplete === false) {
-    document.getElementById('zakatNoHawl').style.display = 'block';
-    return;
+  const gain = finalValue - amount;
+  const gainPct = ((finalValue / amount - 1) * 100).toFixed(1);
+  const zakat = finalValue * 0.025;
+  const isUp = gain >= 0;
+
+  document.getElementById('simResultTitle').textContent = name;
+  document.getElementById('simResultSubtitle').textContent = '£' + amount.toLocaleString() + ' invested over ' + periodLabel;
+  document.getElementById('simPeriodLabel').textContent = periodLabel;
+  document.getElementById('simFinalValue').textContent = '£' + finalValue.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  document.getElementById('simTotalReturn').textContent = (isUp ? '+' : '') + '£' + Math.abs(gain).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' (' + (isUp?'+':'') + gainPct + '%)';
+  document.getElementById('simTotalReturn').style.color = isUp ? 'var(--green)' : 'var(--red)';
+  document.getElementById('simZakat').textContent = '£' + zakat.toFixed(2);
+  document.getElementById('simPurification').textContent = '£' + purification.toFixed(2);
+
+  const pillClass = verdict === 'halal' ? 'halal-pill' : verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
+  const pillText = verdict === 'halal' ? '✓ Halal' : verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
+  const pill = document.getElementById('simVerdictPill');
+  pill.className = 'verdict-pill ' + pillClass;
+  pill.style.cssText = 'padding:7px 14px;font-size:13px;';
+  pill.textContent = pillText;
+
+  if (breakdown) {
+    document.getElementById('simBreakdownContent').innerHTML = breakdown;
+    document.getElementById('simBreakdown').style.display = 'block';
+  } else {
+    document.getElementById('simBreakdown').style.display = 'none';
   }
 
-  const zakatDue = zakatableWealth * 0.025;
-  document.getElementById('zakatDue').style.display = 'block';
-  document.getElementById('zakatAmount').textContent = '£' + zakatDue.toFixed(2);
-  document.getElementById('zakatTotal').textContent = '£' + zakatableWealth.toLocaleString();
-  document.getElementById('zakatPfDisplay').textContent = '£' + portfolio.toLocaleString();
-  document.getElementById('zakatSavDisplay').textContent = '£' + savings.toLocaleString();
+  // Draw chart
+  drawSimChart(amount, finalValue, years);
+
+  document.getElementById('simResults').style.display = 'block';
+  document.getElementById('simResults').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-// HISTORICAL RETURNS
-const historicalReturns = {
-  'AAPL': { '1y': 1.23, '3y': 2.15, '5y': 3.89, name: 'Apple Inc.' },
-  'MSFT': { '1y': 1.18, '3y': 1.95, '5y': 3.42, name: 'Microsoft' },
-  'NVDA': { '1y': 2.10, '3y': 8.50, '5y': 22.40, name: 'NVIDIA' },
-  'TSLA': { '1y': 0.85, '3y': 1.45, '5y': 7.20, name: 'Tesla' },
-  'AMZN': { '1y': 1.32, '3y': 1.65, '5y': 2.90, name: 'Amazon' },
-  'V':    { '1y': 1.15, '3y': 1.55, '5y': 2.20, name: 'Visa' },
-  'AZN':  { '1y': 1.08, '3y': 1.45, '5y': 1.95, name: 'AstraZeneca' },
-  'GSK':  { '1y': 1.05, '3y': 1.22, '5y': 1.48, name: 'GSK' },
-  'ULVR': { '1y': 1.02, '3y': 0.98, '5y': 1.15, name: 'Unilever' },
-  'HLAL': { '1y': 1.21, '3y': 1.82, '5y': null, name: 'Wahed FTSE Shariah ETF' },
-  'SPUS': { '1y': 1.24, '3y': 1.90, '5y': null, name: 'SP Funds S&P 500 Sharia' },
-};
+function drawSimChart(startValue, endValue, years) {
+  const canvas = document.getElementById('simChart');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio || 600;
+  canvas.height = 200 * window.devicePixelRatio || 200;
+  ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+  const w = canvas.offsetWidth || 600;
+  const h = 200;
 
-function quickHist(ticker) {
-  document.getElementById('histTicker').value = ticker;
-  runHistorical();
-}
-
-function runHistorical() {
-  const ticker = document.getElementById('histTicker').value.trim().toUpperCase();
-  const amount = parseFloat(document.getElementById('histAmount').value) || 10000;
-  const data = historicalReturns[ticker];
-  const resultEl = document.getElementById('histResult');
-  
-  if (!ticker) return;
-
-  if (!data) {
-    resultEl.innerHTML = `<div class="empty">Historical data not available for ${ticker} yet. Try AAPL, NVDA, MSFT, TSLA or AZN.</div>`;
-    resultEl.style.display = 'block';
-    return;
+  // Generate data points
+  const points = [];
+  for (let i = 0; i <= years * 12; i++) {
+    const progress = i / (years * 12);
+    // Smooth curve with some variance
+    const value = startValue + (endValue - startValue) * (progress + 0.1 * Math.sin(progress * Math.PI * 2) * progress);
+    points.push(Math.max(startValue * 0.8, value));
   }
 
-  const periods = [
-    { label: '1 year ago', key: '1y', years: 1 },
-    { label: '3 years ago', key: '3y', years: 3 },
-    { label: '5 years ago', key: '5y', years: 5 },
-  ];
+  const minVal = Math.min(...points) * 0.95;
+  const maxVal = Math.max(...points) * 1.05;
+  const padding = { top: 20, right: 20, bottom: 30, left: 60 };
 
-  const cardsHtml = periods.map(p => {
-    if (!data[p.key]) return `<div class="sim-item"><div class="sim-label">5 years ago</div><div class="sim-value" style="font-size:14px;color:var(--grey-500);">Data N/A</div></div>`;
-    const currentValue = amount * data[p.key];
-    const gain = currentValue - amount;
-    const gainPct = ((data[p.key] - 1) * 100).toFixed(0);
-    const isUp = gain >= 0;
-    return `<div class="sim-item">
-      <div class="sim-label">Invested ${p.label}</div>
-      <div class="sim-value ${isUp ? 'green' : ''}" style="font-size:20px;">£${currentValue.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
-      <div style="font-size:12px;color:${isUp ? 'var(--green)' : 'var(--red)'};margin-top:4px;font-weight:600;">${isUp ? '+' : ''}£${gain.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${isUp ? '+' : ''}${gainPct}%)</div>
-    </div>`;
-  }).join('');
+  ctx.clearRect(0, 0, w, h);
 
-  const stock = stocks[ticker] || {};
-  const verdictText = stock.verdict === 'halal' ? '✓ Halal' : stock.verdict === 'haram' ? '✕ Haram — not recommended' : '⚠ Doubtful';
+  // Grid lines
+  ctx.strokeStyle = '#E2E8F0';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padding.top + (h - padding.top - padding.bottom) * i / 4;
+    ctx.beginPath();
+    ctx.moveTo(padding.left, y);
+    ctx.lineTo(w - padding.right, y);
+    ctx.stroke();
+    const val = maxVal - (maxVal - minVal) * i / 4;
+    ctx.fillStyle = '#94A3B8';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('£' + Math.round(val).toLocaleString(), padding.left - 8, y + 4);
+  }
 
-  resultEl.innerHTML = `
-    <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:14px;padding:20px;">
-      <div style="font-weight:700;font-size:16px;margin-bottom:4px;">${data.name} (${ticker})</div>
-      <div style="font-size:13px;color:var(--grey-500);margin-bottom:16px;">${verdictText} · £${amount.toLocaleString()} invested</div>
-      <div class="sim-grid">${cardsHtml}</div>
-      <p style="font-size:11px;color:var(--grey-500);margin-top:14px;">Past performance is not a guarantee of future returns. For educational purposes only. Returns are approximate and based on historical price data.</p>
-    </div>`;
-  resultEl.style.display = 'block';
-}
+  // Gradient fill
+  const gradient = ctx.createLinearGradient(0, padding.top, 0, h - padding.bottom);
+  gradient.addColorStop(0, 'rgba(10,124,92,0.15)');
+  gradient.addColorStop(1, 'rgba(10,124,92,0)');
 
-// PORTFOLIO BUILDER
-function addBuilderRow() {
-  const rows = document.getElementById('builderRows');
-  const div = document.createElement('div');
-  div.className = 'builder-row';
-  div.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:center;';
-  div.innerHTML = `
-    <input class="app-input" type="text" placeholder="Ticker" style="max-width:100px;" />
-    <input class="app-input" type="number" placeholder="%" min="1" max="100" style="max-width:80px;" />
-    <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--grey-500);font-size:20px;cursor:pointer;padding:4px;">×</button>`;
-  rows.appendChild(div);
-}
+  ctx.beginPath();
+  points.forEach((val, i) => {
+    const x = padding.left + (w - padding.left - padding.right) * i / (points.length - 1);
+    const y = padding.top + (h - padding.top - padding.bottom) * (1 - (val - minVal) / (maxVal - minVal));
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.lineTo(w - padding.right, h - padding.bottom);
+  ctx.lineTo(padding.left, h - padding.bottom);
+  ctx.closePath();
+  ctx.fillStyle = gradient;
+  ctx.fill();
 
-function runBuilder() {
-  const amount = parseFloat(document.getElementById('builderAmount').value) || 10000;
-  const rows = document.querySelectorAll('.builder-row');
-  const msg = document.getElementById('builderMsg');
-  msg.className = 'msg'; msg.style.display = 'none';
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = '#0A7C5C';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  points.forEach((val, i) => {
+    const x = padding.left + (w - padding.left - padding.right) * i / (points.length - 1);
+    const y = padding.top + (h - padding.top - padding.bottom) * (1 - (val - minVal) / (maxVal - minVal));
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
 
-  const items = [];
-  let totalPct = 0;
-
-  rows.forEach(row => {
-    const inputs = row.querySelectorAll('input');
-    const ticker = inputs[0].value.trim().toUpperCase();
-    const pct = parseFloat(inputs[1].value);
-    if (ticker && pct) { items.push({ ticker, pct }); totalPct += pct; }
+  // Start and end dots
+  [[0, startValue], [points.length-1, endValue]].forEach(([i, val]) => {
+    const x = padding.left + (w - padding.left - padding.right) * i / (points.length - 1);
+    const y = padding.top + (h - padding.top - padding.bottom) * (1 - (val - minVal) / (maxVal - minVal));
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#0A7C5C';
+    ctx.fill();
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.stroke();
   });
 
-  if (!items.length) { msg.textContent = 'Please add at least one stock.'; msg.className = 'msg error'; return; }
-  if (totalPct !== 100) { msg.textContent = `Allocations must add up to 100%. Currently: ${totalPct}%.`; msg.className = 'msg error'; return; }
-
-  let html = '<div style="display:grid;gap:10px;">';
-  let totalPurif = 0;
-
-  items.forEach(item => {
-    const invested = (amount * item.pct) / 100;
-    const s = stocks[item.ticker] || { name: item.ticker, verdict: 'unknown', purif: 0 };
-    const price = prices[item.ticker] || 100;
-    const shares = Math.floor(invested / price);
-    const actualInvested = shares * price;
-    const purif = (s.purif || 0) * shares;
-    totalPurif += purif;
-    const pillClass = s.verdict === 'halal' ? 'halal-pill' : s.verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
-    const verdictText = s.verdict === 'halal' ? '✓ Halal' : s.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
-
-    html += `<div style="background:white;border-radius:12px;padding:16px;border:1.5px solid var(--grey-200);">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <strong style="font-size:15px;">${item.ticker}</strong>
-          <span class="verdict-pill ${pillClass}">${verdictText}</span>
-        </div>
-        <span style="font-size:14px;font-weight:700;color:var(--green);">${item.pct}% · £${actualInvested.toFixed(2)}</span>
-      </div>
-      <div style="font-size:12px;color:var(--grey-500);">${s.name}</div>
-      <div style="display:flex;gap:16px;font-size:12px;color:var(--grey-500);margin-top:6px;">
-        <span>${shares} shares</span>
-        <span>£${price.toFixed(2)}/share</span>
-        ${purif > 0 ? '<span style="color:var(--green);font-weight:600;">Purif: \u00a3' + purif.toFixed(2) + '</span>' : ''}
-      </div>
-    </div>`;
-  });
-
-  html += `<div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;">
-    <div>
-      <div style="font-weight:700;font-size:14px;">Total invested</div>
-      <div style="font-size:12px;color:var(--grey-500);">Total purification: £${totalPurif.toFixed(2)}/year</div>
-    </div>
-    <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--green);">£${amount.toLocaleString()}</div>
-  </div></div>`;
-
-  document.getElementById('builderResult').innerHTML = html;
-  document.getElementById('builderResult').style.display = 'block';
+  // X axis labels
+  ctx.fillStyle = '#94A3B8';
+  ctx.font = '11px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Today', padding.left, h - 8);
+  ctx.fillText(years + (years === 1 ? ' year' : ' years'), w - padding.right, h - 8);
 }
 
-// PRESET LOADER
-function loadPreset(tickers, allocations) {
-  const amount = 10000;
-  const tickerArr = tickers.split(',');
-  let html = '<div style="display:grid;gap:10px;">';
-  let totalPurif = 0;
-
-  tickerArr.forEach((ticker, i) => {
-    const pct = allocations[i];
-    const invested = (amount * pct) / 100;
-    const s = stocks[ticker] || { name: ticker, verdict: 'halal', purif: 0 };
-    const price = prices[ticker] || 100;
-    const shares = Math.floor(invested / price);
-    const actualInvested = shares * price;
-    const purif = (s.purif || 0) * shares;
-    totalPurif += purif;
-
-    html += `<div style="background:white;border-radius:12px;padding:16px;border:1.5px solid var(--grey-200);">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-        <div><strong>${ticker}</strong> <span style="font-size:12px;color:var(--grey-500);">${s.name}</span></div>
-        <span style="font-weight:700;color:var(--green);">${pct}% · £${actualInvested.toFixed(2)}</span>
-      </div>
-      <div style="font-size:12px;color:var(--grey-500);display:flex;gap:14px;">
-        <span>${shares} shares · £${price.toFixed(2)}/share</span>
-        ${purif > 0 ? '<span style="color:var(--green);">Purif: \u00a3' + purif.toFixed(2) + '</span>' : ''}
-      </div>
-    </div>`;
-  });
-
-  html += `<div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;">
-    <div style="font-weight:700;">Total purification due per year</div>
-    <div style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--green);">£${totalPurif.toFixed(2)}</div>
-  </div></div>`;
-
-  document.getElementById('presetResult').innerHTML = html;
-  document.getElementById('presetResult').style.display = 'block';
-}
-
+// INIT
 // INIT
 const savedCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
 if (savedCollapsed) {
