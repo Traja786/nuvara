@@ -288,11 +288,15 @@ tr:last-child td { border-bottom: none; }
       <div class="card">
         <div class="card-title">Buy a stock</div>
         <div class="input-row">
-          <input class="app-input" id="buyTicker" type="text" placeholder="Ticker (e.g. AAPL)" />
-          <input class="app-input" id="buyShares" type="number" min="1" placeholder="Shares" style="max-width:100px;" />
-          <input class="app-input" id="buyPrice" type="number" min="0.01" step="0.01" placeholder="Price £" style="max-width:130px;" />
+          <input class="app-input" id="buyTicker" type="text" placeholder="Ticker (e.g. AAPL)" onblur="fetchBuyPrice()" onkeydown="if(event.key==='Tab') fetchBuyPrice()" />
+          <input class="app-input" id="buyShares" type="number" min="1" placeholder="Shares" style="max-width:100px;" oninput="updateBuyTotal()" />
+          <div style="position:relative;max-width:150px;flex:1;">
+            <input class="app-input" id="buyPrice" type="number" min="0.01" step="0.01" placeholder="Price £" style="width:100%;" oninput="updateBuyTotal()" />
+            <div id="priceFetching" style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--grey-500);">Fetching...</div>
+          </div>
           <button class="btn-green" onclick="buyStock()">Buy →</button>
         </div>
+        <div id="buyTotal" style="font-size:13px;color:var(--grey-500);margin-top:8px;display:none;">Total cost: <strong id="buyTotalAmount" style="color:var(--black);"></strong></div>
         <div id="buyMsg" class="msg"></div>
       </div>
       <div class="card">
@@ -333,10 +337,11 @@ tr:last-child td { border-bottom: none; }
     <div class="page-content">
 
       <!-- TABS -->
-      <div style="display:flex;gap:4px;background:white;border-radius:12px;padding:4px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
-        <button class="sim-tab active-sim" onclick="switchSimTab('historical',this)" style="flex:1;padding:10px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:var(--green);color:white;">📈 Historical Returns</button>
-        <button class="sim-tab" onclick="switchSimTab('builder',this)" style="flex:1;padding:10px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">🏗️ Portfolio Builder</button>
-        <button class="sim-tab" onclick="switchSimTab('presets',this)" style="flex:1;padding:10px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">⭐ Preset Portfolios</button>
+      <div style="display:flex;gap:4px;background:white;border-radius:12px;padding:4px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.05);flex-wrap:wrap;">
+        <button class="sim-tab active-sim" onclick="switchSimTab('historical',this)" style="flex:1;min-width:120px;padding:10px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:var(--green);color:white;">📈 Historical Returns</button>
+        <button class="sim-tab" onclick="switchSimTab('builder',this)" style="flex:1;min-width:120px;padding:10px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">🏗️ Portfolio Builder</button>
+        <button class="sim-tab" onclick="switchSimTab('presets',this)" style="flex:1;min-width:120px;padding:10px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">⭐ Preset Portfolios</button>
+        <button class="sim-tab" onclick="switchSimTab('zakat',this)" style="flex:1;min-width:120px;padding:10px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">☪️ Zakat Calculator</button>
       </div>
 
       <!-- HISTORICAL RETURNS -->
@@ -408,12 +413,65 @@ tr:last-child td { border-bottom: none; }
         </div>
       </div>
 
-    </div>
-  </div>
+      <!-- ZAKAT CALCULATOR -->
+      <div id="sim-zakat" style="display:none;">
+        <div class="card">
+          <div class="card-title">☪️ Zakat on Investments</div>
+          <div style="background:#F0FDF9;border:1.5px solid #D1FAE5;border-radius:12px;padding:16px;margin-bottom:20px;font-size:13px;color:#065F46;line-height:1.8;">
+            <strong>How zakat on investments works:</strong> Zakat is 2.5% of the total value of your halal investments, payable once per lunar year (hawl) if your total wealth exceeds the nisab threshold. The nisab is based on the value of 85g of gold or 595g of silver — whichever is lower.
+          </div>
+          <div class="input-row" style="flex-wrap:wrap;margin-bottom:16px;">
+            <div style="flex:1;min-width:200px;">
+              <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:6px;">Total halal investment value (£)</label>
+              <input class="app-input" id="zakatPortfolio" type="number" placeholder="e.g. 10000" style="width:100%;" oninput="calcZakat()" />
+            </div>
+            <div style="flex:1;min-width:200px;">
+              <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:6px;">Other savings & assets (£)</label>
+              <input class="app-input" id="zakatSavings" type="number" placeholder="e.g. 5000" style="width:100%;" oninput="calcZakat()" />
+            </div>
+            <div style="flex:1;min-width:200px;">
+              <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:6px;">Debts owed by you (£)</label>
+              <input class="app-input" id="zakatDebts" type="number" placeholder="e.g. 2000" style="width:100%;" oninput="calcZakat()" />
+            </div>
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:8px;">Have you held these assets for one full lunar year (hawl)?</label>
+            <div style="display:flex;gap:10px;">
+              <button onclick="setHawl(true, this)" id="hawlYes" style="flex:1;padding:10px;border:1.5px solid var(--grey-200);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">Yes</button>
+              <button onclick="setHawl(false, this)" id="hawlNo" style="flex:1;padding:10px;border:1.5px solid var(--grey-200);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">No — still building up</button>
+            </div>
+          </div>
 
-</div>
-
-<!-- MOBILE BOTTOM NAV -->
+          <div id="zakatResult" style="display:none;">
+            <div id="zakatBelowNisab" style="display:none;background:#FEF3C7;border:1.5px solid #FDE68A;border-radius:12px;padding:20px;text-align:center;">
+              <div style="font-size:24px;margin-bottom:8px;">📊</div>
+              <div style="font-weight:700;font-size:16px;color:#92400E;margin-bottom:6px;">Below nisab threshold</div>
+              <div style="font-size:13px;color:#92400E;">Your total zakatable wealth is below the nisab threshold (approx. £4,500). No zakat is due at this time.</div>
+            </div>
+            <div id="zakatNoHawl" style="display:none;background:#F0FDF9;border:1.5px solid #D1FAE5;border-radius:12px;padding:20px;text-align:center;">
+              <div style="font-size:24px;margin-bottom:8px;">⏳</div>
+              <div style="font-weight:700;font-size:16px;color:#065F46;margin-bottom:6px;">Hawl not yet complete</div>
+              <div style="font-size:13px;color:#065F46;">Zakat only becomes due after you have held these assets above the nisab for one full lunar year. Note the date your wealth first exceeded the nisab and pay on that anniversary.</div>
+            </div>
+            <div id="zakatDue" style="display:none;">
+              <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:14px;padding:24px;text-align:center;margin-bottom:16px;">
+                <div style="font-size:13px;color:var(--grey-500);margin-bottom:8px;">Zakat due this year</div>
+                <div style="font-family:'Sora',sans-serif;font-size:42px;font-weight:800;color:var(--green);" id="zakatAmount"></div>
+                <div style="font-size:13px;color:var(--grey-500);margin-top:8px;">2.5% of zakatable wealth</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="sim-item"><div class="sim-label">Total zakatable wealth</div><div class="sim-value" id="zakatTotal" style="font-size:18px;"></div></div>
+                <div class="sim-item"><div class="sim-label">Nisab threshold (est.)</div><div class="sim-value" style="font-size:18px;">~£4,500</div></div>
+                <div class="sim-item"><div class="sim-label">Investments</div><div class="sim-value" id="zakatPfDisplay" style="font-size:18px;"></div></div>
+                <div class="sim-item"><div class="sim-label">Savings & assets</div><div class="sim-value" id="zakatSavDisplay" style="font-size:18px;"></div></div>
+              </div>
+              <div style="background:#FEF3C7;border-radius:10px;padding:14px;margin-top:14px;font-size:12px;color:#92400E;line-height:1.7;">
+                <strong>Important:</strong> This is an estimate based on standard Hanafi methodology. Zakat calculations can vary by madhab and personal circumstances. Always consult a qualified Islamic scholar for your specific situation. Zakat should be paid to eligible recipients — the eight categories mentioned in the Quran (Surah At-Tawbah 9:60).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 <div class="mobile-nav">
   <div class="mobile-nav-items">
     <button class="mobile-nav-btn active" onclick="switchPage('scanner',this)"><span>🔍</span><span>Scanner</span></button>
@@ -691,7 +749,7 @@ async function removeWatch(id) {
 
 // SIMULATOR TAB SWITCHING
 function switchSimTab(tab, el) {
-  ['historical','builder','presets'].forEach(t => {
+  ['historical','builder','presets','zakat'].forEach(t => {
     document.getElementById('sim-' + t).style.display = t === tab ? 'block' : 'none';
   });
   document.querySelectorAll('.sim-tab').forEach(t => {
@@ -700,6 +758,90 @@ function switchSimTab(tab, el) {
   });
   el.style.background = 'var(--green)';
   el.style.color = 'white';
+}
+
+// AUTO PRICE FETCH
+async function fetchBuyPrice() {
+  const ticker = document.getElementById('buyTicker').value.trim().toUpperCase();
+  if (!ticker) return;
+
+  // Check local prices first
+  if (prices[ticker]) {
+    document.getElementById('buyPrice').value = prices[ticker].toFixed(2);
+    updateBuyTotal();
+    return;
+  }
+
+  document.getElementById('priceFetching').style.display = 'block';
+  try {
+    const res = await fetch('/.netlify/functions/fmp-proxy?ticker=' + ticker + '&type=profile');
+    const data = await res.json();
+    if (data && data.price) {
+      document.getElementById('buyPrice').value = parseFloat(data.price).toFixed(2);
+      updateBuyTotal();
+    }
+  } catch(e) {}
+  document.getElementById('priceFetching').style.display = 'none';
+}
+
+function updateBuyTotal() {
+  const shares = parseFloat(document.getElementById('buyShares').value);
+  const price = parseFloat(document.getElementById('buyPrice').value);
+  const totalEl = document.getElementById('buyTotal');
+  if (shares && price) {
+    document.getElementById('buyTotalAmount').textContent = '£' + (shares * price).toFixed(2);
+    totalEl.style.display = 'block';
+  } else {
+    totalEl.style.display = 'none';
+  }
+}
+
+// ZAKAT CALCULATOR
+let hawlComplete = null;
+
+function setHawl(val, el) {
+  hawlComplete = val;
+  document.querySelectorAll('#hawlYes, #hawlNo').forEach(b => {
+    b.style.background = 'none';
+    b.style.color = 'var(--grey-500)';
+    b.style.borderColor = 'var(--grey-200)';
+  });
+  el.style.background = 'var(--green)';
+  el.style.color = 'white';
+  el.style.borderColor = 'var(--green)';
+  calcZakat();
+}
+
+function calcZakat() {
+  const portfolio = parseFloat(document.getElementById('zakatPortfolio').value) || 0;
+  const savings = parseFloat(document.getElementById('zakatSavings').value) || 0;
+  const debts = parseFloat(document.getElementById('zakatDebts').value) || 0;
+  const nisab = 4500;
+
+  if (!portfolio && !savings) { document.getElementById('zakatResult').style.display = 'none'; return; }
+
+  const zakatableWealth = Math.max(0, portfolio + savings - debts);
+  document.getElementById('zakatResult').style.display = 'block';
+  document.getElementById('zakatBelowNisab').style.display = 'none';
+  document.getElementById('zakatNoHawl').style.display = 'none';
+  document.getElementById('zakatDue').style.display = 'none';
+
+  if (zakatableWealth < nisab) {
+    document.getElementById('zakatBelowNisab').style.display = 'block';
+    return;
+  }
+
+  if (hawlComplete === false) {
+    document.getElementById('zakatNoHawl').style.display = 'block';
+    return;
+  }
+
+  const zakatDue = zakatableWealth * 0.025;
+  document.getElementById('zakatDue').style.display = 'block';
+  document.getElementById('zakatAmount').textContent = '£' + zakatDue.toFixed(2);
+  document.getElementById('zakatTotal').textContent = '£' + zakatableWealth.toLocaleString();
+  document.getElementById('zakatPfDisplay').textContent = '£' + portfolio.toLocaleString();
+  document.getElementById('zakatSavDisplay').textContent = '£' + savings.toLocaleString();
 }
 
 // HISTORICAL RETURNS
