@@ -93,14 +93,18 @@ body { font-family: 'Inter', sans-serif; background: var(--grey-100); color: var
 .doubtful-pill { background: #FEF3C7; color: #92400E; }
 
 /* WATCHLIST */
-.watch-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 10px; background: var(--grey-100); margin-bottom: 8px; }
+.watch-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-radius: 12px; background: white; border: 1.5px solid var(--grey-200); margin-bottom: 8px; transition: border-color 0.15s; }
+.watch-item:hover { border-color: var(--green); }
 .btn-remove { background: none; border: none; color: var(--grey-500); font-size: 20px; cursor: pointer; line-height: 1; padding: 2px 6px; border-radius: 4px; }
 .btn-remove:hover { color: var(--red); background: #FEE2E2; }
 
 /* TABLE */
 table { width: 100%; border-collapse: collapse; }
-th { font-size: 11px; font-weight: 600; color: var(--grey-500); text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--grey-200); }
+th { font-size: 11px; font-weight: 600; color: white; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px; text-align: left; background: var(--navy); }
+th:first-child { border-radius: 10px 0 0 0; }
+th:last-child { border-radius: 0 10px 0 0; }
 td { padding: 12px; font-size: 14px; border-bottom: 1px solid var(--grey-100); }
+tr:hover td { background: var(--grey-100); }
 tr:last-child td { border-bottom: none; }
 .btn-sell { background: none; border: 1px solid var(--grey-200); color: var(--grey-500); padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif; }
 .btn-sell:hover { border-color: var(--red); color: var(--red); }
@@ -252,7 +256,7 @@ tr:last-child td { border-bottom: none; }
     <div class="page-content">
       <div class="card">
         <div class="input-row">
-          <input class="app-input" id="scanInput" type="text" placeholder="Enter ticker or company name (e.g. AAPL, Lloyds, VWRL)" onkeydown="if(event.key==='Enter') runScan()" />
+          <input class="app-input" id="scanInput" type="text" placeholder="AAPL, TSLA, AZN or company name" onkeydown="if(event.key==='Enter') runScan()" />
           <button class="btn-green" onclick="runScan()">Scan →</button>
         </div>
         <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
@@ -276,7 +280,7 @@ tr:last-child td { border-bottom: none; }
         <div class="page-title">📊 Paper Portfolio</div>
         <div class="page-subtitle">Practice halal investing with £10,000 virtual cash</div>
       </div>
-      <button onclick="resetPortfolio()" style="background:none;border:1px solid var(--grey-200);color:var(--grey-500);padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;">Reset to £10k</button>
+      <button onclick="resetPortfolio()" style="background:none;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;">Reset to £10k</button>
     </div>
     <div class="page-content">
       <div class="stats-row">
@@ -313,14 +317,19 @@ tr:last-child td { border-bottom: none; }
         <div class="page-title">⭐ Watchlist</div>
         <div class="page-subtitle">Save and track stocks you're interested in</div>
       </div>
+      <div id="watchCount" style="background:rgba(10,124,92,0.2);color:#6EE7B7;font-size:13px;font-weight:700;padding:6px 14px;border-radius:100px;"></div>
     </div>
     <div class="page-content">
       <div class="card">
-        <div class="input-row" style="margin-bottom:16px;">
-          <input class="app-input" id="watchInput" type="text" placeholder="Add ticker (e.g. TSLA, HLAL)" onkeydown="if(event.key==='Enter') addWatch()" />
+        <div class="card-title">Add to watchlist</div>
+        <div class="input-row" style="margin-bottom:12px;">
+          <input class="app-input" id="watchInput" type="text" placeholder="Ticker or company name (e.g. TSLA, AstraZeneca)" onkeydown="if(event.key==='Enter') addWatch()" />
           <button class="btn-green" onclick="addWatch()">Add →</button>
         </div>
         <div id="watchMsg" class="msg"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Your stocks</div>
         <div id="watchlistContainer"><div class="empty">Your watchlist is empty. Add a stock above.</div></div>
       </div>
     </div>
@@ -500,22 +509,69 @@ function switchPage(page, el) {
 function quickScan(ticker) { document.getElementById('scanInput').value = ticker; runScan(); }
 
 function runScan() {
-  const input = document.getElementById('scanInput').value.trim().toUpperCase();
-  if (!input) return;
+  const raw = document.getElementById('scanInput').value.trim();
+  if (!raw) return;
+
+  // Check if multiple tickers (comma separated)
+  const inputs = raw.split(',').map(s => s.trim()).filter(Boolean);
+
+  if (inputs.length > 1) {
+    // Multi-scan mode
+    document.getElementById('scanLoading').style.display = 'none';
+    const results = inputs.map(input => {
+      const ticker = input.toUpperCase();
+      return findStock(ticker) || findStock(input);
+    });
+
+    const html = results.map(stock => {
+      if (!stock) return '';
+      const verdictText = stock.verdict === 'halal' ? '✓ Halal' : stock.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
+      const pillClass = stock.verdict + '-pill';
+      const bgColor = stock.verdict === 'halal' ? 'var(--green-subtle)' : stock.verdict === 'haram' ? '#FEF2F2' : '#FFFBEB';
+      const borderColor = stock.verdict === 'halal' ? 'var(--green-light)' : stock.verdict === 'haram' ? '#FECACA' : '#FDE68A';
+      return `<div style="background:${bgColor};border:1.5px solid ${borderColor};border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-weight:700;font-size:15px;">${stock.name}</div>
+          <div style="font-size:12px;color:var(--grey-500);">${stock.ticker} · ${stock.sector}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="verdict-pill ${pillClass}" style="padding:6px 12px;font-size:13px;">${verdictText}</span>
+          <button onclick="showSingleScan('${stock.ticker}')" style="background:none;border:1px solid var(--grey-200);color:var(--grey-500);padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;">Details</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('scanResult').innerHTML = '<div style="display:grid;gap:10px;">' + html + '</div>';
+    return;
+  }
+
+  // Single scan mode
+  const input = raw.toUpperCase();
   document.getElementById('scanLoading').style.display = 'block';
   document.getElementById('scanResult').innerHTML = '';
   setTimeout(() => {
     document.getElementById('scanLoading').style.display = 'none';
-    const stock = findStock(input);
-    if (stock) showScanResult(stock, input);
+    const stock = findStock(input) || findStock(raw);
+    if (stock) showScanResult(stock, stock.ticker);
     else document.getElementById('scanResult').innerHTML = '<div class="empty">Stock not found. Try a different ticker.</div>';
   }, 900);
+}
+
+function showSingleScan(ticker) {
+  document.getElementById('scanInput').value = ticker;
+  const stock = findStock(ticker);
+  if (stock) showScanResult(stock, ticker);
 }
 
 function findStock(input) {
   if (stocks[input]) return { ...stocks[input], ticker: input };
   const q = input.toLowerCase();
-  const found = Object.entries(stocks).find(([k, v]) => v.name.toLowerCase().includes(q));
+  // Exact match first
+  let found = Object.entries(stocks).find(([k, v]) => v.name.toLowerCase() === q);
+  // Starts with
+  if (!found) found = Object.entries(stocks).find(([k, v]) => v.name.toLowerCase().startsWith(q));
+  // Includes
+  if (!found) found = Object.entries(stocks).find(([k, v]) => v.name.toLowerCase().includes(q));
   if (found) return { ...found[1], ticker: found[0] };
   return null;
 }
@@ -578,10 +634,15 @@ async function buyStock() {
   const msg = document.getElementById('buyMsg');
   msg.className = 'msg'; msg.style.display = 'none';
 
-  // Name to ticker lookup
+  // Name to ticker lookup - exact word match first, then partial
   if (!stocks[ticker]) {
     const input = document.getElementById('buyTicker').value.trim().toLowerCase();
-    const found = Object.entries(stocks).find(([k, v]) => v.name.toLowerCase().includes(input));
+    // Try exact name match first
+    let found = Object.entries(stocks).find(([k, v]) => v.name.toLowerCase() === input);
+    // Then try starts with
+    if (!found) found = Object.entries(stocks).find(([k, v]) => v.name.toLowerCase().startsWith(input));
+    // Then try includes
+    if (!found) found = Object.entries(stocks).find(([k, v]) => v.name.toLowerCase().includes(input));
     if (found) { ticker = found[0]; document.getElementById('buyTicker').value = ticker; }
   }
 
@@ -680,23 +741,31 @@ async function addWatchTicker(ticker) {
 
 function renderWatchlist() {
   const c = document.getElementById('watchlistContainer');
-  if (!watchlist.length) { c.innerHTML = '<div class="empty">Your watchlist is empty. Add a stock above.</div>'; return; }
+  const countEl = document.getElementById('watchCount');
+  if (!watchlist.length) {
+    c.innerHTML = '<div class="empty">Your watchlist is empty. Add a stock above.</div>';
+    if (countEl) countEl.textContent = '';
+    return;
+  }
+  if (countEl) countEl.textContent = watchlist.length + ' stock' + (watchlist.length !== 1 ? 's' : '');
   c.innerHTML = watchlist.map(w => {
     const s = stocks[w.ticker] || { name: w.ticker, verdict: 'unknown', sector: 'Unknown' };
-    const price = prices[w.ticker] ? '£' + prices[w.ticker].toFixed(2) : 'N/A';
+    const price = prices[w.ticker] ? '£' + prices[w.ticker].toFixed(2) : '';
     const pillClass = s.verdict === 'halal' ? 'halal-pill' : s.verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
     const verdictText = s.verdict === 'halal' ? '✓ Halal' : s.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
-    return `<div class="watch-item">
+    const bgColor = s.verdict === 'halal' ? 'var(--green-subtle)' : s.verdict === 'haram' ? '#FEF2F2' : '#FFFBEB';
+    const borderColor = s.verdict === 'halal' ? 'var(--green-light)' : s.verdict === 'haram' ? '#FECACA' : '#FDE68A';
+    return `<div class="watch-item" style="background:${bgColor};border-color:${borderColor};">
       <div style="flex:1;">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <span style="font-weight:700;font-size:15px;">${w.ticker}</span>
+          <span style="font-weight:800;font-size:15px;color:var(--black);">${w.ticker}</span>
           <span class="verdict-pill ${pillClass}">${verdictText}</span>
-          <span style="font-size:12px;color:var(--grey-500);">${s.sector || ''}</span>
+          ${s.sector ? '<span style="font-size:11px;color:var(--grey-500);">' + s.sector + '</span>' : ''}
         </div>
-        <div style="font-size:13px;color:var(--grey-500);margin-top:3px;">${s.name} ${price !== 'N/A' ? '· <strong style="color:var(--black);">' + price + '</strong>' : ''}</div>
+        <div style="font-size:12px;color:var(--grey-500);margin-top:3px;">${s.name}${price ? ' · <strong style="color:var(--black);">' + price + '</strong>' : ''}</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <button onclick="quickScanFromWatch('${w.ticker}')" style="background:none;border:1px solid var(--grey-200);color:var(--grey-500);padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;">Screen</button>
+        <button onclick="quickScanFromWatch('${w.ticker}')" style="background:white;border:1px solid var(--grey-200);color:var(--grey-700);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;">Screen</button>
         <button class="btn-remove" onclick="removeWatch('${w.id}')">×</button>
       </div>
     </div>`;
