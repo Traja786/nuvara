@@ -495,7 +495,7 @@ function showScanResult(stock, ticker) {
     </div>`;
 }
 
-function addWatchFromScan(ticker) { addWatchTicker(ticker); switchPage('watchlist'); }
+async function addWatchFromScan(ticker) { await addWatchTicker(ticker); switchPage('watchlist'); }
 function goToBuy(ticker) { document.getElementById('buyTicker').value = ticker; switchPage('portfolio'); }
 
 // PORTFOLIO
@@ -600,17 +600,31 @@ function renderWatchlist() {
   const c = document.getElementById('watchlistContainer');
   if (!watchlist.length) { c.innerHTML = '<div class="empty">Your watchlist is empty. Add a stock above.</div>'; return; }
   c.innerHTML = watchlist.map(w => {
-    const s = stocks[w.ticker] || { name: w.ticker, verdict: 'unknown' };
+    const s = stocks[w.ticker] || { name: w.ticker, verdict: 'unknown', sector: 'Unknown' };
+    const price = prices[w.ticker] ? '£' + prices[w.ticker].toFixed(2) : 'N/A';
     const pillClass = s.verdict === 'halal' ? 'halal-pill' : s.verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
     const verdictText = s.verdict === 'halal' ? '✓ Halal' : s.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
     return `<div class="watch-item">
-      <div>
-        <div style="font-weight:700;font-size:14px;">${w.ticker} <span class="verdict-pill ${pillClass}" style="margin-left:6px;">${verdictText}</span></div>
-        <div style="font-size:12px;color:var(--grey-500);margin-top:2px;">${s.name}</div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span style="font-weight:700;font-size:15px;">${w.ticker}</span>
+          <span class="verdict-pill ${pillClass}">${verdictText}</span>
+          <span style="font-size:12px;color:var(--grey-500);">${s.sector || ''}</span>
+        </div>
+        <div style="font-size:13px;color:var(--grey-500);margin-top:3px;">${s.name} ${price !== 'N/A' ? '· <strong style="color:var(--black);">' + price + '</strong>' : ''}</div>
       </div>
-      <button class="btn-remove" onclick="removeWatch('${w.id}')">×</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="quickScanFromWatch('${w.ticker}')" style="background:none;border:1px solid var(--grey-200);color:var(--grey-500);padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;">Screen</button>
+        <button class="btn-remove" onclick="removeWatch('${w.id}')">×</button>
+      </div>
     </div>`;
   }).join('');
+}
+
+function quickScanFromWatch(ticker) {
+  switchPage('scanner');
+  document.getElementById('scanInput').value = ticker;
+  runScan();
 }
 
 async function removeWatch(id) {
