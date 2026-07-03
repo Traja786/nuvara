@@ -537,7 +537,7 @@ async function fetchWatchlistPrices() {
   if (!watchlist.length) return;
   const fetches = watchlist.map(w => getLivePrice(w.ticker));
   await Promise.all(fetches);
-  renderWatchlist();
+  renderWatchlist(); // Re-render with live prices once loaded
 }
 
 // AUTH CHECK
