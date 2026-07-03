@@ -307,6 +307,7 @@ tr:last-child td { border-bottom: none; }
           <button class="btn-green" onclick="buyStock()">Buy →</button>
         </div>
         <div id="buyTotal" style="font-size:13px;color:var(--grey-500);margin-top:8px;display:none;">Total cost: <strong id="buyTotalAmount" style="color:var(--black);"></strong></div>
+        <div style="font-size:11px;color:#94A3B8;margin-top:10px;">⏱ Prices are sourced from FMP and may be delayed by 15-20 minutes. This is virtual paper trading only — no real money is involved.</div>
         <div id="buyMsg" class="msg"></div>
       </div>
       <div class="card">
@@ -337,6 +338,7 @@ tr:last-child td { border-bottom: none; }
       <div class="card">
         <div class="card-title">Your stocks</div>
         <div id="watchlistContainer"><div class="empty">Your watchlist is empty. Add a stock above.</div></div>
+        <div style="font-size:11px;color:#94A3B8;margin-top:12px;">⏱ Prices may be delayed 15-20 minutes.</div>
       </div>
     </div>
   </div>
@@ -502,6 +504,8 @@ const stocks = {
 const prices = {};
 const priceCache = {};
 
+const priceDataCache = {};
+
 async function getLivePrice(ticker) {
   if (priceCache[ticker]) return priceCache[ticker];
   const tickersToTry = [ticker, ticker + '.L'];
@@ -511,8 +515,18 @@ async function getLivePrice(ticker) {
       const data = await res.json();
       const p = Array.isArray(data) ? data[0] : data;
       if (p && p.price) {
-        priceCache[ticker] = parseFloat(p.price);
-        return priceCache[ticker];
+        let price = parseFloat(p.price);
+        price = convertPenceToPounds(price, ticker);
+        priceCache[ticker] = price;
+        // Cache full price data for watchlist
+        priceDataCache[ticker] = {
+          price,
+          change: p.change ? convertPenceToPounds(parseFloat(p.change), ticker) : null,
+          changePct: p.changesPercentage ? parseFloat(p.changesPercentage) : null,
+          dayHigh: p.dayHigh ? convertPenceToPounds(parseFloat(p.dayHigh), ticker) : null,
+          dayLow: p.dayLow ? convertPenceToPounds(parseFloat(p.dayLow), ticker) : null,
+        };
+        return price;
       }
     } catch(e) {}
   }
@@ -766,6 +780,16 @@ async function fetchBuyPrice() {
   }
 }
 
+// UK stocks on LSE are often quoted in pence — convert if price > 100x reasonable range
+function convertPenceToPounds(price, ticker) {
+  // UK tickers ending in .L or known UK stocks — if price > 500 it's likely in pence
+  const ukTickers = ['LLOY','BARC','NWG','STAN','AZN','GSK','HIK','SN','ULVR','RKT','TSCO','SBRY','MKS','NEXT','BT','VOD','AUTO','SAGE','EXPN','BP','AAL','GLEN','ANTO','CRH','MNDI','FERG','IMI','WEIR','SGRO','RIO','LAND','BLND','HL','III','IAG','EZJ','CPG','WTB','BATS','IMB','DGE','BA','QQ','LGEN','PRU','AV','VMUK','NWG'];
+  if (ukTickers.includes(ticker) && price > 200) {
+    return price / 100; // convert pence to pounds
+  }
+  return price;
+}
+
 function updateBuyTotal() {
   const shares = parseFloat(document.getElementById('buyShares').value);
   const price = parseFloat(document.getElementById('buyPrice').value);
@@ -924,25 +948,39 @@ function renderWatchlist() {
   if (countEl) countEl.textContent = watchlist.length + ' stock' + (watchlist.length !== 1 ? 's' : '');
   c.innerHTML = watchlist.map(w => {
     const s = stocks[w.ticker] || { name: w.ticker, verdict: 'unknown', sector: 'Unknown' };
-    const price = priceCache[w.ticker] ? '£' + priceCache[w.ticker].toFixed(2) : '<span style="font-size:11px;color:var(--grey-400);">Loading...</span>';
+    const pd = priceDataCache[w.ticker];
     const pillClass = s.verdict === 'halal' ? 'halal-pill' : s.verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
     const verdictText = s.verdict === 'halal' ? '✓ Halal' : s.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
     const bgColor = s.verdict === 'halal' ? 'var(--green-subtle)' : s.verdict === 'haram' ? '#FEF2F2' : '#FFFBEB';
     const borderColor = s.verdict === 'halal' ? 'var(--green-light)' : s.verdict === 'haram' ? '#FECACA' : '#FDE68A';
-    return `<div class="watch-item" style="background:${bgColor};border-color:${borderColor};">
-      <div style="flex:1;">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <span style="font-weight:800;font-size:15px;color:var(--black);">${w.ticker}</span>
-          <span class="verdict-pill ${pillClass}">${verdictText}</span>
-          ${s.sector ? '<span style="font-size:11px;color:var(--grey-500);">' + s.sector + '</span>' : ''}
-        </div>
-        <div style="font-size:12px;color:var(--grey-500);margin-top:3px;">${s.name}${price ? ' · <strong style="color:var(--black);">' + price + '</strong>' : ''}</div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button onclick="quickScanFromWatch('${w.ticker}')" style="background:white;border:1px solid var(--grey-200);color:var(--grey-700);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;">Screen</button>
-        <button class="btn-remove" onclick="removeWatch('${w.id}')">×</button>
-      </div>
-    </div>`;
+
+    let priceHtml = '<span style="font-size:11px;color:#94A3B8;">Loading...</span>';
+    if (pd) {
+      const isUp = pd.change >= 0;
+      const changeColor = isUp ? 'var(--green)' : 'var(--red)';
+      const changeSign = isUp ? '+' : '';
+      priceHtml = '<div style="text-align:right;">' +
+        '<div style="font-family:Sora,sans-serif;font-size:17px;font-weight:800;color:var(--black);">£' + pd.price.toFixed(2) + '</div>' +
+        '<div style="font-size:12px;font-weight:700;color:' + changeColor + ';">' + changeSign + '£' + Math.abs(pd.change).toFixed(2) + ' (' + changeSign + pd.changePct.toFixed(2) + '%)</div>' +
+        (pd.dayLow && pd.dayHigh ? '<div style="font-size:10px;color:#94A3B8;margin-top:2px;">L: £' + pd.dayLow.toFixed(2) + ' · H: £' + pd.dayHigh.toFixed(2) + '</div>' : '') +
+        '</div>';
+    }
+
+    return '<div style="background:' + bgColor + ';border:1.5px solid ' + borderColor + ';border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">' +
+      '<div style="flex:1;">' +
+      '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">' +
+      '<span style="font-weight:800;font-size:15px;color:var(--black);">' + w.ticker + '</span>' +
+      '<span class="verdict-pill ' + pillClass + '">' + verdictText + '</span>' +
+      (s.sector ? '<span style="font-size:11px;color:var(--grey-500);">' + s.sector + '</span>' : '') +
+      '</div>' +
+      '<div style="font-size:12px;color:var(--grey-500);">' + s.name + '</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:12px;">' +
+      priceHtml +
+      '<div style="display:flex;flex-direction:column;gap:6px;">' +
+      '<button onclick="quickScanFromWatch(\'' + w.ticker + '\')" style="background:white;border:1px solid var(--grey-200);color:var(--grey-700);padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">Screen</button>' +
+      '<button class="btn-remove" onclick="removeWatch(\'' + w.id + '\')" style="font-size:16px;">×</button>' +
+      '</div></div></div>';
   }).join('');
 }
 
