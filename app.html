@@ -516,6 +516,7 @@ async function getLivePrice(ticker) {
       const p = Array.isArray(data) ? data[0] : data;
       if (p && p.price) {
         let price = parseFloat(p.price);
+        console.log('FMP response for ' + t + ':', { price: p.price, change: p.change, changePct: p.changesPercentage, dayHigh: p.dayHigh, dayLow: p.dayLow });
         price = convertPenceToPounds(price, ticker);
         priceCache[ticker] = price;
         // Cache full price data for watchlist
@@ -967,14 +968,15 @@ function renderWatchlist() {
     const bgColor = s.verdict === 'halal' ? 'var(--green-subtle)' : s.verdict === 'haram' ? '#FEF2F2' : '#FFFBEB';
     const borderColor = s.verdict === 'halal' ? 'var(--green-light)' : s.verdict === 'haram' ? '#FECACA' : '#FDE68A';
 
-    let priceHtml = '<div style="text-align:right;min-width:80px;"><span style="font-size:11px;color:#94A3B8;">Fetching price...</span></div>';
-    if (pd) {
+    let priceHtml = '<div style="text-align:right;min-width:80px;"><span style="font-size:11px;color:#94A3B8;">Fetching...</span></div>';
+    if (pd && pd.price) {
+      const hasChange = pd.change !== null && pd.changePct !== null;
       const isUp = pd.change >= 0;
       const changeColor = isUp ? 'var(--green)' : 'var(--red)';
       const changeSign = isUp ? '+' : '';
       priceHtml = '<div style="text-align:right;min-width:80px;">' +
         '<div style="font-family:Sora,sans-serif;font-size:17px;font-weight:800;color:var(--black);">£' + pd.price.toFixed(2) + '</div>' +
-        '<div style="font-size:12px;font-weight:700;color:' + changeColor + ';">' + changeSign + '£' + Math.abs(pd.change).toFixed(2) + ' (' + changeSign + pd.changePct.toFixed(2) + '%)</div>' +
+        (hasChange ? '<div style="font-size:12px;font-weight:700;color:' + changeColor + ';">' + changeSign + '£' + Math.abs(pd.change).toFixed(2) + ' (' + changeSign + pd.changePct.toFixed(2) + '%)</div>' : '') +
         (pd.dayLow && pd.dayHigh ? '<div style="font-size:10px;color:#94A3B8;margin-top:2px;">L: £' + pd.dayLow.toFixed(2) + ' · H: £' + pd.dayHigh.toFixed(2) + '</div>' : '') +
         '</div>';
     }
