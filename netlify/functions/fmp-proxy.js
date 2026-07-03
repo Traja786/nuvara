@@ -14,6 +14,19 @@ exports.handler = async function(event) {
 
   try {
     const response = await fetch(urls[type] || urls.profile);
+    
+    // If ratios fail try without crashing
+    if (!response.ok) {
+      return {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify([])
+      };
+    }
+
     const data = await response.json();
     return {
       statusCode: 200,
@@ -24,6 +37,13 @@ exports.handler = async function(event) {
       body: JSON.stringify(data)
     };
   } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify([])
+    };
   }
 };
