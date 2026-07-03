@@ -947,20 +947,28 @@ function runSimulator() {
     document.getElementById('simBreakdown').style.display = 'none';
   }
 
-  // Draw chart
-  drawSimChart(amount, finalValue, years);
-
   document.getElementById('simResults').style.display = 'block';
-  document.getElementById('simResults').scrollIntoView({behavior:'smooth', block:'nearest'});
+  // Draw chart after DOM has rendered
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      drawSimChart(amount, finalValue, years);
+      document.getElementById('simResults').scrollIntoView({behavior:'smooth', block:'nearest'});
+    }, 50);
+  });
 }
 
 function drawSimChart(startValue, endValue, years) {
   const canvas = document.getElementById('simChart');
+  // Force canvas to match its displayed size
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = 200 * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = '200px';
   const ctx = canvas.getContext('2d');
-  canvas.width = canvas.offsetWidth * window.devicePixelRatio || 600;
-  canvas.height = 200 * window.devicePixelRatio || 200;
-  ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
-  const w = canvas.offsetWidth || 600;
+  ctx.scale(dpr, dpr);
+  const w = rect.width;
   const h = 200;
 
   // Generate data points
