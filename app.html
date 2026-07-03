@@ -581,18 +581,88 @@ function runScan() {
   const input = raw.toUpperCase();
   document.getElementById('scanLoading').style.display = 'block';
   document.getElementById('scanResult').innerHTML = '';
-  setTimeout(() => {
+
+  // Check local database first
+  const localStock = findStock(input) || findStock(raw);
+  if (localStock) {
     document.getElementById('scanLoading').style.display = 'none';
-    const stock = findStock(input) || findStock(raw);
-    if (stock) showScanResult(stock, stock.ticker);
-    else document.getElementById('scanResult').innerHTML = '<div class="empty">Stock not found. Try a different ticker.</div>';
-  }, 900);
+    showScanResult(localStock, localStock.ticker);
+    return;
+  }
+
+  // Fall through to FMP API for unknown stocks
+  fetchFromFMP(input).then(stock => {
+    document.getElementById('scanLoading').style.display = 'none';
+    if (stock) showScanResult(stock, input);
+    else document.getElementById('scanResult').innerHTML = '<div class="empty">Stock not found. Try a different ticker (e.g. AAPL, HSBA, OCDO).</div>';
+  });
 }
 
-function showSingleScan(ticker) {
+async function fetchFromFMP(ticker) {
+  try {
+    const [profileRes, ratiosRes] = await Promise.all([
+      fetch('/.netlify/functions/fmp-proxy?ticker=' + ticker + '&type=profile'),
+      fetch('/.netlify/functions/fmp-proxy?ticker=' + ticker + '&type=ratios')
+    ]);
+    const profile = await profileRes.json();
+    const ratios = await ratiosRes.json();
+
+    const p = Array.isArray(profile) ? profile[0] : profile;
+    const r = Array.isArray(ratios) ? ratios[0] : ratios;
+
+    if (!p || !p.companyName) return null;
+
+    // Calculate screens from live data
+    const interestPct = r && r.interestIncomeToRevenueTTM ? Math.abs(r.interestIncomeToRevenueTTM * 100) : 0;
+    const debtRatio = r && r.debtToMarketCapTTM ? Math.abs(r.debtToMarketCapTTM * 100) : 0;
+
+    const sector = p.sector || 'Unknown';
+    const haramSectors = ['banking', 'financial services', 'insurance', 'tobacco', 'alcohol', 'defense', 'gambling', 'adult'];
+    const sectorLower = sector.toLowerCase();
+    const businessFail = haramSectors.some(s => sectorLower.includes(s));
+    const interestFail = interestPct > 5;
+    const debtFail = debtRatio > 33;
+
+    let verdict = 'halal';
+    if (businessFail) verdict = 'haram';
+    else if (interestFail || debtFail || interestPct > 2) verdict = 'doubtful';
+
+    const screens = [
+      { n: 'Business activity', d: sector, s: businessFail ? 'fail' : 'pass' },
+      { n: 'Interest income', d: interestPct.toFixed(1) + '% of revenue', s: interestFail ? 'fail' : interestPct > 2 ? 'warn' : 'pass' },
+      { n: 'Debt ratio', d: debtRatio.toFixed(1) + '% of market cap', s: debtFail ? 'fail' : debtRatio > 25 ? 'warn' : 'pass' },
+      { n: 'Impure income', d: 'Based on available data', s: interestFail ? 'fail' : 'pass' },
+    ];
+
+    return {
+      ticker,
+      name: p.companyName,
+      sector,
+      verdict,
+      screens,
+      purif: verdict === 'halal' ? 0.04 : 0,
+      note: verdict === 'haram'
+        ? sector + ' is not a permissible business activity under halal investment standards.'
+        : verdict === 'doubtful'
+        ? 'This stock passes some screens but raises concerns. Classified as doubtful — proceed with caution and consult a scholar.'
+        : p.companyName + ' passes our initial screens based on live financial data. This is an automated screening — always verify before investing.',
+      live: true,
+      price: p.price
+    };
+  } catch(e) {
+    return null;
+  }
+}
+
+async function showSingleScan(ticker) {
+  switchPage('scanner');
   document.getElementById('scanInput').value = ticker;
   const stock = findStock(ticker);
-  if (stock) showScanResult(stock, ticker);
+  if (stock) { showScanResult(stock, ticker); return; }
+  document.getElementById('scanLoading').style.display = 'block';
+  const liveStock = await fetchFromFMP(ticker);
+  document.getElementById('scanLoading').style.display = 'none';
+  if (liveStock) showScanResult(liveStock, ticker);
 }
 
 function findStock(input) {
