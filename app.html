@@ -216,6 +216,12 @@ tr:last-child td { border-bottom: none; }
       <span class="tooltip">Simulator</span>
     </button>
 
+    <button class="nav-item" onclick="switchPage('directory', this)">
+      <span class="nav-icon">📚</span>
+      <span class="nav-label">Stock Directory</span>
+      <span class="tooltip">Stock Directory</span>
+    </button>
+
     <div class="nav-section-label" style="margin-top:16px;">Coming soon</div>
     <button class="nav-item disabled">
       <span class="nav-icon">📰</span>
@@ -423,6 +429,31 @@ tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
+  <!-- DIRECTORY PAGE -->
+  <div id="page-directory" style="display:none;">
+    <div class="page-header">
+      <div>
+        <div class="page-title">📚 Stock Directory</div>
+        <div class="page-subtitle">Browse and search all screened stocks and ETFs</div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="card">
+        <div class="input-row" style="margin-bottom:16px;">
+          <input class="app-input" id="dirSearch" type="text" placeholder="Search by name or ticker..." oninput="filterDirectory()" style="flex:1;" />
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+          <button onclick="filterByVerdict('all',this)" class="dir-filter" style="padding:7px 14px;border:1.5px solid var(--green);border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:var(--green);color:white;">All</button>
+          <button onclick="filterByVerdict('halal',this)" class="dir-filter" style="padding:7px 14px;border:1.5px solid var(--grey-200);border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">✓ Halal only</button>
+          <button onclick="filterByVerdict('doubtful',this)" class="dir-filter" style="padding:7px 14px;border:1.5px solid var(--grey-200);border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">⚠ Doubtful</button>
+          <button onclick="filterByVerdict('haram',this)" class="dir-filter" style="padding:7px 14px;border:1.5px solid var(--grey-200);border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:none;color:var(--grey-500);">✕ Haram</button>
+        </div>
+        <div style="font-size:12px;color:var(--grey-500);margin-bottom:12px;" id="dirCount"></div>
+        <div id="dirResults"></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 <div class="mobile-nav">
   <div class="mobile-nav-items">
@@ -495,7 +526,7 @@ function toggleSidebar() {
 
 // PAGE SWITCHING
 function switchPage(page, el) {
-  ['scanner','portfolio','watchlist','simulator'].forEach(p => {
+  ['scanner','portfolio','watchlist','simulator','directory'].forEach(p => {
     document.getElementById('page-' + p).style.display = p === page ? 'block' : 'none';
   });
   document.querySelectorAll('.nav-item:not(.disabled), .mobile-nav-btn').forEach(i => i.classList.remove('active'));
@@ -503,6 +534,7 @@ function switchPage(page, el) {
   document.querySelectorAll('.nav-item:not(.disabled)').forEach(i => {
     if (i.getAttribute('onclick') && i.getAttribute('onclick').includes("'" + page + "'")) i.classList.add('active');
   });
+  if (page === 'directory') renderDirectory();
 }
 
 // SCANNER
@@ -1012,7 +1044,70 @@ function drawSimChart(startValue, endValue, years) {
   ctx.fillText(years + (years === 1 ? ' year' : ' years'), w - padding.right, h - 8);
 }
 
-// INIT
+// STOCK DIRECTORY
+let dirVerdictFilter = 'all';
+
+function renderDirectory(filter) {
+  filter = filter || '';
+  const results = document.getElementById('dirResults');
+  const countEl = document.getElementById('dirCount');
+  const query = filter.toLowerCase();
+
+  const filtered = Object.entries(stocks).filter(([ticker, s]) => {
+    const matchesSearch = !query || ticker.toLowerCase().includes(query) || s.name.toLowerCase().includes(query) || (s.sector && s.sector.toLowerCase().includes(query));
+    const matchesVerdict = dirVerdictFilter === 'all' || s.verdict === dirVerdictFilter;
+    return matchesSearch && matchesVerdict;
+  });
+
+  if (countEl) countEl.textContent = filtered.length + ' stocks found';
+
+  if (!filtered.length) {
+    results.innerHTML = '<div class="empty">No stocks found matching your search.</div>';
+    return;
+  }
+
+  results.innerHTML = filtered.map(([ticker, s]) => {
+    const pillClass = s.verdict === 'halal' ? 'halal-pill' : s.verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
+    const verdictText = s.verdict === 'halal' ? '✓ Halal' : s.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
+    const bgColor = s.verdict === 'halal' ? 'var(--green-subtle)' : s.verdict === 'haram' ? '#FEF2F2' : '#FFFBEB';
+    const borderColor = s.verdict === 'halal' ? 'var(--green-light)' : s.verdict === 'haram' ? '#FECACA' : '#FDE68A';
+    return '<div style="background:' + bgColor + ';border:1.5px solid ' + borderColor + ';border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="goToScan(\'' + ticker + '\')">' +
+      '<div>' +
+      '<div style="display:flex;align-items:center;gap:8px;">' +
+      '<strong style="font-size:14px;">' + ticker + '</strong>' +
+      '<span class="verdict-pill ' + pillClass + '">' + verdictText + '</span>' +
+      '<span style="font-size:11px;color:var(--grey-500);">' + (s.sector || '') + '</span>' +
+      '</div>' +
+      '<div style="font-size:12px;color:var(--grey-500);margin-top:3px;">' + s.name + '</div>' +
+      '</div>' +
+      '<div style="font-size:12px;color:var(--grey-500);font-weight:600;">Screen →</div>' +
+      '</div>';
+  }).join('');
+}
+
+function filterDirectory() {
+  renderDirectory(document.getElementById('dirSearch').value);
+}
+
+function filterByVerdict(verdict, el) {
+  dirVerdictFilter = verdict;
+  document.querySelectorAll('.dir-filter').forEach(b => {
+    b.style.background = 'none';
+    b.style.color = 'var(--grey-500)';
+    b.style.borderColor = 'var(--grey-200)';
+  });
+  el.style.background = 'var(--green)';
+  el.style.color = 'white';
+  el.style.borderColor = 'var(--green)';
+  filterDirectory();
+}
+
+function goToScan(ticker) {
+  switchPage('scanner');
+  document.getElementById('scanInput').value = ticker;
+  runScan();
+}
+
 // INIT
 const savedCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
 if (savedCollapsed) {

@@ -1576,6 +1576,10 @@
       <div class="modal-error" id="signupError"></div>
       <input class="modal-input" id="signupEmail" type="email" placeholder="Email address" />
       <input class="modal-input" id="signupPassword" type="password" placeholder="Password (min 6 characters)" />
+      <label style="display:flex;align-items:flex-start;gap:10px;margin:12px 0;cursor:pointer;">
+        <input type="checkbox" id="newsletterOptIn" checked style="margin-top:3px;accent-color:#0A7C5C;width:16px;height:16px;flex-shrink:0;" />
+        <span style="font-size:13px;color:#64748B;line-height:1.5;">Send me halal investing tips and product updates. You can unsubscribe anytime.</span>
+      </label>
       <button class="modal-btn" onclick="signUp()">Create free account</button>
       <p class="modal-switch">Already have an account? <a onclick="showAuthForm('login')">Sign in</a></p>
     </div>
@@ -1755,29 +1759,32 @@ async function signIn() {
 async function signUp() {
   const email = document.getElementById('signupEmail').value.trim();
   const password = document.getElementById('signupPassword').value;
+  const optIn = document.getElementById('newsletterOptIn').checked;
   const errEl = document.getElementById('signupError');
   errEl.style.display = 'none';
   if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters'; errEl.style.display = 'block'; return; }
   const { error } = await _supabase.auth.signUp({ email, password });
   if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
 
-  // Auto-subscribe to Beehiiv newsletter
-  try {
-    const iframe = document.createElement('iframe');
-    iframe.name = 'beehiiv_signup';
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'https://app.beehiiv.com/subscribe';
-    form.target = 'beehiiv_signup';
-    form.style.display = 'none';
-    [['publication_id','pub_82bb9d91-11eb-4b9f-a388-87ead251a68a'],['email',email],['utm_source','nuvara_signup']].forEach(([n,v]) => {
-      const i = document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; form.appendChild(i);
-    });
-    document.body.appendChild(form);
-    form.submit();
-  } catch(e) {}
+  // Only subscribe to Beehiiv if opted in
+  if (optIn) {
+    try {
+      const iframe = document.createElement('iframe');
+      iframe.name = 'beehiiv_signup';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://app.beehiiv.com/subscribe';
+      form.target = 'beehiiv_signup';
+      form.style.display = 'none';
+      [['publication_id','pub_82bb9d91-11eb-4b9f-a388-87ead251a68a'],['email',email],['utm_source','nuvara_signup']].forEach(([n,v]) => {
+        const i = document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; form.appendChild(i);
+      });
+      document.body.appendChild(form);
+      form.submit();
+    } catch(e) {}
+  }
 
   document.getElementById('signupForm').style.display = 'none';
   document.getElementById('verifyForm').style.display = 'block';
