@@ -498,7 +498,33 @@ const stocks = {
   'RIO':{ name:'Rio Tinto PLC', verdict:'halal', sector:'Mining', purif:0.04, screens:[{n:'Business activity',d:'Mining & metals',s:'pass'},{n:'Interest income',d:'0.9% of revenue',s:'pass'},{n:'Debt ratio',d:'15% of market cap',s:'pass'},{n:'Impure income',d:'< 1% of revenue',s:'pass'}], note:'Rio Tinto passes all ethical screens.' },
 };
 
-const prices = { 'AAPL':213,'MSFT':415,'NVDA':950,'TSLA':265,'V':275,'AZN':115,'GSK':17,'ULVR':42,'NEXT':90,'LLOY':0.58,'BARC':2.15,'BATS':27,'JPM':198,'META':488,'HLAL':45,'SPUS':52,'VWRL':98,'RIO':52 };
+// Live price cache — fetched from FMP
+const prices = {};
+const priceCache = {};
+
+async function getLivePrice(ticker) {
+  if (priceCache[ticker]) return priceCache[ticker];
+  const tickersToTry = [ticker, ticker + '.L'];
+  for (const t of tickersToTry) {
+    try {
+      const res = await fetch('/.netlify/functions/fmp-proxy?ticker=' + t + '&type=profile');
+      const data = await res.json();
+      const p = Array.isArray(data) ? data[0] : data;
+      if (p && p.price) {
+        priceCache[ticker] = parseFloat(p.price);
+        return priceCache[ticker];
+      }
+    } catch(e) {}
+  }
+  return null;
+}
+
+async function fetchWatchlistPrices() {
+  if (!watchlist.length) return;
+  const fetches = watchlist.map(w => getLivePrice(w.ticker));
+  await Promise.all(fetches);
+  renderWatchlist();
+}
 
 // AUTH CHECK
 async function init() {
@@ -718,7 +744,39 @@ function showScanResult(stock, ticker) {
 }
 
 async function addWatchFromScan(ticker) { await addWatchTicker(ticker); switchPage('watchlist'); }
-function goToBuy(ticker) { document.getElementById('buyTicker').value = ticker; switchPage('portfolio'); }
+function goToBuy(ticker) {
+  document.getElementById('buyTicker').value = ticker;
+  switchPage('portfolio');
+  // Auto-fetch price after switching page
+  setTimeout(() => fetchBuyPrice(), 300);
+}
+
+// AUTO PRICE FETCH
+async function fetchBuyPrice() {
+  const ticker = document.getElementById('buyTicker').value.trim().toUpperCase();
+  if (!ticker) return;
+
+  document.getElementById('priceFetching').style.display = 'block';
+  const price = await getLivePrice(ticker);
+  document.getElementById('priceFetching').style.display = 'none';
+
+  if (price) {
+    document.getElementById('buyPrice').value = price.toFixed(2);
+    updateBuyTotal();
+  }
+}
+
+function updateBuyTotal() {
+  const shares = parseFloat(document.getElementById('buyShares').value);
+  const price = parseFloat(document.getElementById('buyPrice').value);
+  const totalEl = document.getElementById('buyTotal');
+  if (shares && price) {
+    document.getElementById('buyTotalAmount').textContent = '£' + (shares * price).toFixed(2);
+    totalEl.style.display = 'block';
+  } else {
+    totalEl.style.display = 'none';
+  }
+}
 
 // PORTFOLIO
 async function loadData() {
@@ -731,6 +789,8 @@ async function loadData() {
   updatePortfolioStats(cash);
   renderHoldings();
   renderWatchlist();
+  // Fetch live prices in background
+  fetchWatchlistPrices();
 }
 
 function updatePortfolioStats(cash) {
@@ -799,7 +859,7 @@ function renderHoldings() {
       const pillClass = s.verdict === 'halal' ? 'halal-pill' : s.verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
       const verdictText = s.verdict === 'halal' ? '✓ Halal' : s.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
       const avgPrice = parseFloat(h.avg_price);
-      const currentPrice = prices[h.ticker] || avgPrice;
+      const currentPrice = priceCache[h.ticker] || avgPrice;
       const currentValue = h.shares * currentPrice;
       const costBasis = h.shares * avgPrice;
       const pnl = currentValue - costBasis;
@@ -864,7 +924,7 @@ function renderWatchlist() {
   if (countEl) countEl.textContent = watchlist.length + ' stock' + (watchlist.length !== 1 ? 's' : '');
   c.innerHTML = watchlist.map(w => {
     const s = stocks[w.ticker] || { name: w.ticker, verdict: 'unknown', sector: 'Unknown' };
-    const price = prices[w.ticker] ? '£' + prices[w.ticker].toFixed(2) : '';
+    const price = priceCache[w.ticker] ? '£' + priceCache[w.ticker].toFixed(2) : '<span style="font-size:11px;color:var(--grey-400);">Loading...</span>';
     const pillClass = s.verdict === 'halal' ? 'halal-pill' : s.verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
     const verdictText = s.verdict === 'halal' ? '✓ Halal' : s.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
     const bgColor = s.verdict === 'halal' ? 'var(--green-subtle)' : s.verdict === 'haram' ? '#FEF2F2' : '#FFFBEB';
