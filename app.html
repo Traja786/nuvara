@@ -599,67 +599,71 @@ function runScan() {
 }
 
 async function fetchFromFMP(ticker) {
-  try {
-    const [profileRes, ratiosRes] = await Promise.all([
-      fetch('/.netlify/functions/fmp-proxy?ticker=' + ticker + '&type=profile'),
-      fetch('/.netlify/functions/fmp-proxy?ticker=' + ticker + '&type=ratios')
-    ]);
-    const profileData = await profileRes.json();
-    const ratiosData = await ratiosRes.json();
+  // Try original ticker first, then with .L suffix for UK stocks
+  const tickersToTry = [ticker];
+  if (!ticker.includes('.')) tickersToTry.push(ticker + '.L');
 
-    // FMP returns array or object — handle both
-    const p = Array.isArray(profileData) ? profileData[0] : profileData;
-    const r = Array.isArray(ratiosData) ? ratiosData[0] : ratiosData;
+  for (const t of tickersToTry) {
+    try {
+      const [profileRes, ratiosRes] = await Promise.all([
+        fetch('/.netlify/functions/fmp-proxy?ticker=' + t + '&type=profile'),
+        fetch('/.netlify/functions/fmp-proxy?ticker=' + t + '&type=ratios')
+      ]);
+      const profileData = await profileRes.json();
+      const ratiosData = await ratiosRes.json();
 
-    // FMP uses different field names — check all variants
-    const companyName = p && (p.companyName || p.name || p.company_name);
-    if (!p || !companyName) return null;
+      const p = Array.isArray(profileData) ? profileData[0] : profileData;
+      const r = Array.isArray(ratiosData) ? ratiosData[0] : ratiosData;
 
-    const sector = p.sector || p.industry || 'Unknown';
-    const price = p.price || p.stockPrice || 0;
+      const companyName = p && (p.companyName || p.name || p.company_name);
+      if (!p || !companyName) continue; // try next ticker format
 
-    // Financial ratios — FMP TTM field names
-    const interestIncome = r && (r.interestIncomeToRevenueTTM || r.interestExpenseToOperatingCashFlowTTM || 0);
-    const interestPct = Math.abs((interestIncome || 0) * 100);
-    const debtToEquity = r && (r.debtEquityRatioTTM || r.debtToEquityRatioTTM || 0);
-    const debtRatio = Math.min(Math.abs((debtToEquity || 0) * 15), 60); // approximate conversion
+      const sector = p.sector || p.industry || 'Unknown';
+      const price = p.price || p.stockPrice || 0;
 
-    const haramSectors = ['banking', 'financial services', 'insurance', 'tobacco', 'alcohol', 'defense', 'gambling', 'adult', 'beverages—wineries'];
-    const sectorLower = (sector || '').toLowerCase();
-    const businessFail = haramSectors.some(s => sectorLower.includes(s));
-    const interestFail = interestPct > 5;
-    const debtFail = debtRatio > 33;
+      const interestIncome = r && (r.interestIncomeToRevenueTTM || r.interestExpenseToOperatingCashFlowTTM || 0);
+      const interestPct = Math.abs((interestIncome || 0) * 100);
+      const debtToEquity = r && (r.debtEquityRatioTTM || r.debtToEquityRatioTTM || 0);
+      const debtRatio = Math.min(Math.abs((debtToEquity || 0) * 15), 60);
 
-    let verdict = 'halal';
-    if (businessFail) verdict = 'haram';
-    else if (interestFail || debtFail) verdict = 'doubtful';
+      const haramSectors = ['banking', 'financial services', 'insurance', 'tobacco', 'alcohol', 'defense', 'gambling', 'adult', 'beverages—wineries'];
+      const sectorLower = (sector || '').toLowerCase();
+      const businessFail = haramSectors.some(s => sectorLower.includes(s));
+      const interestFail = interestPct > 5;
+      const debtFail = debtRatio > 33;
 
-    const screens = [
-      { n: 'Business activity', d: sector, s: businessFail ? 'fail' : 'pass' },
-      { n: 'Interest income', d: interestPct > 0 ? interestPct.toFixed(1) + '% of revenue' : 'Below threshold', s: interestFail ? 'fail' : interestPct > 2 ? 'warn' : 'pass' },
-      { n: 'Debt ratio', d: debtRatio > 0 ? debtRatio.toFixed(1) + '% of market cap (est.)' : 'Within limits', s: debtFail ? 'fail' : debtRatio > 25 ? 'warn' : 'pass' },
-      { n: 'Live data screening', d: 'Based on FMP financial data', s: verdict === 'haram' ? 'fail' : 'pass' },
-    ];
+      let verdict = 'halal';
+      if (businessFail) verdict = 'haram';
+      else if (interestFail || debtFail) verdict = 'doubtful';
 
-    return {
-      ticker,
-      name: companyName,
-      sector,
-      verdict,
-      screens,
-      purif: verdict === 'halal' ? 0.04 : 0,
-      note: verdict === 'haram'
-        ? companyName + ' fails the business screen. ' + sector + ' is not permissible under halal investment standards.'
-        : verdict === 'doubtful'
-        ? companyName + ' passes the business screen but financial ratios raise concerns. Classified as doubtful — verify before investing.'
-        : companyName + ' passes our initial screens based on live financial data. This is an automated screening — always verify before investing.',
-      live: true,
-      price
-    };
-  } catch(e) {
-    console.error('FMP fetch error:', e);
-    return null;
+      const screens = [
+        { n: 'Business activity', d: sector, s: businessFail ? 'fail' : 'pass' },
+        { n: 'Interest income', d: interestPct > 0 ? interestPct.toFixed(1) + '% of revenue' : 'Below threshold', s: interestFail ? 'fail' : interestPct > 2 ? 'warn' : 'pass' },
+        { n: 'Debt ratio', d: debtRatio > 0 ? debtRatio.toFixed(1) + '% of market cap (est.)' : 'Within limits', s: debtFail ? 'fail' : debtRatio > 25 ? 'warn' : 'pass' },
+        { n: 'Live data screening', d: 'Based on FMP financial data', s: verdict === 'haram' ? 'fail' : 'pass' },
+      ];
+
+      return {
+        ticker: t,
+        name: companyName,
+        sector,
+        verdict,
+        screens,
+        purif: verdict === 'halal' ? 0.04 : 0,
+        note: verdict === 'haram'
+          ? companyName + ' fails the business screen. ' + sector + ' is not permissible under halal investment standards.'
+          : verdict === 'doubtful'
+          ? companyName + ' passes the business screen but financial ratios raise concerns. Classified as doubtful — verify before investing.'
+          : companyName + ' passes our initial screens based on live financial data. This is an automated screening — always verify before investing.',
+        live: true,
+        price
+      };
+    } catch(e) {
+      console.error('FMP fetch error for ' + t + ':', e);
+      continue;
+    }
   }
+  return null;
 }
 
 async function showSingleScan(ticker) {
