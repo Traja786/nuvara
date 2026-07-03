@@ -757,7 +757,20 @@ function showScanResult(stock, ticker) {
     </div>`;
 }
 
-async function addWatchFromScan(ticker) { await addWatchTicker(ticker); switchPage('watchlist'); }
+async function addWatchFromScan(ticker) {
+  // Reload fresh watchlist data first to avoid stale duplicate check
+  const { data } = await db.from('watchlist').select('*').eq('user_id', currentUser.id);
+  watchlist = data || [];
+
+  if (watchlist.find(w => w.ticker === ticker)) {
+    switchPage('watchlist');
+    return;
+  }
+
+  await db.from('watchlist').insert({ user_id: currentUser.id, ticker });
+  await loadData();
+  switchPage('watchlist');
+}
 function goToBuy(ticker) {
   document.getElementById('buyTicker').value = ticker;
   switchPage('portfolio');
