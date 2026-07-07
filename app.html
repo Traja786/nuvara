@@ -57,10 +57,12 @@ body { font-family: 'Inter', sans-serif; background: var(--grey-100); color: var
 .btn-signout:hover { color: rgba(255,255,255,0.7); }
 
 /* RIGHT PANEL */
-.right-panel { width: 260px; position: fixed; top: 0; right: 0; bottom: 0; background: white; border-left: 1px solid var(--grey-200); padding: 20px 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+.right-panel { width: 260px; position: fixed; top: 0; right: 0; bottom: 0; background: white; border-left: 1px solid var(--grey-200); padding: 20px 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; z-index: 150; transition: transform 0.25s ease; }
+.right-panel.hidden { transform: translateX(260px); }
 .right-panel-title { font-size: 11px; font-weight: 700; color: var(--grey-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-.main { margin-left: var(--sidebar-w); margin-right: 260px; transition: margin-left 0.25s ease; min-height: 100vh; }
+.main { margin-left: var(--sidebar-w); margin-right: 260px; transition: margin-left 0.25s ease, margin-right 0.25s ease; min-height: 100vh; }
 .main.collapsed { margin-left: var(--sidebar-collapsed); }
+.main.rp-hidden { margin-right: 0; }
 
 @media (max-width: 1100px) {
   .right-panel { display: none; }
@@ -467,12 +469,17 @@ tr:last-child td { border-bottom: none; }
 <!-- RIGHT STATS PANEL -->
 <div class="right-panel" id="rightPanel">
 
+  <!-- HEADER -->
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-size:11px;font-weight:700;color:var(--grey-500);text-transform:uppercase;letter-spacing:0.5px;">Overview</div>
+    <button onclick="toggleRightPanel()" style="background:none;border:none;color:var(--grey-400);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" title="Minimise">◀</button>
+  </div>
+
   <!-- PORTFOLIO SNAPSHOT -->
   <div>
     <div class="right-panel-title">Your portfolio</div>
     <div id="rpPortfolioValue" style="font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:var(--black);">£0.00</div>
     <div id="rpPortfolioPnl" style="font-size:13px;color:var(--grey-500);margin-top:2px;">No holdings yet</div>
-    <div id="rpCash" style="font-size:12px;color:var(--grey-500);margin-top:4px;"></div>
   </div>
 
   <div style="height:1px;background:var(--grey-200);"></div>
@@ -480,7 +487,7 @@ tr:last-child td { border-bottom: none; }
   <!-- MARKET PULSE -->
   <div>
     <div class="right-panel-title">Market pulse</div>
-    <div id="rpMarket" style="display:grid;gap:8px;">
+    <div id="rpMarket" style="display:grid;gap:2px;">
       <div style="font-size:12px;color:var(--grey-500);">Loading...</div>
     </div>
   </div>
@@ -488,10 +495,10 @@ tr:last-child td { border-bottom: none; }
   <div style="height:1px;background:var(--grey-200);"></div>
 
   <!-- ZAKAT REMINDER -->
-  <div id="rpZakat" style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:12px;padding:14px;">
+  <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:12px;padding:14px;">
     <div style="font-size:11px;font-weight:700;color:var(--green-dark);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">☪️ Zakat reminder</div>
     <div style="font-size:13px;color:var(--grey-700);line-height:1.6;">If your portfolio exceeds £4,500 and you've held it for one lunar year, zakat of 2.5% is due.</div>
-    <button onclick="switchPage('simulator');switchSimTab('zakat',document.querySelector('.sim-tab:last-child'))" style="margin-top:10px;background:var(--green);color:white;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;width:100%;">Calculate zakat →</button>
+    <button onclick="switchPage('simulator');switchSimTab('zakat',document.querySelector('.sim-tab:last-child'))" style="margin-top:10px;background:var(--green);color:white;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;width:100%;">Calculate zakat →</button>
   </div>
 
   <div style="height:1px;background:var(--grey-200);"></div>
@@ -502,15 +509,33 @@ tr:last-child td { border-bottom: none; }
     <div id="rpTip" style="font-size:13px;color:var(--grey-600);line-height:1.7;"></div>
   </div>
 
-  <!-- QUICK SCAN -->
-  <div style="margin-top:auto;">
-    <div class="right-panel-title">Quick scan</div>
-    <div style="display:flex;gap:6px;">
-      <input class="app-input" id="rpScanInput" type="text" placeholder="Ticker..." style="flex:1;padding:8px 10px;font-size:13px;" onkeydown="if(event.key==='Enter'){document.getElementById('scanInput').value=this.value;switchPage('scanner');runScan();this.value=''}" />
-      <button onclick="document.getElementById('scanInput').value=document.getElementById('rpScanInput').value;switchPage('scanner');runScan();document.getElementById('rpScanInput').value=''" style="background:var(--green);color:white;border:none;border-radius:10px;padding:8px 12px;font-size:13px;cursor:pointer;">→</button>
+  <div style="height:1px;background:var(--grey-200);"></div>
+
+  <!-- AFFILIATE BANNER -->
+  <div>
+    <div class="right-panel-title">Ready to invest?</div>
+    <div style="display:grid;gap:8px;">
+      <a href="https://wahedinvest.com" target="_blank" rel="noopener" style="display:block;background:#0F172A;border-radius:10px;padding:12px 14px;text-decoration:none;">
+        <div style="font-size:12px;font-weight:700;color:white;margin-bottom:2px;">☪️ Wahed Invest</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);">Shariah-certified portfolios →</div>
+      </a>
+      <a href="https://investengine.com/referral/u/kk9r83/" target="_blank" rel="noopener" style="display:block;background:#2563EB;border-radius:10px;padding:12px 14px;text-decoration:none;">
+        <div style="font-size:12px;font-weight:700;color:white;margin-bottom:2px;">📊 InvestEngine</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);">Commission-free ETFs →</div>
+      </a>
+      <a href="https://freetrade.io" target="_blank" rel="noopener" style="display:block;background:#F59E0B;border-radius:10px;padding:12px 14px;text-decoration:none;">
+        <div style="font-size:12px;font-weight:700;color:white;margin-bottom:2px;">📈 Freetrade</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);">Zero commission trading →</div>
+      </a>
     </div>
+    <div style="font-size:10px;color:#94A3B8;margin-top:8px;">We may earn a referral fee. Always screen stocks with Nuvara first.</div>
   </div>
 
+</div>
+
+<!-- COLLAPSED TAB -->
+<div id="rightPanelTab" style="display:none;position:fixed;right:0;top:50%;transform:translateY(-50%);background:var(--navy);color:rgba(255,255,255,0.7);padding:12px 6px;border-radius:8px 0 0 8px;cursor:pointer;z-index:150;writing-mode:vertical-rl;font-size:11px;font-weight:600;letter-spacing:0.5px;" onclick="toggleRightPanel()">
+  Overview ▶
 </div>
 
 <!-- PRICE ALERT MODAL -->
@@ -622,7 +647,11 @@ async function fetchWatchlistPrices() {
   const fetches = tickers.map(t => getLivePrice(t));
   await Promise.all(fetches);
   renderWatchlist();
-  renderHoldings(); // Re-render holdings with live prices for accurate P&L
+  renderHoldings();
+  // Update portfolio stats and right panel with live prices
+  const { data: pf } = await db.from('profiles').select('cash_balance').eq('user_id', currentUser.id).maybeSingle();
+  updatePortfolioStats(pf ? pf.cash_balance : 10000);
+  updateRightPanel();
 }
 
 // AUTH CHECK
@@ -1493,6 +1522,29 @@ async function deleteAlert(id) {
 }
 
 // RIGHT PANEL
+let rpCollapsed = localStorage.getItem('rp_collapsed') === 'true';
+
+function toggleRightPanel() {
+  rpCollapsed = !rpCollapsed;
+  localStorage.setItem('rp_collapsed', rpCollapsed);
+  applyRightPanelState();
+}
+
+function applyRightPanelState() {
+  const panel = document.getElementById('rightPanel');
+  const tab = document.getElementById('rightPanelTab');
+  const main = document.getElementById('main');
+  if (rpCollapsed) {
+    panel.classList.add('hidden');
+    tab.style.display = 'block';
+    main.classList.add('rp-hidden');
+  } else {
+    panel.classList.remove('hidden');
+    tab.style.display = 'none';
+    main.classList.remove('rp-hidden');
+  }
+}
+
 const halalTips = [
   'Visa and Mastercard are payment processors — they don\'t lend money, making them halal.',
   'The S&P 500 contains banks, alcohol and tobacco. Always screen before investing in any index fund.',
@@ -1556,6 +1608,7 @@ if (savedCollapsed) {
   document.getElementById('main').classList.add('collapsed');
   sidebarCollapsed = true;
 }
+applyRightPanelState();
 init();
 </script>
 </body>
