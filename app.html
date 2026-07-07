@@ -69,6 +69,13 @@ body { font-family: 'Inter', sans-serif; background: var(--grey-100); color: var
   .main { margin-right: 0; }
 }
 
+/* NUVARA PLUS LOCK */
+.plus-lock-overlay { position:absolute; inset:0; background:rgba(255,255,255,0.95); border-radius:16px; display:flex; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px); }
+.plus-lock-content { text-align:center; max-width:280px; }
+.coming-badge { font-size:9px; font-weight:700; padding:2px 6px; border-radius:100px; margin-left:auto; white-space:nowrap; transition:opacity 0.2s; }
+.nav-item .coming-badge { background:rgba(10,124,92,0.25); color:#6EE7B7; }
+.sidebar.collapsed .coming-badge { opacity:0; }
+
 /* PAGE HEADER */
 .page-header { background: var(--navy); padding: 18px 28px; border-bottom: 3px solid var(--green); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
 .page-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: white; }
@@ -243,6 +250,38 @@ tr:last-child td { border-bottom: none; }
       <span class="nav-label">Invest</span>
       <span class="coming-badge">Soon</span>
       <span class="tooltip">Coming soon</span>
+    </button>
+
+    <div class="nav-section-label" style="margin-top:16px;">🚀 Nuvara Plus</div>
+    <button class="nav-item" onclick="switchPage('halalScore', this)">
+      <span class="nav-icon">🎯</span>
+      <span class="nav-label">Halal Score</span>
+      <span class="coming-badge">Plus</span>
+      <span class="tooltip">Portfolio Halal Score</span>
+    </button>
+    <button class="nav-item" onclick="switchPage('purification', this)">
+      <span class="nav-icon">🌿</span>
+      <span class="nav-label">Purification</span>
+      <span class="coming-badge">Plus</span>
+      <span class="tooltip">Purification Tracker</span>
+    </button>
+    <button class="nav-item" onclick="switchPage('zakatReport', this)">
+      <span class="nav-icon">☪️</span>
+      <span class="nav-label">Zakat Report</span>
+      <span class="coming-badge">Plus</span>
+      <span class="tooltip">Zakat Report</span>
+    </button>
+    <button class="nav-item" onclick="switchPage('compare', this)">
+      <span class="nav-icon">⚖️</span>
+      <span class="nav-label">Compare</span>
+      <span class="coming-badge">Plus</span>
+      <span class="tooltip">Stock Comparison</span>
+    </button>
+    <button class="nav-item" onclick="switchPage('sectors', this)">
+      <span class="nav-icon">🔎</span>
+      <span class="nav-label">Sector Screener</span>
+      <span class="coming-badge">Plus</span>
+      <span class="tooltip">Sector Screener</span>
     </button>
   </nav>
 
@@ -472,7 +511,7 @@ tr:last-child td { border-bottom: none; }
   <!-- HEADER -->
   <div style="display:flex;justify-content:space-between;align-items:center;">
     <div style="font-size:11px;font-weight:700;color:var(--grey-500);text-transform:uppercase;letter-spacing:0.5px;">Overview</div>
-    <button onclick="toggleRightPanel()" style="background:none;border:none;color:var(--grey-400);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" title="Minimise">◀</button>
+    <button onclick="toggleRightPanel()" style="background:none;border:none;color:var(--grey-400);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" title="Minimise">▶</button>
   </div>
 
   <!-- PORTFOLIO SNAPSHOT -->
@@ -538,7 +577,258 @@ tr:last-child td { border-bottom: none; }
   Overview ▶
 </div>
 
-<!-- PRICE ALERT MODAL -->
+  <!-- HALAL SCORE PAGE -->
+  <div id="page-halalScore" style="display:none;">
+    <div class="page-header">
+      <div>
+        <div class="page-title">🎯 Portfolio Halal Score</div>
+        <div class="page-subtitle">Your overall halal compliance rating</div>
+      </div>
+      <div style="background:rgba(10,124,92,0.2);color:#6EE7B7;font-size:11px;font-weight:700;padding:5px 12px;border-radius:100px;">🚀 Nuvara Plus Preview</div>
+    </div>
+    <div class="page-content">
+      <div class="card" id="halalScoreCard">
+        <div style="text-align:center;padding:20px 0;">
+          <div style="font-size:13px;color:var(--grey-500);margin-bottom:8px;">Your portfolio halal score</div>
+          <div style="position:relative;display:inline-block;">
+            <svg width="160" height="160" viewBox="0 0 160 160">
+              <circle cx="80" cy="80" r="70" fill="none" stroke="#E2E8F0" stroke-width="12"/>
+              <circle cx="80" cy="80" r="70" fill="none" stroke="#0A7C5C" stroke-width="12" stroke-dasharray="440" id="scoreCircle" stroke-dashoffset="440" stroke-linecap="round" transform="rotate(-90 80 80)" style="transition:stroke-dashoffset 1s ease;"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <div style="font-family:'Sora',sans-serif;font-size:36px;font-weight:800;color:var(--black);" id="scoreNumber">--</div>
+              <div style="font-size:12px;color:var(--grey-500);">out of 100</div>
+            </div>
+          </div>
+          <div style="font-size:14px;font-weight:600;margin-top:12px;" id="scoreLabel"></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;" id="scoreBreakdown"></div>
+
+        <!-- FREE PREVIEW ENDS HERE — LOCK SUGGESTIONS -->
+        <div style="position:relative;">
+          <div id="scoreSuggestions" style="filter:blur(4px);pointer-events:none;opacity:0.4;">
+            <div style="font-size:14px;font-weight:700;color:var(--black);margin-bottom:12px;">How to improve your score</div>
+            <div style="background:#FEF2F2;border-radius:12px;padding:14px;margin-bottom:8px;">
+              <div style="font-weight:600;font-size:13px;">Remove LLOY — Haram (Banking)</div>
+              <div style="font-size:12px;color:var(--grey-500);margin-top:2px;">Replace with AZN to gain +8 points</div>
+            </div>
+            <div style="background:#FEF2F2;border-radius:12px;padding:14px;">
+              <div style="font-weight:600;font-size:13px;">Replace META — Doubtful</div>
+              <div style="font-size:12px;color:var(--grey-500);margin-top:2px;">Replace with MSFT to gain +5 points</div>
+            </div>
+          </div>
+          <div id="scoreLock" class="plus-lock-overlay">
+            <div class="plus-lock-content">
+              <div style="font-size:32px;margin-bottom:8px;">🚀</div>
+              <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:var(--black);margin-bottom:6px;">Nuvara Plus</div>
+              <div style="font-size:13px;color:var(--grey-500);margin-bottom:16px;">Get personalised suggestions to improve your halal score and reach 100/100.</div>
+              <button onclick="showPlusSignup()" class="btn-green" style="width:100%;padding:12px;">Join early access — free 30 days →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PURIFICATION TRACKER PAGE -->
+  <div id="page-purification" style="display:none;">
+    <div class="page-header">
+      <div>
+        <div class="page-title">🌿 Purification Tracker</div>
+        <div class="page-subtitle">Track what you need to donate to charity</div>
+      </div>
+      <div style="background:rgba(10,124,92,0.2);color:#6EE7B7;font-size:11px;font-weight:700;padding:5px 12px;border-radius:100px;">🚀 Nuvara Plus Preview</div>
+    </div>
+    <div class="page-content">
+      <div class="card">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
+          <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:14px;padding:18px;text-align:center;">
+            <div style="font-size:12px;color:var(--grey-500);margin-bottom:6px;">This month</div>
+            <div style="font-family:'Sora',sans-serif;font-size:28px;font-weight:800;color:var(--green);" id="purMonthly">£0.00</div>
+            <div style="font-size:11px;color:var(--grey-500);margin-top:4px;">To donate</div>
+          </div>
+          <div style="background:var(--grey-100);border-radius:14px;padding:18px;text-align:center;position:relative;overflow:hidden;">
+            <div style="font-size:12px;color:var(--grey-500);margin-bottom:6px;">Annual total</div>
+            <div style="font-family:'Sora',sans-serif;font-size:28px;font-weight:800;color:var(--black);filter:blur(6px);">£47.20</div>
+            <div style="font-size:11px;color:var(--grey-500);margin-top:4px;">Estimated</div>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.7);">
+              <button onclick="showPlusSignup()" style="background:var(--green);color:white;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">🔒 Plus only</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-title">Holdings breakdown</div>
+        <div id="purHoldings"></div>
+
+        <!-- LOCK EXPORT -->
+        <div style="position:relative;margin-top:16px;">
+          <button style="width:100%;padding:12px;background:var(--grey-100);border:1.5px solid var(--grey-200);border-radius:10px;font-size:14px;font-weight:600;color:var(--grey-400);cursor:not-allowed;font-family:Inter,sans-serif;">📥 Export annual report (Nuvara Plus)</button>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+            <button onclick="showPlusSignup()" style="background:var(--green);color:white;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">🔒 Unlock export →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZAKAT REPORT PAGE -->
+  <div id="page-zakatReport" style="display:none;">
+    <div class="page-header">
+      <div>
+        <div class="page-title">☪️ Zakat Report</div>
+        <div class="page-subtitle">Your full zakat calculation for this year</div>
+      </div>
+      <div style="background:rgba(10,124,92,0.2);color:#6EE7B7;font-size:11px;font-weight:700;padding:5px 12px;border-radius:100px;">🚀 Nuvara Plus Preview</div>
+    </div>
+    <div class="page-content">
+      <div class="card">
+        <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:14px;padding:20px;margin-bottom:20px;text-align:center;">
+          <div style="font-size:13px;color:var(--grey-500);margin-bottom:6px;">Estimated zakat due this year</div>
+          <div style="font-family:'Sora',sans-serif;font-size:40px;font-weight:800;color:var(--green);" id="zakatReportAmount">£0.00</div>
+          <div style="font-size:12px;color:var(--grey-500);margin-top:6px;">2.5% of portfolio value above nisab (£4,500)</div>
+        </div>
+
+        <div style="display:grid;gap:10px;margin-bottom:20px;" id="zakatReportBreakdown"></div>
+
+        <div style="background:#FEF3C7;border-radius:12px;padding:14px;margin-bottom:20px;font-size:12px;color:#92400E;line-height:1.7;">
+          <strong>Important:</strong> This is an estimate. Zakat calculations vary by madhab. Consult a qualified Islamic scholar for your specific situation. Nisab threshold is approximately £4,500 based on gold price.
+        </div>
+
+        <!-- LOCK PDF DOWNLOAD -->
+        <div style="position:relative;">
+          <div style="filter:blur(2px);pointer-events:none;">
+            <div style="border:1.5px dashed var(--grey-200);border-radius:12px;padding:20px;text-align:center;">
+              <div style="font-size:32px;margin-bottom:8px;">📄</div>
+              <div style="font-weight:700;font-size:14px;color:var(--black);">Download Zakat Report PDF</div>
+              <div style="font-size:13px;color:var(--grey-500);margin-top:4px;">Full breakdown for your records and charity receipts</div>
+            </div>
+          </div>
+          <div id="zakatLock" class="plus-lock-overlay">
+            <div class="plus-lock-content">
+              <div style="font-size:32px;margin-bottom:8px;">📄</div>
+              <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:var(--black);margin-bottom:6px;">Download Zakat Report</div>
+              <div style="font-size:13px;color:var(--grey-500);margin-bottom:16px;">Get a full PDF zakat report for your records with Nuvara Plus.</div>
+              <button onclick="showPlusSignup()" class="btn-green" style="width:100%;padding:12px;">Join early access — free 30 days →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STOCK COMPARE PAGE -->
+  <div id="page-compare" style="display:none;">
+    <div class="page-header">
+      <div>
+        <div class="page-title">⚖️ Stock Comparison</div>
+        <div class="page-subtitle">Compare two stocks side by side</div>
+      </div>
+      <div style="background:rgba(10,124,92,0.2);color:#6EE7B7;font-size:11px;font-weight:700;padding:5px 12px;border-radius:100px;">🚀 Nuvara Plus Preview</div>
+    </div>
+    <div class="page-content">
+      <div class="card">
+        <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:20px;">
+          <input class="app-input" id="compare1" type="text" placeholder="First ticker (e.g. AAPL)" />
+          <div style="font-size:20px;color:var(--grey-400);font-weight:300;">vs</div>
+          <input class="app-input" id="compare2" type="text" placeholder="Second ticker (e.g. MSFT)" />
+        </div>
+        <button onclick="runComparison()" class="btn-green" style="width:100%;padding:13px;font-size:14px;margin-bottom:20px;">Compare →</button>
+
+        <div id="compareResults" style="display:none;">
+          <!-- Basic comparison visible free -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;" id="compareBasic"></div>
+
+          <!-- Detailed comparison locked -->
+          <div style="position:relative;">
+            <div style="filter:blur(4px);pointer-events:none;opacity:0.5;" id="compareDetail">
+              <table style="width:100%;border-collapse:collapse;">
+                <thead><tr><th style="text-align:left;padding:8px;font-size:11px;color:var(--grey-500);border-bottom:1px solid var(--grey-200);">Screen</th><th style="padding:8px;font-size:11px;color:var(--grey-500);border-bottom:1px solid var(--grey-200);">Stock A</th><th style="padding:8px;font-size:11px;color:var(--grey-500);border-bottom:1px solid var(--grey-200);">Stock B</th></tr></thead>
+                <tbody>
+                  <tr><td style="padding:10px 8px;font-size:13px;border-bottom:1px solid var(--grey-100);">Business activity</td><td style="text-align:center;padding:10px 8px;border-bottom:1px solid var(--grey-100);color:var(--green);">✓ Pass</td><td style="text-align:center;padding:10px 8px;border-bottom:1px solid var(--grey-100);color:var(--green);">✓ Pass</td></tr>
+                  <tr><td style="padding:10px 8px;font-size:13px;border-bottom:1px solid var(--grey-100);">Interest income</td><td style="text-align:center;padding:10px 8px;border-bottom:1px solid var(--grey-100);">0.8%</td><td style="text-align:center;padding:10px 8px;border-bottom:1px solid var(--grey-100);">1.2%</td></tr>
+                  <tr><td style="padding:10px 8px;font-size:13px;border-bottom:1px solid var(--grey-100);">Debt ratio</td><td style="text-align:center;padding:10px 8px;border-bottom:1px solid var(--grey-100);">18%</td><td style="text-align:center;padding:10px 8px;border-bottom:1px solid var(--grey-100);">11%</td></tr>
+                  <tr><td style="padding:10px 8px;font-size:13px;">Purification/share</td><td style="text-align:center;padding:10px 8px;">£0.04</td><td style="text-align:center;padding:10px 8px;">£0.07</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="plus-lock-overlay" id="compareLock">
+              <div class="plus-lock-content">
+                <div style="font-size:32px;margin-bottom:8px;">⚖️</div>
+                <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:var(--black);margin-bottom:6px;">Full comparison</div>
+                <div style="font-size:13px;color:var(--grey-500);margin-bottom:16px;">See the full side-by-side ratio breakdown with Nuvara Plus.</div>
+                <button onclick="showPlusSignup()" class="btn-green" style="width:100%;padding:12px;">Join early access — free 30 days →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTOR SCREENER PAGE -->
+  <div id="page-sectors" style="display:none;">
+    <div class="page-header">
+      <div>
+        <div class="page-title">🔎 Sector Screener</div>
+        <div class="page-subtitle">Find halal stocks by sector</div>
+      </div>
+      <div style="background:rgba(10,124,92,0.2);color:#6EE7B7;font-size:11px;font-weight:700;padding:5px 12px;border-radius:100px;">🚀 Nuvara Plus Preview</div>
+    </div>
+    <div class="page-content">
+      <div class="card">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+          <button onclick="screenSector('Technology',this)" class="sector-btn" style="padding:8px 14px;border:1.5px solid var(--grey-200);border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:none;color:var(--grey-500);">💻 Technology</button>
+          <button onclick="screenSector('Pharmaceuticals',this)" class="sector-btn" style="padding:8px 14px;border:1.5px solid var(--grey-200);border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:none;color:var(--grey-500);">💊 Pharma</button>
+          <button onclick="screenSector('Mining',this)" class="sector-btn" style="padding:8px 14px;border:1.5px solid var(--grey-200);border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:none;color:var(--grey-500);">⛏️ Mining</button>
+          <button onclick="screenSector('Consumer Goods',this)" class="sector-btn" style="padding:8px 14px;border:1.5px solid var(--grey-200);border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:none;color:var(--grey-500);">🛍️ Consumer</button>
+          <button onclick="screenSector('Energy',this)" class="sector-btn" style="padding:8px 14px;border:1.5px solid var(--grey-200);border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:none;color:var(--grey-500);">⚡ Energy</button>
+          <button onclick="screenSector('Retail',this)" class="sector-btn" style="padding:8px 14px;border:1.5px solid var(--grey-200);border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:none;color:var(--grey-500);">🏪 Retail</button>
+          <button onclick="screenSector('Telecommunications',this)" class="sector-btn" style="padding:8px 14px;border:1.5px solid var(--grey-200);border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:none;color:var(--grey-500);">📡 Telecom</button>
+        </div>
+
+        <div id="sectorResults"></div>
+
+        <!-- LOCK after 5 results -->
+        <div id="sectorLock" style="display:none;position:relative;margin-top:16px;">
+          <div class="plus-lock-overlay" style="position:relative;border-radius:16px;">
+            <div class="plus-lock-content">
+              <div style="font-size:32px;margin-bottom:8px;">🔎</div>
+              <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:var(--black);margin-bottom:6px;">See all results</div>
+              <div style="font-size:13px;color:var(--grey-500);margin-bottom:16px;">You're seeing 5 of <span id="sectorTotal"></span> stocks in this sector. Unlock all results with Nuvara Plus.</div>
+              <button onclick="showPlusSignup()" class="btn-green" style="width:100%;padding:12px;">Join early access — free 30 days →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NUVARA PLUS EARLY ACCESS MODAL -->
+<div id="plusModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:white;border-radius:20px;padding:32px;max-width:400px;width:100%;position:relative;text-align:center;">
+    <button onclick="closePlusModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;color:#94A3B8;cursor:pointer;">×</button>
+    <div style="font-size:40px;margin-bottom:12px;">🚀</div>
+    <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--black);margin-bottom:8px;">Nuvara Plus</div>
+    <div style="font-size:14px;color:var(--grey-500);line-height:1.7;margin-bottom:20px;">Join the early access list and get <strong>30 days free</strong> when we launch at £4.99/month.</div>
+    <div style="display:grid;gap:8px;text-align:left;margin-bottom:20px;">
+      <div style="display:flex;gap:10px;font-size:13px;color:var(--grey-700);"><span style="color:var(--green);font-weight:700;">✓</span> Portfolio halal score with improvement tips</div>
+      <div style="display:flex;gap:10px;font-size:13px;color:var(--grey-700);"><span style="color:var(--green);font-weight:700;">✓</span> Annual purification tracker & export</div>
+      <div style="display:flex;gap:10px;font-size:13px;color:var(--grey-700);"><span style="color:var(--green);font-weight:700;">✓</span> Downloadable zakat PDF report</div>
+      <div style="display:flex;gap:10px;font-size:13px;color:var(--grey-700);"><span style="color:var(--green);font-weight:700;">✓</span> Full stock comparison tool</div>
+      <div style="display:flex;gap:10px;font-size:13px;color:var(--grey-700);"><span style="color:var(--green);font-weight:700;">✓</span> Unlimited sector screener</div>
+      <div style="display:flex;gap:10px;font-size:13px;color:var(--grey-700);"><span style="color:var(--green);font-weight:700;">✓</span> AAOIFI vs Dow Jones methodology</div>
+      <div style="display:flex;gap:10px;font-size:13px;color:var(--grey-700);"><span style="color:var(--green);font-weight:700;">✓</span> Screening alerts when verdicts change</div>
+    </div>
+    <input class="app-input" id="plusEmail" type="email" placeholder="Your email address" style="width:100%;margin-bottom:10px;" />
+    <button onclick="joinPlusWaitlist()" class="btn-green" style="width:100%;padding:14px;font-size:15px;">Join early access →</button>
+    <div id="plusMsg" class="msg" style="margin-top:10px;"></div>
+    <div style="font-size:11px;color:#94A3B8;margin-top:12px;">No payment required now. We'll email you when Plus launches.</div>
+  </div>
+</div>
+
 <div id="alertModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:20px;">
   <div style="background:white;border-radius:20px;padding:28px;max-width:380px;width:100%;position:relative;">
     <button onclick="closeAlertModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;color:#94A3B8;cursor:pointer;">×</button>
@@ -680,8 +970,9 @@ function toggleSidebar() {
 
 // PAGE SWITCHING
 function switchPage(page, el) {
-  ['scanner','portfolio','watchlist','simulator','directory'].forEach(p => {
-    document.getElementById('page-' + p).style.display = p === page ? 'block' : 'none';
+  ['scanner','portfolio','watchlist','simulator','directory','halalScore','purification','zakatReport','compare','sectors'].forEach(p => {
+    const el = document.getElementById('page-' + p);
+    if (el) el.style.display = p === page ? 'block' : 'none';
   });
   document.querySelectorAll('.nav-item:not(.disabled), .mobile-nav-btn').forEach(i => i.classList.remove('active'));
   if (el) el.classList.add('active');
@@ -689,6 +980,9 @@ function switchPage(page, el) {
     if (i.getAttribute('onclick') && i.getAttribute('onclick').includes("'" + page + "'")) i.classList.add('active');
   });
   if (page === 'directory') renderDirectory();
+  if (page === 'halalScore') calculateHalalScore();
+  if (page === 'purification') calculatePurification();
+  if (page === 'zakatReport') calculateZakatReport();
 }
 
 // SCANNER
@@ -1447,11 +1741,25 @@ function openAlertModal(ticker) {
   const s = stocks[ticker] || { name: ticker };
   const currentPrice = priceCache[ticker];
   const modal = document.getElementById('alertModal');
-  modal.style.cssText = 'display:flex;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:20px;';
+  modal.style.display = 'flex';
+  modal.style.position = 'fixed';
+  modal.style.inset = '0';
+  modal.style.zIndex = '9999';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
+  modal.style.padding = '20px';
+  modal.style.background = 'rgba(0,0,0,0.5)';
   document.getElementById('alertModalTitle').textContent = ticker + ' — ' + s.name;
   document.getElementById('alertCurrentPrice').textContent = currentPrice ? 'Current price: £' + currentPrice.toFixed(2) : '';
   document.getElementById('alertPrice').value = '';
   document.getElementById('alertMsg').style.display = 'none';
+  // Reset alert type buttons
+  document.getElementById('alertBelow').style.background = 'var(--green)';
+  document.getElementById('alertBelow').style.color = 'white';
+  document.getElementById('alertBelow').style.borderColor = 'var(--green)';
+  document.getElementById('alertAbove').style.background = 'none';
+  document.getElementById('alertAbove').style.color = 'var(--grey-500)';
+  document.getElementById('alertAbove').style.borderColor = 'var(--grey-200)';
   loadExistingAlerts(ticker);
 }
 
@@ -1611,6 +1919,187 @@ function updateRightPanel() {
 
   const rpTip = document.getElementById('rpTip');
   if (rpTip) rpTip.textContent = halalTips[Math.floor(Math.random() * halalTips.length)];
+}
+
+// NUVARA PLUS
+function showPlusSignup() {
+  const modal = document.getElementById('plusModal');
+  modal.style.cssText = 'display:flex;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;padding:20px;';
+  // Pre-fill email if logged in
+  if (currentUser) document.getElementById('plusEmail').value = currentUser.email;
+}
+
+function closePlusModal() {
+  document.getElementById('plusModal').style.display = 'none';
+}
+
+async function joinPlusWaitlist() {
+  const email = document.getElementById('plusEmail').value.trim();
+  const msg = document.getElementById('plusMsg');
+  msg.style.display = 'none';
+  if (!email || !email.includes('@')) { msg.textContent = 'Please enter a valid email.'; msg.className = 'msg error'; return; }
+
+  // Subscribe to Beehiiv with Plus tag
+  try {
+    const iframe = document.createElement('iframe');
+    iframe.name = 'plus_beehiiv';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://app.beehiiv.com/subscribe';
+    form.target = 'plus_beehiiv';
+    form.style.display = 'none';
+    [['publication_id','pub_82bb9d91-11eb-4b9f-a388-87ead251a68a'],['email',email],['utm_source','nuvara_plus_waitlist']].forEach(([n,v]) => {
+      const i = document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; form.appendChild(i);
+    });
+    document.body.appendChild(form);
+    form.submit();
+  } catch(e) {}
+
+  msg.textContent = '✓ You\'re on the list! We\'ll email you when Nuvara Plus launches with your 30 days free.';
+  msg.className = 'msg success';
+  document.getElementById('plusEmail').value = '';
+}
+
+// HALAL SCORE
+function calculateHalalScore() {
+  if (!holdings.length) {
+    document.getElementById('scoreNumber').textContent = '--';
+    document.getElementById('scoreLabel').textContent = 'Add holdings to see your score';
+    return;
+  }
+
+  const totalValue = holdings.reduce((s, h) => s + (h.shares * h.avg_price), 0);
+  let halalValue = 0, haramValue = 0, doubtfulValue = 0;
+
+  holdings.forEach(h => {
+    const s = stocks[h.ticker] || { verdict: 'doubtful' };
+    const val = h.shares * h.avg_price;
+    if (s.verdict === 'halal') halalValue += val;
+    else if (s.verdict === 'haram') haramValue += val;
+    else doubtfulValue += val;
+  });
+
+  const score = totalValue > 0 ? Math.round(((halalValue + doubtfulValue * 0.5) / totalValue) * 100) : 0;
+  const halalPct = totalValue > 0 ? Math.round((halalValue / totalValue) * 100) : 0;
+  const haramPct = totalValue > 0 ? Math.round((haramValue / totalValue) * 100) : 0;
+  const doubtfulPct = 100 - halalPct - haramPct;
+
+  document.getElementById('scoreNumber').textContent = score;
+  document.getElementById('scoreLabel').textContent = score >= 90 ? '🟢 Excellent — very strong halal portfolio' : score >= 70 ? '🟡 Good — minor concerns to address' : score >= 50 ? '🟠 Fair — some haram exposure to resolve' : '🔴 Poor — significant haram holdings';
+
+  // Animate circle
+  const circumference = 440;
+  const offset = circumference - (score / 100) * circumference;
+  document.getElementById('scoreCircle').style.strokeDashoffset = offset;
+  document.getElementById('scoreCircle').style.stroke = score >= 90 ? '#0A7C5C' : score >= 70 ? '#F59E0B' : '#EF4444';
+
+  document.getElementById('scoreBreakdown').innerHTML = [
+    { label: '✓ Halal', pct: halalPct, color: 'var(--green-subtle)', border: 'var(--green-light)', text: 'var(--green-dark)' },
+    { label: '⚠ Doubtful', pct: doubtfulPct, color: '#FFFBEB', border: '#FDE68A', text: '#92400E' },
+    { label: '✕ Haram', pct: haramPct, color: '#FEF2F2', border: '#FECACA', text: 'var(--red)' },
+  ].map(b => '<div style="background:' + b.color + ';border:1.5px solid ' + b.border + ';border-radius:12px;padding:14px;text-align:center;"><div style="font-size:11px;color:' + b.text + ';font-weight:700;margin-bottom:4px;">' + b.label + '</div><div style="font-family:Sora,sans-serif;font-size:22px;font-weight:800;color:' + b.text + ';">' + b.pct + '%</div></div>').join('');
+}
+
+// PURIFICATION TRACKER
+function calculatePurification() {
+  const totalPurif = holdings.reduce((s, h) => {
+    const stock = stocks[h.ticker] || { purif: 0 };
+    return s + ((stock.purif || 0) * h.shares);
+  }, 0);
+
+  document.getElementById('purMonthly').textContent = '£' + (totalPurif / 12).toFixed(2);
+
+  const holdingsHtml = holdings.map(h => {
+    const s = stocks[h.ticker] || { name: h.ticker, purif: 0, verdict: 'unknown' };
+    const purif = (s.purif || 0) * h.shares;
+    if (purif === 0) return '';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--grey-100);">' +
+      '<div><div style="font-weight:600;font-size:14px;">' + h.ticker + '</div><div style="font-size:12px;color:var(--grey-500);">' + h.shares + ' shares × £' + (s.purif || 0).toFixed(2) + '/share</div></div>' +
+      '<div style="font-weight:700;color:var(--green);">£' + purif.toFixed(2) + '/yr</div>' +
+      '</div>';
+  }).filter(Boolean).join('');
+
+  document.getElementById('purHoldings').innerHTML = holdingsHtml || '<div class="empty">No purification required for current holdings.</div>';
+}
+
+// ZAKAT REPORT
+function calculateZakatReport() {
+  const portfolioValue = holdings.reduce((s, h) => {
+    const price = priceCache[h.ticker] || h.avg_price;
+    return s + (h.shares * price);
+  }, 0);
+
+  const nisab = 4500;
+  const zakatableWealth = Math.max(0, portfolioValue - nisab);
+  const zakatDue = zakatableWealth * 0.025;
+
+  document.getElementById('zakatReportAmount').textContent = portfolioValue > nisab ? '£' + zakatDue.toFixed(2) : '£0.00 — below nisab';
+
+  const breakdown = holdings.map(h => {
+    const price = priceCache[h.ticker] || h.avg_price;
+    const value = h.shares * price;
+    const zakat = value > 0 ? value * 0.025 : 0;
+    return '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--grey-100);font-size:13px;">' +
+      '<div><strong>' + h.ticker + '</strong> <span style="color:var(--grey-500);">' + h.shares + ' shares</span></div>' +
+      '<div style="text-align:right;"><div>£' + value.toFixed(2) + '</div><div style="color:var(--green);font-size:11px;">Zakat: £' + zakat.toFixed(2) + '</div></div>' +
+      '</div>';
+  }).join('');
+
+  document.getElementById('zakatReportBreakdown').innerHTML = breakdown || '<div class="empty">No holdings to calculate zakat on.</div>';
+}
+
+// STOCK COMPARISON
+function runComparison() {
+  const t1 = document.getElementById('compare1').value.trim().toUpperCase();
+  const t2 = document.getElementById('compare2').value.trim().toUpperCase();
+  if (!t1 || !t2) return;
+
+  const s1 = findStock(t1) || { name: t1, verdict: 'unknown', ticker: t1 };
+  const s2 = findStock(t2) || { name: t2, verdict: 'unknown', ticker: t2 };
+
+  const pill = (s) => {
+    const cls = s.verdict === 'halal' ? 'halal-pill' : s.verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
+    const txt = s.verdict === 'halal' ? '✓ Halal' : s.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
+    return '<span class="verdict-pill ' + cls + '" style="padding:6px 12px;font-size:13px;">' + txt + '</span>';
+  };
+
+  document.getElementById('compareBasic').innerHTML = [s1, s2].map(s =>
+    '<div style="background:var(--grey-100);border-radius:12px;padding:16px;text-align:center;">' +
+    '<div style="font-family:Sora,sans-serif;font-size:18px;font-weight:800;margin-bottom:4px;">' + s.ticker + '</div>' +
+    '<div style="font-size:12px;color:var(--grey-500);margin-bottom:10px;">' + s.name + '</div>' +
+    pill(s) + '</div>'
+  ).join('');
+
+  document.getElementById('compareResults').style.display = 'block';
+  document.getElementById('compareLock').style.display = 'flex';
+}
+
+// SECTOR SCREENER
+function screenSector(sector, el) {
+  document.querySelectorAll('.sector-btn').forEach(b => {
+    b.style.background = 'none'; b.style.color = 'var(--grey-500)'; b.style.borderColor = 'var(--grey-200)';
+  });
+  el.style.background = 'var(--green)'; el.style.color = 'white'; el.style.borderColor = 'var(--green)';
+
+  const results = Object.entries(stocks).filter(([k, s]) => s.sector && s.sector.toLowerCase().includes(sector.toLowerCase()) && s.verdict === 'halal');
+  const total = results.length;
+  const preview = results.slice(0, 5);
+
+  document.getElementById('sectorResults').innerHTML = preview.map(([ticker, s]) =>
+    '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--grey-100);">' +
+    '<div><strong style="font-size:14px;">' + ticker + '</strong> <span style="font-size:12px;color:var(--grey-500);">' + s.name + '</span></div>' +
+    '<span class="verdict-pill halal-pill">✓ Halal</span>' +
+    '</div>'
+  ).join('');
+
+  if (total > 5) {
+    document.getElementById('sectorTotal').textContent = total;
+    document.getElementById('sectorLock').style.display = 'block';
+  } else {
+    document.getElementById('sectorLock').style.display = 'none';
+  }
 }
 
 // INIT
