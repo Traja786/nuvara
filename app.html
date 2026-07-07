@@ -1446,7 +1446,8 @@ function openAlertModal(ticker) {
   alertType = 'below';
   const s = stocks[ticker] || { name: ticker };
   const currentPrice = priceCache[ticker];
-  document.getElementById('alertModal').style.display = 'flex';
+  const modal = document.getElementById('alertModal');
+  modal.style.cssText = 'display:flex;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:20px;';
   document.getElementById('alertModalTitle').textContent = ticker + ' — ' + s.name;
   document.getElementById('alertCurrentPrice').textContent = currentPrice ? 'Current price: £' + currentPrice.toFixed(2) : '';
   document.getElementById('alertPrice').value = '';
@@ -1577,7 +1578,7 @@ function updateRightPanel() {
   }
 
   const markets = [
-    { name: 'FTSE 100', ticker: 'ISF' },
+    { name: 'FTSE 100', ticker: 'ISF.L' },
     { name: 'S&P 500', ticker: 'SPY' },
     { name: 'HLAL ETF', ticker: 'HLAL' },
   ];
@@ -1585,16 +1586,27 @@ function updateRightPanel() {
   const rpMarket = document.getElementById('rpMarket');
   if (rpMarket) {
     rpMarket.innerHTML = markets.map(m => {
-      const pd = priceDataCache[m.ticker];
+      const pd = priceDataCache[m.ticker] || (priceCache[m.ticker] ? { price: priceCache[m.ticker], change: null, changePct: null } : null);
       if (!pd) return '<div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid var(--grey-100);"><span style="color:var(--grey-500);">' + m.name + '</span><span style="color:var(--grey-400);">Loading...</span></div>';
+      const hasChange = pd.changePct !== null && pd.changePct !== undefined;
       const isUp = pd.change >= 0;
       const sign = isUp ? '+' : '';
-      return '<div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid var(--grey-100);">' +
+      return '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:6px 0;border-bottom:1px solid var(--grey-100);">' +
         '<span style="color:var(--grey-700);font-weight:500;">' + m.name + '</span>' +
-        '<span style="color:' + (isUp ? 'var(--green)' : 'var(--red)') + ';font-weight:700;">' + sign + (pd.changePct || 0).toFixed(2) + '%</span>' +
+        '<div style="text-align:right;">' +
+        '<div style="font-weight:700;color:var(--black);">£' + (pd.price || 0).toFixed(2) + '</div>' +
+        (hasChange ? '<div style="font-size:10px;color:' + (isUp ? 'var(--green)' : 'var(--red)') + ';">' + sign + pd.changePct.toFixed(2) + '%</div>' : '') +
+        '</div>' +
         '</div>';
     }).join('');
-    markets.forEach(m => { if (!priceDataCache[m.ticker]) getLivePrice(m.ticker).then(() => { const rpM = document.getElementById('rpMarket'); if (rpM) updateRightPanel(); }); });
+    markets.forEach(m => { 
+      if (!priceCache[m.ticker]) {
+        getLivePrice(m.ticker).then(() => { 
+          const rpM = document.getElementById('rpMarket'); 
+          if (rpM) updateRightPanel(); 
+        }); 
+      }
+    });
   }
 
   const rpTip = document.getElementById('rpTip');
