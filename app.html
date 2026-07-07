@@ -457,6 +457,32 @@ tr:last-child td { border-bottom: none; }
   </div>
 
 </div>
+<!-- PRICE ALERT MODAL -->
+<div id="alertModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:white;border-radius:20px;padding:28px;max-width:380px;width:100%;position:relative;">
+    <button onclick="closeAlertModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;color:#94A3B8;cursor:pointer;">×</button>
+    <div style="font-size:24px;margin-bottom:8px;">🔔</div>
+    <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:var(--black);margin-bottom:4px;" id="alertModalTitle"></div>
+    <div style="font-size:13px;color:var(--grey-500);margin-bottom:20px;">Get an email when this stock hits your target price.</div>
+
+    <div style="margin-bottom:16px;">
+      <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:6px;">Alert me when price is</label>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <button onclick="setAlertType('below',this)" id="alertBelow" style="flex:1;padding:10px;border:1.5px solid var(--green);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:var(--green);color:white;">📉 Below</button>
+        <button onclick="setAlertType('above',this)" id="alertAbove" style="flex:1;padding:10px;border:1.5px solid var(--grey-200);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;background:none;color:var(--grey-500);">📈 Above</button>
+      </div>
+      <label style="font-size:12px;font-weight:600;color:var(--grey-700);display:block;margin-bottom:6px;">Target price (£)</label>
+      <input class="app-input" id="alertPrice" type="number" step="0.01" placeholder="e.g. 150.00" style="width:100%;" />
+      <div style="font-size:11px;color:#94A3B8;margin-top:6px;" id="alertCurrentPrice"></div>
+    </div>
+
+    <button onclick="saveAlert()" class="btn-green" style="width:100%;padding:13px;font-size:14px;">Set alert →</button>
+    <div id="alertMsg" class="msg" style="margin-top:10px;"></div>
+
+    <div id="existingAlerts" style="margin-top:16px;"></div>
+  </div>
+</div>
+
 <div class="mobile-nav">
   <div class="mobile-nav-items">
     <button class="mobile-nav-btn active" onclick="switchPage('scanner',this)"><span>🔍</span><span>Scanner</span></button>
@@ -995,6 +1021,7 @@ function renderWatchlist() {
       priceHtml +
       '<div style="display:flex;gap:6px;">' +
       '<button onclick="quickScanFromWatch(\'' + w.ticker + '\')" style="background:white;border:1px solid var(--grey-200);color:var(--grey-700);padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">Screen</button>' +
+      '<button onclick="openAlertModal(\'' + w.ticker + '\')" style="background:white;border:1px solid var(--grey-200);color:var(--grey-700);padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">🔔 Alert</button>' +
       '<button onclick="removeWatch(\'' + w.id + '\')" style="background:none;border:1px solid var(--grey-200);color:var(--grey-500);padding:5px 8px;border-radius:7px;font-size:14px;cursor:pointer;line-height:1;">×</button>' +
       '</div>' +
       '</div>' +
@@ -1313,6 +1340,91 @@ function goToScan(ticker) {
   switchPage('scanner');
   document.getElementById('scanInput').value = ticker;
   runScan();
+}
+
+// PRICE ALERTS
+let alertTicker = null;
+let alertType = 'below';
+let existingAlerts = [];
+
+function openAlertModal(ticker) {
+  alertTicker = ticker;
+  alertType = 'below';
+  const s = stocks[ticker] || { name: ticker };
+  const currentPrice = priceCache[ticker];
+  document.getElementById('alertModal').style.display = 'flex';
+  document.getElementById('alertModalTitle').textContent = ticker + ' — ' + s.name;
+  document.getElementById('alertCurrentPrice').textContent = currentPrice ? 'Current price: £' + currentPrice.toFixed(2) : '';
+  document.getElementById('alertPrice').value = '';
+  document.getElementById('alertMsg').style.display = 'none';
+  loadExistingAlerts(ticker);
+}
+
+function closeAlertModal() {
+  document.getElementById('alertModal').style.display = 'none';
+  alertTicker = null;
+}
+
+function setAlertType(type, el) {
+  alertType = type;
+  document.querySelectorAll('#alertBelow, #alertAbove').forEach(b => {
+    b.style.background = 'none';
+    b.style.color = 'var(--grey-500)';
+    b.style.borderColor = 'var(--grey-200)';
+  });
+  el.style.background = 'var(--green)';
+  el.style.color = 'white';
+  el.style.borderColor = 'var(--green)';
+}
+
+async function saveAlert() {
+  const price = parseFloat(document.getElementById('alertPrice').value);
+  const msg = document.getElementById('alertMsg');
+  msg.style.display = 'none';
+
+  if (!price || price <= 0) {
+    msg.textContent = 'Please enter a valid target price.';
+    msg.className = 'msg error';
+    return;
+  }
+
+  const { error } = await db.from('price_alerts').insert({
+    user_id: currentUser.id,
+    ticker: alertTicker,
+    target_price: price,
+    alert_type: alertType,
+    email: currentUser.email,
+    triggered: false
+  });
+
+  if (error) {
+    msg.textContent = 'Error saving alert: ' + error.message;
+    msg.className = 'msg error';
+    return;
+  }
+
+  msg.textContent = '✓ Alert set! We\'ll email you at ' + currentUser.email + ' when ' + alertTicker + ' goes ' + alertType + ' £' + price.toFixed(2);
+  msg.className = 'msg success';
+  document.getElementById('alertPrice').value = '';
+  loadExistingAlerts(alertTicker);
+}
+
+async function loadExistingAlerts(ticker) {
+  const { data } = await db.from('price_alerts').select('*').eq('user_id', currentUser.id).eq('ticker', ticker).eq('triggered', false);
+  const container = document.getElementById('existingAlerts');
+  if (!data || !data.length) { container.innerHTML = ''; return; }
+
+  container.innerHTML = '<div style="font-size:12px;font-weight:600;color:var(--grey-700);margin-bottom:8px;">Active alerts</div>' +
+    data.map(a => '<div style="display:flex;justify-content:space-between;align-items:center;background:var(--grey-100);border-radius:8px;padding:10px 12px;margin-bottom:6px;">' +
+      '<div style="font-size:13px;">' + (a.alert_type === 'below' ? '📉' : '📈') + ' ' + a.alert_type + ' £' + parseFloat(a.target_price).toFixed(2) + '</div>' +
+      '<button onclick="deleteAlert(\'' + a.id + '\')" style="background:none;border:none;color:var(--grey-500);font-size:16px;cursor:pointer;">×</button>' +
+      '</div>'
+    ).join('');
+}
+
+async function deleteAlert(id) {
+  await db.from('price_alerts').delete().eq('id', id);
+  loadExistingAlerts(alertTicker);
 }
 
 // INIT
