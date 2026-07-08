@@ -504,78 +504,6 @@ tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
-</div>
-<!-- RIGHT STATS PANEL -->
-<div class="right-panel" id="rightPanel">
-
-  <!-- HEADER -->
-  <div style="display:flex;justify-content:space-between;align-items:center;">
-    <div style="font-size:11px;font-weight:700;color:var(--grey-500);text-transform:uppercase;letter-spacing:0.5px;">Overview</div>
-    <button onclick="toggleRightPanel()" style="background:none;border:none;color:var(--grey-400);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" title="Minimise">▶</button>
-  </div>
-
-  <!-- PORTFOLIO SNAPSHOT -->
-  <div>
-    <div class="right-panel-title">Your portfolio</div>
-    <div id="rpPortfolioValue" style="font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:var(--black);">£0.00</div>
-    <div id="rpPortfolioPnl" style="font-size:13px;color:var(--grey-500);margin-top:2px;">No holdings yet</div>
-  </div>
-
-  <div style="height:1px;background:var(--grey-200);"></div>
-
-  <!-- MARKET PULSE -->
-  <div>
-    <div class="right-panel-title">Market pulse</div>
-    <div id="rpMarket" style="display:grid;gap:2px;">
-      <div style="font-size:12px;color:var(--grey-500);">Loading...</div>
-    </div>
-  </div>
-
-  <div style="height:1px;background:var(--grey-200);"></div>
-
-  <!-- ZAKAT REMINDER -->
-  <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:12px;padding:14px;">
-    <div style="font-size:11px;font-weight:700;color:var(--green-dark);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">☪️ Zakat reminder</div>
-    <div style="font-size:13px;color:var(--grey-700);line-height:1.6;">If your portfolio exceeds £4,500 and you've held it for one lunar year, zakat of 2.5% is due.</div>
-    <button onclick="switchPage('simulator');switchSimTab('zakat',document.querySelector('.sim-tab:last-child'))" style="margin-top:10px;background:var(--green);color:white;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;width:100%;">Calculate zakat →</button>
-  </div>
-
-  <div style="height:1px;background:var(--grey-200);"></div>
-
-  <!-- HALAL TIP -->
-  <div>
-    <div class="right-panel-title">Did you know?</div>
-    <div id="rpTip" style="font-size:13px;color:var(--grey-600);line-height:1.7;"></div>
-  </div>
-
-  <div style="height:1px;background:var(--grey-200);"></div>
-
-  <!-- AFFILIATE BANNER -->
-  <div>
-    <div class="right-panel-title">Ready to invest?</div>
-    <div style="display:grid;gap:8px;">
-      <a href="https://wahedinvest.com" target="_blank" rel="noopener" style="display:block;background:#0F172A;border-radius:10px;padding:12px 14px;text-decoration:none;">
-        <div style="font-size:12px;font-weight:700;color:white;margin-bottom:2px;">☪️ Wahed Invest</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.5);">Shariah-certified portfolios →</div>
-      </a>
-      <a href="https://investengine.com/referral/u/kk9r83/" target="_blank" rel="noopener" style="display:block;background:#2563EB;border-radius:10px;padding:12px 14px;text-decoration:none;">
-        <div style="font-size:12px;font-weight:700;color:white;margin-bottom:2px;">📊 InvestEngine</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.5);">Commission-free ETFs →</div>
-      </a>
-      <a href="https://freetrade.io" target="_blank" rel="noopener" style="display:block;background:#F59E0B;border-radius:10px;padding:12px 14px;text-decoration:none;">
-        <div style="font-size:12px;font-weight:700;color:white;margin-bottom:2px;">📈 Freetrade</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.5);">Zero commission trading →</div>
-      </a>
-    </div>
-    <div style="font-size:10px;color:#94A3B8;margin-top:8px;">We may earn a referral fee. Always screen stocks with Nuvara first.</div>
-  </div>
-
-</div>
-
-<!-- COLLAPSED TAB -->
-<div id="rightPanelTab" style="display:none;position:fixed;right:0;top:50%;transform:translateY(-50%);background:var(--navy);color:rgba(255,255,255,0.7);padding:12px 6px;border-radius:8px 0 0 8px;cursor:pointer;z-index:150;writing-mode:vertical-rl;font-size:11px;font-weight:600;letter-spacing:0.5px;" onclick="toggleRightPanel()">
-  Overview ▶
-</div>
 
   <!-- HALAL SCORE PAGE -->
   <div id="page-halalScore" style="display:none;">
@@ -804,7 +732,79 @@ tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
+
 </div>
+<!-- RIGHT STATS PANEL -->
+<div class="right-panel" id="rightPanel">
+
+  <!-- HEADER -->
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-size:11px;font-weight:700;color:var(--grey-500);text-transform:uppercase;letter-spacing:0.5px;">Overview</div>
+    <button onclick="toggleRightPanel()" style="background:none;border:none;color:var(--grey-400);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;" title="Minimise">▶</button>
+  </div>
+
+  <!-- PORTFOLIO SNAPSHOT -->
+  <div>
+    <div class="right-panel-title">Your portfolio</div>
+    <div id="rpPortfolioValue" style="font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:var(--black);">£0.00</div>
+    <div id="rpPortfolioPnl" style="font-size:13px;color:var(--grey-500);margin-top:2px;">No holdings yet</div>
+  </div>
+
+  <div style="height:1px;background:var(--grey-200);"></div>
+
+  <!-- MARKET PULSE -->
+  <div>
+    <div class="right-panel-title">Market pulse</div>
+    <div id="rpMarket" style="display:grid;gap:2px;">
+      <div style="font-size:12px;color:var(--grey-500);">Loading...</div>
+    </div>
+  </div>
+
+  <div style="height:1px;background:var(--grey-200);"></div>
+
+  <!-- ZAKAT REMINDER -->
+  <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:12px;padding:14px;">
+    <div style="font-size:11px;font-weight:700;color:var(--green-dark);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">☪️ Zakat reminder</div>
+    <div style="font-size:13px;color:var(--grey-700);line-height:1.6;">If your portfolio exceeds £4,500 and you've held it for one lunar year, zakat of 2.5% is due.</div>
+    <button onclick="switchPage('simulator');switchSimTab('zakat',document.querySelector('.sim-tab:last-child'))" style="margin-top:10px;background:var(--green);color:white;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;width:100%;">Calculate zakat →</button>
+  </div>
+
+  <div style="height:1px;background:var(--grey-200);"></div>
+
+  <!-- HALAL TIP -->
+  <div>
+    <div class="right-panel-title">Did you know?</div>
+    <div id="rpTip" style="font-size:13px;color:var(--grey-600);line-height:1.7;"></div>
+  </div>
+
+  <div style="height:1px;background:var(--grey-200);"></div>
+
+  <!-- AFFILIATE BANNER -->
+  <div>
+    <div class="right-panel-title">Ready to invest?</div>
+    <div style="display:grid;gap:8px;">
+      <a href="https://wahedinvest.com" target="_blank" rel="noopener" style="display:block;background:#0F172A;border-radius:10px;padding:12px 14px;text-decoration:none;">
+        <div style="font-size:12px;font-weight:700;color:white;margin-bottom:2px;">☪️ Wahed Invest</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);">Shariah-certified portfolios →</div>
+      </a>
+      <a href="https://investengine.com/referral/u/kk9r83/" target="_blank" rel="noopener" style="display:block;background:#2563EB;border-radius:10px;padding:12px 14px;text-decoration:none;">
+        <div style="font-size:12px;font-weight:700;color:white;margin-bottom:2px;">📊 InvestEngine</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);">Commission-free ETFs →</div>
+      </a>
+      <a href="https://freetrade.io" target="_blank" rel="noopener" style="display:block;background:#F59E0B;border-radius:10px;padding:12px 14px;text-decoration:none;">
+        <div style="font-size:12px;font-weight:700;color:white;margin-bottom:2px;">📈 Freetrade</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);">Zero commission trading →</div>
+      </a>
+    </div>
+    <div style="font-size:10px;color:#94A3B8;margin-top:8px;">We may earn a referral fee. Always screen stocks with Nuvara first.</div>
+  </div>
+
+</div>
+
+<!-- COLLAPSED TAB -->
+<div id="rightPanelTab" style="display:none;position:fixed;right:0;top:50%;transform:translateY(-50%);background:var(--navy);color:rgba(255,255,255,0.7);padding:12px 6px;border-radius:8px 0 0 8px;cursor:pointer;z-index:150;writing-mode:vertical-rl;font-size:11px;font-weight:600;letter-spacing:0.5px;" onclick="toggleRightPanel()">
+  Overview ▶
+</div></div>
 
 <!-- NUVARA PLUS EARLY ACCESS MODAL -->
 <div id="plusModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;padding:20px;">
@@ -2203,12 +2203,14 @@ function screenSector(sector, el) {
 
 // GLOBAL DELEGATED EVENTS FOR WATCHLIST BUTTONS
 document.addEventListener('click', function(e) {
-  const alertBtn = e.target.closest('[data-action="alert"]');
-  const screenBtn = e.target.closest('[data-action="screen"]');
-  const removeBtn = e.target.closest('[data-action="remove"]');
-  if (alertBtn) openAlertModal(alertBtn.dataset.ticker);
-  if (screenBtn) quickScanFromWatch(screenBtn.dataset.ticker);
-  if (removeBtn) removeWatch(removeBtn.dataset.id);
+  const btn = e.target.closest('button[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const ticker = btn.dataset.ticker;
+  const id = btn.dataset.id;
+  if (action === 'alert' && ticker) { e.preventDefault(); e.stopPropagation(); openAlertModal(ticker); }
+  if (action === 'screen' && ticker) { e.preventDefault(); quickScanFromWatch(ticker); }
+  if (action === 'remove' && id) { e.preventDefault(); removeWatch(id); }
 });
 
 // INIT
