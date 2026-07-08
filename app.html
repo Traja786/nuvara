@@ -1507,9 +1507,9 @@ function renderWatchlist() {
       '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;margin-left:16px;">' +
       priceHtml +
       '<div style="display:flex;gap:6px;">' +
-      '<button data-ticker="' + w.ticker + '" onclick="quickScanFromWatch(this.dataset.ticker)" style="background:white;border:1px solid var(--grey-200);color:var(--grey-700);padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">Screen</button>' +
-      '<button data-ticker="' + w.ticker + '" onclick="openAlertModal(this.dataset.ticker)" style="background:white;border:1px solid var(--grey-200);color:var(--grey-700);padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">🔔 Alert</button>' +
-      '<button data-id="' + w.id + '" onclick="removeWatch(this.dataset.id)" style="background:none;border:1px solid var(--grey-200);color:var(--grey-500);padding:5px 8px;border-radius:7px;font-size:14px;cursor:pointer;line-height:1;">×</button>' +
+      '<button data-action="screen" data-ticker="' + w.ticker + '" style="background:white;border:1px solid var(--grey-200);color:var(--grey-700);padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">Screen</button>' +
+      '<button data-action="alert" data-ticker="' + w.ticker + '" style="background:white;border:1px solid var(--grey-200);color:var(--grey-700);padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">🔔 Alert</button>' +
+      '<button data-action="remove" data-id="' + w.id + '" style="background:none;border:1px solid var(--grey-200);color:var(--grey-500);padding:5px 8px;border-radius:7px;font-size:14px;cursor:pointer;line-height:1;">×</button>' +
       '</div>' +
       '</div>' +
       '</div>' +
@@ -2200,6 +2200,16 @@ function screenSector(sector, el) {
     document.getElementById('sectorLock').style.display = 'none';
   }
 }
+
+// GLOBAL DELEGATED EVENTS FOR WATCHLIST BUTTONS
+document.addEventListener('click', function(e) {
+  const alertBtn = e.target.closest('[data-action="alert"]');
+  const screenBtn = e.target.closest('[data-action="screen"]');
+  const removeBtn = e.target.closest('[data-action="remove"]');
+  if (alertBtn) openAlertModal(alertBtn.dataset.ticker);
+  if (screenBtn) quickScanFromWatch(screenBtn.dataset.ticker);
+  if (removeBtn) removeWatch(removeBtn.dataset.id);
+});
 
 // INIT
 const savedCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
