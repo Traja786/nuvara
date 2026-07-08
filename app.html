@@ -232,6 +232,11 @@ tr:last-child td { border-bottom: none; }
       <span class="tooltip">Simulator</span>
     </button>
 
+    <button class="nav-item" onclick="switchPage('alerts', this)">
+      <span class="nav-icon">🔔</span>
+      <span class="nav-label">Price Alerts</span>
+      <span class="tooltip">Price Alerts</span>
+    </button>
     <button class="nav-item" onclick="switchPage('directory', this)">
       <span class="nav-icon">📚</span>
       <span class="nav-label">Stock Directory</span>
@@ -476,6 +481,31 @@ tr:last-child td { border-bottom: none; }
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ALERTS PAGE -->
+  <div id="page-alerts" style="display:none;">
+    <div class="page-header">
+      <div>
+        <div class="page-title">🔔 Price Alerts</div>
+        <div class="page-subtitle">Manage all your active price alerts</div>
+      </div>
+      <div id="alertsCount" style="background:rgba(10,124,92,0.2);color:#6EE7B7;font-size:13px;font-weight:700;padding:6px 14px;border-radius:100px;"></div>
+    </div>
+    <div class="page-content">
+      <div class="card">
+        <div class="card-title">Active alerts</div>
+        <div id="alertsContainer"><div class="empty">No active alerts. Go to your watchlist and click 🔔 on any stock to set one.</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">How price alerts work</div>
+        <div style="font-size:13px;color:var(--grey-500);line-height:1.8;">
+          Set a target price on any watchlisted stock. When the stock hits your target we'll send an email to <strong id="alertsEmail"></strong>.<br><br>
+          Alerts check prices daily. Once triggered the alert is marked as complete and removed from your active list.<br><br>
+          <span style="color:#94A3B8;font-size:12px;">⏱ Prices are delayed 15-20 minutes. Alerts are for informational purposes only — not financial advice.</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1066,7 +1096,7 @@ function toggleSidebar() {
 
 // PAGE SWITCHING
 function switchPage(page, el) {
-  ['scanner','portfolio','watchlist','simulator','directory','halalScore','purification','zakatReport','compare','sectors'].forEach(p => {
+  ['scanner','portfolio','watchlist','alerts','simulator','directory','halalScore','purification','zakatReport','compare','sectors'].forEach(p => {
     const el = document.getElementById('page-' + p);
     if (el) el.style.display = p === page ? 'block' : 'none';
   });
@@ -1078,6 +1108,7 @@ function switchPage(page, el) {
   // Scroll main content to top
   document.getElementById('main').scrollTo(0, 0);
   window.scrollTo(0, 0);
+  if (page === 'alerts') loadAlertsPage();
   if (page === 'directory') renderDirectory();
   if (page === 'halalScore') calculateHalalScore();
   if (page === 'purification') calculatePurification();
@@ -2199,6 +2230,74 @@ function screenSector(sector, el) {
   } else {
     document.getElementById('sectorLock').style.display = 'none';
   }
+}
+
+// ALERTS PAGE
+async function loadAlertsPage() {
+  const { data, error } = await db.from('price_alerts').select('*').eq('user_id', currentUser.id).eq('triggered', false).order('created_at', { ascending: false });
+  const container = document.getElementById('alertsContainer');
+  const countEl = document.getElementById('alertsCount');
+  const emailEl = document.getElementById('alertsEmail');
+
+  if (emailEl) emailEl.textContent = currentUser.email;
+
+  if (error || !data || !data.length) {
+    container.innerHTML = '<div class="empty">No active alerts. Go to your watchlist and click 🔔 on any stock to set one.</div>';
+    if (countEl) countEl.textContent = '';
+    return;
+  }
+
+  if (countEl) countEl.textContent = data.length + ' active alert' + (data.length !== 1 ? 's' : '');
+
+  // Group by ticker
+  const grouped = {};
+  data.forEach(a => {
+    if (!grouped[a.ticker]) grouped[a.ticker] = [];
+    grouped[a.ticker].push(a);
+  });
+
+  container.innerHTML = Object.entries(grouped).map(([ticker, alerts]) => {
+    const s = stocks[ticker] || { name: ticker, verdict: 'unknown' };
+    const currentPrice = priceCache[ticker];
+    const pillClass = s.verdict === 'halal' ? 'halal-pill' : s.verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
+    const verdictText = s.verdict === 'halal' ? '✓ Halal' : s.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
+
+    const alertRows = alerts.map(a => {
+      const isAbove = a.alert_type === 'above';
+      const price = parseFloat(a.target_price);
+      const triggered = currentPrice && (isAbove ? currentPrice >= price : currentPrice <= price);
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:${triggered ? '#FEF3C7' : 'var(--grey-100)'};border-radius:8px;margin-top:6px;">
+        <div style="font-size:13px;">
+          ${isAbove ? '📈' : '📉'} Alert when <strong>${isAbove ? 'above' : 'below'}</strong> £${price.toFixed(2)}
+          ${triggered ? '<span style="color:#92400E;font-weight:700;margin-left:6px;">⚡ Near target!</span>' : ''}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${currentPrice ? '<span style="font-size:12px;color:var(--grey-500);">Now: £' + currentPrice.toFixed(2) + '</span>' : ''}
+          <button data-action="delete-alert" data-id="${a.id}" style="background:none;border:none;color:var(--grey-400);cursor:pointer;font-size:16px;padding:2px 6px;">×</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div style="border:1.5px solid var(--grey-200);border-radius:12px;padding:16px;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <strong style="font-size:15px;">${ticker}</strong>
+          <span class="verdict-pill ${pillClass}">${verdictText}</span>
+        </div>
+        <button onclick="openAlertModal('${ticker}')" style="background:none;border:1px solid var(--grey-200);color:var(--grey-700);padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">+ Add alert</button>
+      </div>
+      <div style="font-size:12px;color:var(--grey-500);margin-bottom:6px;">${s.name}</div>
+      ${alertRows}
+    </div>`;
+  }).join('');
+
+  // Add delete handler
+  document.querySelectorAll('[data-action="delete-alert"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      await db.from('price_alerts').delete().eq('id', btn.dataset.id);
+      loadAlertsPage();
+    });
+  });
 }
 
 // GLOBAL DELEGATED EVENTS FOR WATCHLIST BUTTONS
