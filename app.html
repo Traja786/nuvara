@@ -69,6 +69,10 @@ body { font-family: 'Inter', sans-serif; background: var(--grey-100); color: var
   .main { margin-right: 0; }
 }
 
+/* ONBOARDING */
+.onboard-dot { width:8px;height:8px;border-radius:50%;background:var(--grey-200);transition:background 0.2s; }
+.onboard-dot.active { background:var(--green); }
+
 /* NUVARA PLUS LOCK */
 .plus-lock-overlay { position:absolute; inset:0; background:rgba(255,255,255,0.95); border-radius:16px; display:flex; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px); }
 .plus-lock-content { text-align:center; max-width:280px; }
@@ -232,11 +236,6 @@ tr:last-child td { border-bottom: none; }
       <span class="tooltip">Simulator</span>
     </button>
 
-    <button class="nav-item" onclick="switchPage('alerts', this)">
-      <span class="nav-icon">🔔</span>
-      <span class="nav-label">Price Alerts</span>
-      <span class="tooltip">Price Alerts</span>
-    </button>
     <button class="nav-item" onclick="switchPage('directory', this)">
       <span class="nav-icon">📚</span>
       <span class="nav-label">Stock Directory</span>
@@ -836,6 +835,80 @@ tr:last-child td { border-bottom: none; }
   Overview ▶
 </div></div>
 
+<!-- ONBOARDING TOUR -->
+<div id="onboardingModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:99999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:white;border-radius:24px;padding:32px;max-width:420px;width:100%;position:relative;text-align:center;">
+    <div id="onboardStep1">
+      <div style="font-size:48px;margin-bottom:16px;">🕌</div>
+      <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--black);margin-bottom:8px;">Welcome to Nuvara</div>
+      <div style="font-size:14px;color:var(--grey-500);line-height:1.7;margin-bottom:24px;">The free halal stock screener built for UK Muslim investors. Let us show you around in 3 quick steps.</div>
+      <div style="display:grid;gap:10px;text-align:left;margin-bottom:24px;">
+        <div style="display:flex;gap:12px;align-items:center;background:var(--grey-100);border-radius:12px;padding:12px 14px;">
+          <span style="font-size:24px;">🔍</span>
+          <div><div style="font-weight:700;font-size:13px;">Scan any stock</div><div style="font-size:12px;color:var(--grey-500);">Instant halal verdict with full breakdown</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;background:var(--grey-100);border-radius:12px;padding:12px 14px;">
+          <span style="font-size:24px;">⭐</span>
+          <div><div style="font-weight:700;font-size:13px;">Build your watchlist</div><div style="font-size:12px;color:var(--grey-500);">Track halal stocks with live prices & alerts</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;background:var(--grey-100);border-radius:12px;padding:12px 14px;">
+          <span style="font-size:24px;">☪️</span>
+          <div><div style="font-weight:700;font-size:13px;">Calculate zakat & purification</div><div style="font-size:12px;color:var(--grey-500);">Know your Islamic obligations automatically</div></div>
+        </div>
+      </div>
+      <button onclick="nextOnboardStep(2)" class="btn-green" style="width:100%;padding:14px;font-size:15px;">Get started →</button>
+      <button onclick="skipOnboarding()" style="background:none;border:none;color:var(--grey-500);font-size:13px;cursor:pointer;margin-top:12px;font-family:Inter,sans-serif;">Skip tour</button>
+    </div>
+
+    <div id="onboardStep2" style="display:none;">
+      <div style="font-size:48px;margin-bottom:16px;">🔍</div>
+      <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--black);margin-bottom:8px;">Step 1 — Screen a stock</div>
+      <div style="font-size:14px;color:var(--grey-500);line-height:1.7;margin-bottom:24px;">Go to <strong>Scanner</strong> in the sidebar. Type any ticker or company name — like <strong>AAPL</strong>, <strong>AstraZeneca</strong> or <strong>HSBA</strong>. You'll get an instant verdict with a full breakdown of why.</div>
+      <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:12px;padding:16px;margin-bottom:24px;font-size:13px;color:#065F46;line-height:1.7;">
+        💡 You can also scan multiple stocks at once — just separate tickers with commas: <strong>AAPL, TSLA, AZN</strong>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="nextOnboardStep(1)" style="flex:1;padding:12px;background:none;border:1.5px solid var(--grey-200);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;color:var(--grey-500);">← Back</button>
+        <button onclick="nextOnboardStep(3)" class="btn-green" style="flex:2;padding:12px;font-size:14px;">Next →</button>
+      </div>
+    </div>
+
+    <div id="onboardStep3" style="display:none;">
+      <div style="font-size:48px;margin-bottom:16px;">⭐</div>
+      <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--black);margin-bottom:8px;">Step 2 — Your watchlist</div>
+      <div style="font-size:14px;color:var(--grey-500);line-height:1.7;margin-bottom:24px;">After scanning a stock, hit <strong>"Add to watchlist"</strong> to track it. Your watchlist shows live prices and lets you set price alerts — you'll get an email when your target is hit.</div>
+      <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:12px;padding:16px;margin-bottom:24px;font-size:13px;color:#065F46;line-height:1.7;">
+        💡 Click 🔔 on any watchlist stock to set a price alert above or below a target price
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="nextOnboardStep(2)" style="flex:1;padding:12px;background:none;border:1.5px solid var(--grey-200);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;color:var(--grey-500);">← Back</button>
+        <button onclick="nextOnboardStep(4)" class="btn-green" style="flex:2;padding:12px;font-size:14px;">Next →</button>
+      </div>
+    </div>
+
+    <div id="onboardStep4" style="display:none;">
+      <div style="font-size:48px;margin-bottom:16px;">☪️</div>
+      <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--black);margin-bottom:8px;">Step 3 — Zakat & purification</div>
+      <div style="font-size:14px;color:var(--grey-500);line-height:1.7;margin-bottom:24px;">The <strong>Simulator</strong> calculates your zakat obligation and purification amounts automatically based on your portfolio. No other platform does this.</div>
+      <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:12px;padding:16px;margin-bottom:24px;font-size:13px;color:#065F46;line-height:1.7;">
+        💡 Your portfolio halal score, full zakat report and purification tracker are coming soon with Nuvara Plus
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="nextOnboardStep(3)" style="flex:1;padding:12px;background:none;border:1.5px solid var(--grey-200);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;color:var(--grey-500);">← Back</button>
+        <button onclick="skipOnboarding()" class="btn-green" style="flex:2;padding:12px;font-size:15px;">Start using Nuvara →</button>
+      </div>
+    </div>
+
+    <!-- Progress dots -->
+    <div style="display:flex;justify-content:center;gap:6px;margin-top:20px;" id="onboardDots">
+      <div class="onboard-dot active" id="dot1"></div>
+      <div class="onboard-dot" id="dot2"></div>
+      <div class="onboard-dot" id="dot3"></div>
+      <div class="onboard-dot" id="dot4"></div>
+    </div>
+  </div>
+</div>
+
 <!-- NUVARA PLUS EARLY ACCESS MODAL -->
 <div id="plusModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;padding:20px;">
   <div style="background:white;border-radius:20px;padding:32px;max-width:400px;width:100%;position:relative;text-align:center;">
@@ -1062,7 +1135,7 @@ async function fetchWatchlistPrices() {
   const tickers = [...new Set([...watchlist.map(w => w.ticker), ...holdings.map(h => h.ticker)])];
   const fetches = tickers.map(t => getLivePrice(t));
   await Promise.all(fetches);
-  renderWatchlist();
+  await renderWatchlist();
   renderHoldings();
   // Update portfolio stats and right panel with live prices
   const { data: pf } = await db.from('profiles').select('cash_balance').eq('user_id', currentUser.id).maybeSingle();
@@ -1079,6 +1152,8 @@ async function init() {
   document.getElementById('userEmailText').textContent = currentUser.email;
   document.getElementById('loadingOverlay').style.display = 'none';
   await loadData();
+  updateRightPanel();
+  setTimeout(() => showOnboarding(), 800);
 }
 
 async function signOut() {
@@ -1171,8 +1246,30 @@ function runScan() {
   // Fall through to FMP API for unknown stocks
   fetchFromFMP(input).then(stock => {
     document.getElementById('scanLoading').style.display = 'none';
-    if (stock) showScanResult(stock, input);
-    else document.getElementById('scanResult').innerHTML = '<div class="empty">Stock not found. Try a different ticker (e.g. AAPL, HSBA, OCDO).</div>';
+    if (stock) {
+      showScanResult(stock, input);
+    } else {
+      document.getElementById('scanResult').innerHTML = `
+        <div style="background:var(--grey-100);border-radius:14px;padding:24px;text-align:center;">
+          <div style="font-size:32px;margin-bottom:10px;">🔍</div>
+          <div style="font-weight:700;font-size:16px;color:var(--black);margin-bottom:6px;">Stock not found</div>
+          <div style="font-size:13px;color:var(--grey-500);margin-bottom:16px;">We couldn't find "<strong>${raw}</strong>" in our database or via live data. Try the ticker symbol instead of the company name.</div>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+            <span onclick="document.getElementById('scanInput').value='AAPL';runScan()" style="background:white;border:1.5px solid var(--grey-200);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">Try AAPL</span>
+            <span onclick="document.getElementById('scanInput').value='AZN';runScan()" style="background:white;border:1.5px solid var(--grey-200);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">Try AZN</span>
+            <span onclick="document.getElementById('scanInput').value='HLAL';runScan()" style="background:white;border:1.5px solid var(--grey-200);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">Try HLAL</span>
+          </div>
+        </div>`;
+    }
+  }).catch(() => {
+    document.getElementById('scanLoading').style.display = 'none';
+    document.getElementById('scanResult').innerHTML = `
+      <div style="background:#FEF2F2;border:1.5px solid #FECACA;border-radius:14px;padding:24px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:10px;">⚠️</div>
+        <div style="font-weight:700;font-size:16px;color:var(--black);margin-bottom:6px;">Connection issue</div>
+        <div style="font-size:13px;color:var(--grey-500);margin-bottom:16px;">We couldn't reach our data provider. Please check your connection and try again.</div>
+        <button onclick="runScan()" class="btn-green" style="padding:8px 20px;">Try again →</button>
+      </div>`;
   });
 }
 
@@ -1268,6 +1365,60 @@ function findStock(input) {
   return null;
 }
 
+function getAppAlternatives(stock) {
+  const halalAlternatives = {
+    'Banking': [
+      { ticker: 'HIK', name: 'Hikma Pharmaceuticals', reason: 'Halal healthcare alternative' },
+      { ticker: 'AZN', name: 'AstraZeneca', reason: 'Halal large-cap UK stock' }
+    ],
+    'Insurance': [
+      { ticker: 'ULVR', name: 'Unilever', reason: 'Halal consumer goods' },
+      { ticker: 'AZN', name: 'AstraZeneca', reason: 'Halal healthcare' }
+    ],
+    'Alcohol': [
+      { ticker: 'ULVR', name: 'Unilever', reason: 'Consumer goods without alcohol' },
+      { ticker: 'NKE', name: 'Nike', reason: 'Halal consumer brand' }
+    ],
+    'Tobacco': [
+      { ticker: 'JNJ', name: 'Johnson & Johnson', reason: 'Halal healthcare' },
+      { ticker: 'PFE', name: 'Pfizer', reason: 'Halal pharmaceuticals' }
+    ],
+    'Gambling': [
+      { ticker: 'AAPL', name: 'Apple', reason: 'Halal technology' },
+      { ticker: 'MSFT', name: 'Microsoft', reason: 'Halal technology' }
+    ],
+    'Defence': [
+      { ticker: 'AAPL', name: 'Apple', reason: 'Halal technology' },
+      { ticker: 'GOOGL', name: 'Alphabet', reason: 'Halal technology' }
+    ],
+    'Technology': [
+      { ticker: 'HLAL', name: 'Wahed FTSE Shariah ETF', reason: 'Shariah-certified global exposure' },
+      { ticker: 'SPUS', name: 'SP Funds S&P 500 Sharia ETF', reason: 'Halal S&P 500 exposure' }
+    ],
+    'Index ETF': [
+      { ticker: 'HLAL', name: 'Wahed FTSE Shariah ETF', reason: 'Shariah-certified alternative' },
+      { ticker: 'SPUS', name: 'SP Funds S&P 500 Sharia', reason: 'Halal S&P 500' },
+      { ticker: 'ISDU', name: 'iShares MSCI World Islamic', reason: 'Global halal exposure' }
+    ],
+    'ESG ETF': [
+      { ticker: 'HLAL', name: 'Wahed FTSE Shariah ETF', reason: 'Truly halal — not just ESG' },
+      { ticker: 'UMMA', name: 'Wahed Dow Jones Islamic ETF', reason: 'Shariah-certified global' }
+    ],
+    'Financial Services': [
+      { ticker: 'MA', name: 'Mastercard', reason: 'Payment processor — halal' },
+      { ticker: 'V', name: 'Visa', reason: 'Payment processor — halal' }
+    ],
+  };
+  const sector = stock.sector || '';
+  for (const [key, alts] of Object.entries(halalAlternatives)) {
+    if (sector.toLowerCase().includes(key.toLowerCase())) return alts;
+  }
+  return [
+    { ticker: 'HLAL', name: 'Wahed FTSE Shariah ETF', reason: 'Diversified halal alternative' },
+    { ticker: 'SPUS', name: 'SP Funds S&P 500 Sharia', reason: 'Halal US equity exposure' }
+  ];
+}
+
 function showScanResult(stock, ticker) {
   const icons = { pass:'✓', fail:'✕', warn:'⚠' };
   const verdictText = stock.verdict === 'halal' ? '✓ Halal' : stock.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
@@ -1279,10 +1430,34 @@ function showScanResult(stock, ticker) {
 
   const purif = stock.purif > 0 ? `<div style="background:white;border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><div><div style="font-size:12px;font-weight:600;">Purification amount</div><div style="font-size:11px;color:var(--grey-500);">Donate per share held</div></div><div style="font-size:16px;font-weight:800;color:var(--green);">£${stock.purif.toFixed(2)} / share</div></div>` : '';
 
+  // Halal alternatives for haram/doubtful stocks
+  let alternativesHtml = '';
+  if (stock.verdict === 'haram' || stock.verdict === 'doubtful') {
+    const alts = getAppAlternatives(stock);
+    alternativesHtml = `<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(0,0,0,0.08);">
+      <div style="font-size:12px;font-weight:700;color:var(--grey-700);margin-bottom:10px;">💡 Halal alternatives to consider</div>
+      <div style="display:grid;gap:8px;">
+        ${alts.map(a => `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--green-subtle);border:1px solid var(--green-light);border-radius:10px;padding:10px 14px;cursor:pointer;" onclick="document.getElementById('scanInput').value='${a.ticker}';runScan()">
+          <div>
+            <div style="font-weight:700;font-size:13px;">${a.ticker} — ${a.name}</div>
+            <div style="font-size:11px;color:var(--grey-500);">${a.reason}</div>
+          </div>
+          <span style="color:var(--green);font-size:12px;font-weight:700;">Screen →</span>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  // Live data badge
+  const liveBadge = stock.live ? '<span style="background:#EFF6FF;color:#2563EB;font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px;margin-left:8px;">⚡ Live data</span>' : '';
+
   document.getElementById('scanResult').innerHTML = `
     <div class="scan-result ${stock.verdict}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
-        <div><div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:800;">${stock.name}</div><div style="font-size:12px;color:var(--grey-500);">${ticker} · ${stock.sector}</div></div>
+        <div>
+          <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:800;">${stock.name}${liveBadge}</div>
+          <div style="font-size:12px;color:var(--grey-500);">${ticker} · ${stock.sector}</div>
+        </div>
         <span class="${stock.verdict}-pill verdict-pill" style="padding:7px 14px;font-size:13px;">${verdictText}</span>
       </div>
       <div class="screens-grid">${screensHtml}</div>
@@ -1292,6 +1467,7 @@ function showScanResult(stock, ticker) {
         <button onclick="addWatchFromScan('${ticker}')" class="btn-green" style="font-size:13px;padding:8px 14px;">⭐ Add to watchlist</button>
         ${stock.verdict !== 'haram' ? '<button onclick="goToBuy(\'' + ticker + '\')" style="background:none;border:1.5px solid var(--green);color:var(--green);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;">📈 Paper trade</button>' : ''}
       </div>
+      ${alternativesHtml}
     </div>`;
 }
 
@@ -1363,7 +1539,7 @@ async function loadData() {
   watchlist = w || [];
   updatePortfolioStats(cash);
   renderHoldings();
-  renderWatchlist();
+  await renderWatchlist();
   fetchWatchlistPrices();
   updateRightPanel();
 }
@@ -1495,7 +1671,7 @@ async function addWatchTicker(ticker) {
   msg.textContent = '✓ ' + ticker + ' added to watchlist.'; msg.className = 'msg success';
 }
 
-function renderWatchlist() {
+async function renderWatchlist() {
   const c = document.getElementById('watchlistContainer');
   const countEl = document.getElementById('watchCount');
   if (!watchlist.length) {
@@ -1504,6 +1680,15 @@ function renderWatchlist() {
     return;
   }
   if (countEl) countEl.textContent = watchlist.length + ' stock' + (watchlist.length !== 1 ? 's' : '');
+
+  // Fetch all alerts for this user
+  const { data: allAlerts } = await db.from('price_alerts').select('*').eq('user_id', currentUser.id).eq('triggered', false);
+  const alertsByTicker = {};
+  (allAlerts || []).forEach(a => {
+    if (!alertsByTicker[a.ticker]) alertsByTicker[a.ticker] = [];
+    alertsByTicker[a.ticker].push(a);
+  });
+
   c.innerHTML = watchlist.map(w => {
     const s = stocks[w.ticker] || { name: w.ticker, verdict: 'unknown', sector: 'Unknown' };
     const pd = priceDataCache[w.ticker];
@@ -1511,6 +1696,7 @@ function renderWatchlist() {
     const verdictText = s.verdict === 'halal' ? '✓ Halal' : s.verdict === 'haram' ? '✕ Haram' : '⚠ Doubtful';
     const bgColor = s.verdict === 'halal' ? 'var(--green-subtle)' : s.verdict === 'haram' ? '#FEF2F2' : '#FFFBEB';
     const borderColor = s.verdict === 'halal' ? 'var(--green-light)' : s.verdict === 'haram' ? '#FECACA' : '#FDE68A';
+    const tickerAlerts = alertsByTicker[w.ticker] || [];
 
     let priceHtml = '<div style="text-align:right;min-width:80px;"><span style="font-size:11px;color:#94A3B8;">Fetching...</span></div>';
     if (pd && pd.price) {
@@ -1525,6 +1711,30 @@ function renderWatchlist() {
         '</div>';
     }
 
+    // Alert badge
+    const alertBadge = tickerAlerts.length > 0
+      ? '<span style="background:#FEF3C7;color:#92400E;font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px;">🔔 ' + tickerAlerts.length + ' alert' + (tickerAlerts.length > 1 ? 's' : '') + '</span>'
+      : '';
+
+    // Inline alerts dropdown
+    const alertsHtml = tickerAlerts.length > 0
+      ? '<div id="alerts-' + w.ticker + '" style="display:none;margin-top:10px;border-top:1px solid rgba(0,0,0,0.06);padding-top:10px;">' +
+        '<div style="font-size:11px;font-weight:700;color:var(--grey-500);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Active alerts</div>' +
+        tickerAlerts.map(a => {
+          const price = parseFloat(a.target_price);
+          const isAbove = a.alert_type === 'above';
+          const nearTarget = pd && pd.price && (isAbove ? pd.price >= price * 0.95 : pd.price <= price * 1.05);
+          return '<div style="display:flex;justify-content:space-between;align-items:center;background:' + (nearTarget ? '#FEF3C7' : 'rgba(0,0,0,0.04)') + ';border-radius:8px;padding:8px 10px;margin-bottom:4px;">' +
+            '<div style="font-size:12px;">' + (isAbove ? '📈' : '📉') + ' ' + (isAbove ? 'Above' : 'Below') + ' <strong>£' + price.toFixed(2) + '</strong>' + (nearTarget ? ' <span style="color:#92400E;font-weight:700;">⚡ Near target</span>' : '') + '</div>' +
+            '<button data-action="delete-alert" data-id="' + a.id + '" style="background:none;border:none;color:#94A3B8;cursor:pointer;font-size:14px;padding:0 4px;">×</button>' +
+            '</div>';
+        }).join('') +
+        '<button data-action="alert" data-ticker="' + w.ticker + '" style="margin-top:6px;background:none;border:1px dashed var(--grey-300);color:var(--grey-500);width:100%;padding:6px;border-radius:8px;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;">+ Add another alert</button>' +
+        '</div>'
+      : '';
+
+    const toggleId = 'alerts-' + w.ticker;
+
     return '<div style="background:' + bgColor + ';border:1.5px solid ' + borderColor + ';border-radius:12px;padding:14px 16px;margin-bottom:8px;">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
       '<div style="flex:1;">' +
@@ -1532,6 +1742,7 @@ function renderWatchlist() {
       '<span style="font-weight:800;font-size:15px;color:var(--black);">' + w.ticker + '</span>' +
       '<span class="verdict-pill ' + pillClass + '">' + verdictText + '</span>' +
       (s.sector ? '<span style="font-size:11px;color:var(--grey-500);">' + s.sector + '</span>' : '') +
+      alertBadge +
       '</div>' +
       '<div style="font-size:12px;color:var(--grey-500);">' + s.name + '</div>' +
       '</div>' +
@@ -1539,13 +1750,20 @@ function renderWatchlist() {
       priceHtml +
       '<div style="display:flex;gap:6px;">' +
       '<button data-action="screen" data-ticker="' + w.ticker + '" style="background:white;border:1px solid var(--grey-200);color:var(--grey-700);padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">Screen</button>' +
-      '<button data-action="alert" data-ticker="' + w.ticker + '" style="background:white;border:1px solid var(--grey-200);color:var(--grey-700);padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">🔔 Alert</button>' +
+      '<button data-action="alert" data-ticker="' + w.ticker + '" style="background:white;border:1px solid var(--grey-200);color:var(--grey-700);padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">🔔' + (tickerAlerts.length ? ' ' + tickerAlerts.length : '') + '</button>' +
+      (tickerAlerts.length ? '<button onclick="toggleAlerts(\'' + toggleId + '\')" style="background:white;border:1px solid var(--grey-200);color:var(--grey-700);padding:5px 10px;border-radius:7px;font-size:11px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;">▼</button>' : '') +
       '<button data-action="remove" data-id="' + w.id + '" style="background:none;border:1px solid var(--grey-200);color:var(--grey-500);padding:5px 8px;border-radius:7px;font-size:14px;cursor:pointer;line-height:1;">×</button>' +
       '</div>' +
       '</div>' +
       '</div>' +
+      alertsHtml +
       '</div>';
   }).join('');
+}
+
+function toggleAlerts(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
 function quickScanFromWatch(ticker) {
@@ -2051,6 +2269,26 @@ function updateRightPanel() {
   if (rpTip) rpTip.textContent = halalTips[Math.floor(Math.random() * halalTips.length)];
 }
 
+// ONBOARDING
+function showOnboarding() {
+  if (localStorage.getItem('nuvara_onboarded')) return;
+  const modal = document.getElementById('onboardingModal');
+  modal.style.display = 'flex';
+}
+
+function nextOnboardStep(step) {
+  [1,2,3,4].forEach(i => {
+    document.getElementById('onboardStep' + i).style.display = i === step ? 'block' : 'none';
+    const dot = document.getElementById('dot' + i);
+    if (dot) dot.className = 'onboard-dot' + (i === step ? ' active' : '');
+  });
+}
+
+function skipOnboarding() {
+  document.getElementById('onboardingModal').style.display = 'none';
+  localStorage.setItem('nuvara_onboarded', 'true');
+}
+
 // NUVARA PLUS
 function showPlusSignup() {
   const modal = document.getElementById('plusModal');
@@ -2310,7 +2548,13 @@ document.addEventListener('click', function(e) {
   if (action === 'alert' && ticker) { e.preventDefault(); e.stopPropagation(); openAlertModal(ticker); }
   if (action === 'screen' && ticker) { e.preventDefault(); quickScanFromWatch(ticker); }
   if (action === 'remove' && id) { e.preventDefault(); removeWatch(id); }
+  if (action === 'delete-alert' && id) { e.preventDefault(); deleteAlertInline(id); }
 });
+
+async function deleteAlertInline(id) {
+  await db.from('price_alerts').delete().eq('id', id);
+  renderWatchlist();
+}
 
 // INIT
 const savedCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
