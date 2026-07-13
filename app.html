@@ -245,7 +245,7 @@ tr:last-child td { border-bottom: none; }
     <div class="nav-section-label" style="margin-top:16px;">Coming soon</div>
     <button class="nav-item disabled">
       <span class="nav-icon">📰</span>
-      <span class="nav-label">Halal Watchlist</span>
+      <span class="nav-label">Curated Picks</span>
       <span class="coming-badge">Plus</span>
       <span class="tooltip">Halal Watchlist — Plus</span>
     </button>
@@ -259,9 +259,9 @@ tr:last-child td { border-bottom: none; }
     <div class="nav-section-label" style="margin-top:16px;">🚀 Nuvara Plus</div>
     <button class="nav-item" onclick="switchPage('halalScore', this)">
       <span class="nav-icon">🎯</span>
-      <span class="nav-label">Halal Score</span>
+      <span class="nav-label">Ethical Score</span>
       <span class="coming-badge">Plus</span>
-      <span class="tooltip">Portfolio Halal Score</span>
+      <span class="tooltip">Portfolio Ethical Score</span>
     </button>
     <button class="nav-item" onclick="switchPage('purification', this)">
       <span class="nav-icon">🌿</span>
@@ -308,7 +308,7 @@ tr:last-child td { border-bottom: none; }
     <div class="page-header">
       <div>
         <div class="page-title">🔍 Stock & ETF Scanner</div>
-        <div class="page-subtitle">Screen any stock or ETF for halal and ethical compliance</div>
+        <div class="page-subtitle">Screen any stock or ETF for ethical compliance</div>
       </div>
     </div>
     <div class="page-content">
@@ -336,7 +336,7 @@ tr:last-child td { border-bottom: none; }
     <div class="page-header">
       <div>
         <div class="page-title">📊 Paper Portfolio</div>
-        <div class="page-subtitle">Practice halal investing with £10,000 virtual cash</div>
+        <div class="page-subtitle">Practice ethical investing with £10,000 virtual cash</div>
       </div>
       <button onclick="resetPortfolio()" style="background:none;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;">Reset to £10k</button>
     </div>
@@ -364,7 +364,7 @@ tr:last-child td { border-bottom: none; }
       </div>
       <div class="card">
         <div class="card-title">Your holdings</div>
-        <div id="holdingsContainer"><div class="empty">No holdings yet. Buy your first halal stock above.</div></div>
+        <div id="holdingsContainer"><div class="empty">No holdings yet. Buy your first screened stock above.</div></div>
       </div>
     </div>
   </div>
@@ -538,15 +538,15 @@ tr:last-child td { border-bottom: none; }
   <div id="page-halalScore" style="display:none;">
     <div class="page-header">
       <div>
-        <div class="page-title">🎯 Portfolio Halal Score</div>
-        <div class="page-subtitle">Your overall halal compliance rating</div>
+        <div class="page-title">🎯 Portfolio Ethical Score</div>
+        <div class="page-subtitle">Your overall ethical compliance rating</div>
       </div>
       <div style="background:rgba(10,124,92,0.2);color:#6EE7B7;font-size:11px;font-weight:700;padding:5px 12px;border-radius:100px;">🚀 Nuvara Plus Preview</div>
     </div>
     <div class="page-content">
       <div class="card" id="halalScoreCard">
         <div style="text-align:center;padding:20px 0;">
-          <div style="font-size:13px;color:var(--grey-500);margin-bottom:8px;">Your portfolio halal score</div>
+          <div style="font-size:13px;color:var(--grey-500);margin-bottom:8px;">Your portfolio ethical score</div>
           <div style="position:relative;display:inline-block;">
             <svg width="160" height="160" viewBox="0 0 160 160">
               <circle cx="80" cy="80" r="70" fill="none" stroke="#E2E8F0" stroke-width="12"/>
@@ -579,7 +579,7 @@ tr:last-child td { border-bottom: none; }
             <div class="plus-lock-content">
               <div style="font-size:32px;margin-bottom:8px;">🚀</div>
               <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:var(--black);margin-bottom:6px;">Nuvara Plus</div>
-              <div style="font-size:13px;color:var(--grey-500);margin-bottom:16px;">Get personalised suggestions to improve your halal score and reach 100/100.</div>
+              <div style="font-size:13px;color:var(--grey-500);margin-bottom:16px;">Get personalised suggestions to improve your ethical score and reach 100/100.</div>
               <button onclick="showPlusSignup()" class="btn-green" style="width:100%;padding:12px;">Join early access — free 30 days →</button>
             </div>
           </div>
@@ -728,7 +728,7 @@ tr:last-child td { border-bottom: none; }
     <div class="page-header">
       <div>
         <div class="page-title">🔎 Sector Screener</div>
-        <div class="page-subtitle">Find halal stocks by sector</div>
+        <div class="page-subtitle">Find ethically screened stocks by sector</div>
       </div>
       <div style="background:rgba(10,124,92,0.2);color:#6EE7B7;font-size:11px;font-weight:700;padding:5px 12px;border-radius:100px;">🚀 Nuvara Plus Preview</div>
     </div>
@@ -841,15 +841,15 @@ tr:last-child td { border-bottom: none; }
     <div id="onboardStep1">
       <div style="font-size:48px;margin-bottom:16px;">🕌</div>
       <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--black);margin-bottom:8px;">Welcome to Nuvara</div>
-      <div style="font-size:14px;color:var(--grey-500);line-height:1.7;margin-bottom:24px;">The free halal stock screener built for UK Muslim investors. Let us show you around in 3 quick steps.</div>
+      <div style="font-size:14px;color:var(--grey-500);line-height:1.7;margin-bottom:24px;">The free ethical stock screener for conscious investors. Let us show you around in 3 quick steps.</div>
       <div style="display:grid;gap:10px;text-align:left;margin-bottom:24px;">
         <div style="display:flex;gap:12px;align-items:center;background:var(--grey-100);border-radius:12px;padding:12px 14px;">
           <span style="font-size:24px;">🔍</span>
-          <div><div style="font-weight:700;font-size:13px;">Scan any stock</div><div style="font-size:12px;color:var(--grey-500);">Instant halal verdict with full breakdown</div></div>
+          <div><div style="font-weight:700;font-size:13px;">Scan any stock</div><div style="font-size:12px;color:var(--grey-500);">Instant ethical verdict with full breakdown</div></div>
         </div>
         <div style="display:flex;gap:12px;align-items:center;background:var(--grey-100);border-radius:12px;padding:12px 14px;">
           <span style="font-size:24px;">⭐</span>
-          <div><div style="font-weight:700;font-size:13px;">Build your watchlist</div><div style="font-size:12px;color:var(--grey-500);">Track halal stocks with live prices & alerts</div></div>
+          <div><div style="font-weight:700;font-size:13px;">Build your watchlist</div><div style="font-size:12px;color:var(--grey-500);">Track screened stocks with live prices & alerts</div></div>
         </div>
         <div style="display:flex;gap:12px;align-items:center;background:var(--grey-100);border-radius:12px;padding:12px 14px;">
           <span style="font-size:24px;">☪️</span>
@@ -891,7 +891,7 @@ tr:last-child td { border-bottom: none; }
       <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--black);margin-bottom:8px;">Step 3 — Zakat & purification</div>
       <div style="font-size:14px;color:var(--grey-500);line-height:1.7;margin-bottom:24px;">The <strong>Simulator</strong> calculates your zakat obligation and purification amounts automatically based on your portfolio. No other platform does this.</div>
       <div style="background:var(--green-subtle);border:1.5px solid var(--green-light);border-radius:12px;padding:16px;margin-bottom:24px;font-size:13px;color:#065F46;line-height:1.7;">
-        💡 Your portfolio halal score, full zakat report and purification tracker are coming soon with Nuvara Plus
+        💡 Your portfolio ethical score, full zakat report and purification tracker are coming soon with Nuvara Plus
       </div>
       <div style="display:flex;gap:10px;">
         <button onclick="nextOnboardStep(3)" style="flex:1;padding:12px;background:none;border:1.5px solid var(--grey-200);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;color:var(--grey-500);">← Back</button>
@@ -917,7 +917,7 @@ tr:last-child td { border-bottom: none; }
     <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--black);margin-bottom:8px;">Nuvara Plus</div>
     <div style="font-size:14px;color:var(--grey-500);line-height:1.7;margin-bottom:20px;">Join the early access list and get <strong>30 days free</strong> when we launch at £4.99/month.</div>
     <div style="display:grid;gap:8px;text-align:left;margin-bottom:20px;">
-      <div style="display:flex;gap:10px;font-size:13px;color:var(--grey-700);"><span style="color:var(--green);font-weight:700;">✓</span> Portfolio halal score with improvement tips</div>
+      <div style="display:flex;gap:10px;font-size:13px;color:var(--grey-700);"><span style="color:var(--green);font-weight:700;">✓</span> Portfolio ethical score with improvement tips</div>
       <div style="display:flex;gap:10px;font-size:13px;color:var(--grey-700);"><span style="color:var(--green);font-weight:700;">✓</span> Annual purification tracker & export</div>
       <div style="display:flex;gap:10px;font-size:13px;color:var(--grey-700);"><span style="color:var(--green);font-weight:700;">✓</span> Downloadable zakat PDF report</div>
       <div style="display:flex;gap:10px;font-size:13px;color:var(--grey-700);"><span style="color:var(--green);font-weight:700;">✓</span> Full stock comparison tool</div>
@@ -1398,15 +1398,15 @@ function getAppAlternatives(stock) {
     'Index ETF': [
       { ticker: 'HLAL', name: 'Wahed FTSE Shariah ETF', reason: 'Shariah-certified alternative' },
       { ticker: 'SPUS', name: 'SP Funds S&P 500 Sharia', reason: 'Halal S&P 500' },
-      { ticker: 'ISDU', name: 'iShares MSCI World Islamic', reason: 'Global halal exposure' }
+      { ticker: 'ISDU', name: 'iShares MSCI World Islamic', reason: 'Global ethically screened exposure' }
     ],
     'ESG ETF': [
       { ticker: 'HLAL', name: 'Wahed FTSE Shariah ETF', reason: 'Truly halal — not just ESG' },
       { ticker: 'UMMA', name: 'Wahed Dow Jones Islamic ETF', reason: 'Shariah-certified global' }
     ],
     'Financial Services': [
-      { ticker: 'MA', name: 'Mastercard', reason: 'Payment processor — halal' },
-      { ticker: 'V', name: 'Visa', reason: 'Payment processor — halal' }
+      { ticker: 'MA', name: 'Mastercard', reason: 'Payment processor — ethically compliant' },
+      { ticker: 'V', name: 'Visa', reason: 'Payment processor — ethically compliant' }
     ],
   };
   const sector = stock.sector || '';
@@ -1581,7 +1581,7 @@ async function buyStock() {
   if (!ticker || !shares || !price) { msg.textContent = 'Please fill in all fields.'; msg.className = 'msg error'; return; }
 
   const stock = stocks[ticker];
-  if (stock && stock.verdict === 'haram') { msg.textContent = ticker + ' is haram — paper trading only allows halal stocks.'; msg.className = 'msg error'; return; }
+  if (stock && stock.verdict === 'haram') { msg.textContent = ticker + ' fails ethical screening — paper trading only allows compliant stocks.'; msg.className = 'msg error'; return; }
 
   const { data: pf } = await db.from('profiles').select('cash_balance').eq('user_id', currentUser.id).maybeSingle();
   const cash = pf ? parseFloat(pf.cash_balance) : 10000;
@@ -1610,7 +1610,7 @@ async function buyStock() {
 
 function renderHoldings() {
   const c = document.getElementById('holdingsContainer');
-  if (!holdings.length) { c.innerHTML = '<div class="empty">No holdings yet. Buy your first halal stock above.</div>'; return; }
+  if (!holdings.length) { c.innerHTML = '<div class="empty">No holdings yet. Buy your first screened stock above.</div>'; return; }
   c.innerHTML = `<table><thead><tr><th>Stock</th><th>Shares</th><th>Avg price</th><th>Current price</th><th>Value</th><th>P&L</th><th>Status</th><th></th></tr></thead><tbody>` +
     holdings.map(h => {
       const s = stocks[h.ticker] || {};
@@ -2208,8 +2208,8 @@ const halalTips = [
   'Purification is a small charitable donation to cleanse minimal impure income — it doesn\'t make a stock haram.',
   'HLAL, SPUS and ISDU are the most popular Shariah-certified ETFs available to UK investors.',
   'Debt above 33% of market cap is a red flag under AAOIFI screening standards.',
-  'Interest income above 5% of total revenue is the key financial screen for halal investing.',
-  'AstraZeneca, GSK and Hikma are three UK-listed pharmaceutical stocks that pass all halal screens.',
+  'Interest income above 5% of total revenue is the key financial check for ethical investing.',
+  'AstraZeneca, GSK and Hikma are three UK-listed pharmaceutical stocks that pass all ethical screens.',
   'Zakat on investments is 2.5% of the total value held above nisab for one lunar year.',
   'Tobacco, alcohol, gambling, weapons and conventional banking are excluded from halal portfolios.',
   'VWRL and CSPX — two of the UK\'s most popular ETFs — both hold significant banking and alcohol exposure.',
