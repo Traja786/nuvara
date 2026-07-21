@@ -1597,6 +1597,7 @@
       <div class="modal-error" id="loginError"></div>
       <input class="modal-input" id="loginEmail" type="email" placeholder="Email address" />
       <input class="modal-input" id="loginPassword" type="password" placeholder="Password" />
+      <p style="text-align:right;margin:-8px 0 12px;"><a onclick="showAuthForm('reset')" style="font-size:13px;color:#0A7C5C;cursor:pointer;font-weight:600;">Forgot password?</a></p>
       <button class="modal-btn" onclick="signIn()">Sign in</button>
       <p class="modal-switch">Don't have an account? <a onclick="showAuthForm('signup')">Sign up free</a></p>
     </div>
@@ -1617,6 +1618,23 @@
       <h2>Check your email</h2>
       <p>We've sent a verification link to your email. Click it to activate your account then come back and sign in.</p>
       <button class="modal-btn" onclick="closeAuth()">Got it</button>
+    </div>
+    <div id="resetForm" style="display:none;">
+      <h2>Reset your password</h2>
+      <p>Enter your email and we'll send you a link to reset your password.</p>
+      <div class="modal-error" id="resetError"></div>
+      <div class="modal-success" id="resetSuccess" style="display:none;background:var(--green-subtle);color:var(--green-dark);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;"></div>
+      <input class="modal-input" id="resetEmail" type="email" placeholder="Email address" />
+      <button class="modal-btn" onclick="requestPasswordReset()">Send reset link</button>
+      <p class="modal-switch"><a onclick="showAuthForm('login')">← Back to sign in</a></p>
+    </div>
+    <div id="newPasswordForm" style="display:none;">
+      <h2>Set a new password</h2>
+      <p>Choose a new password for your account.</p>
+      <div class="modal-error" id="newPasswordError"></div>
+      <input class="modal-input" id="newPassword" type="password" placeholder="New password (min 6 characters)" />
+      <input class="modal-input" id="newPasswordConfirm" type="password" placeholder="Confirm new password" />
+      <button class="modal-btn" onclick="setNewPassword()">Update password</button>
     </div>
   </div>
 </div>
@@ -1774,7 +1792,53 @@ function showAuthForm(mode) {
   document.getElementById('loginForm').style.display = mode === 'login' ? 'block' : 'none';
   document.getElementById('signupForm').style.display = mode === 'signup' ? 'block' : 'none';
   document.getElementById('verifyForm').style.display = 'none';
+  document.getElementById('resetForm').style.display = mode === 'reset' ? 'block' : 'none';
+  document.getElementById('newPasswordForm').style.display = mode === 'newPassword' ? 'block' : 'none';
 }
+
+async function requestPasswordReset() {
+  const email = document.getElementById('resetEmail').value.trim();
+  const errEl = document.getElementById('resetError');
+  const successEl = document.getElementById('resetSuccess');
+  errEl.style.display = 'none';
+  successEl.style.display = 'none';
+  if (!email || !email.includes('@')) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; return; }
+
+  const { error } = await _supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/'
+  });
+
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  successEl.textContent = '✓ Check your email — we\'ve sent a link to reset your password.';
+  successEl.style.display = 'block';
+  document.getElementById('resetEmail').value = '';
+}
+
+async function setNewPassword() {
+  const pw = document.getElementById('newPassword').value;
+  const pwConfirm = document.getElementById('newPasswordConfirm').value;
+  const errEl = document.getElementById('newPasswordError');
+  errEl.style.display = 'none';
+
+  if (pw.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+  if (pw !== pwConfirm) { errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return; }
+
+  const { error } = await _supabase.auth.updateUser({ password: pw });
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+
+  // Clean the recovery token out of the URL and show success
+  window.history.replaceState({}, document.title, window.location.pathname);
+  closeAuth();
+  alert('Your password has been updated. You can now sign in with your new password.');
+}
+
+// Detect password recovery link — Supabase redirects back here with a recovery session
+_supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    document.getElementById('authModal').classList.add('active');
+    showAuthForm('newPassword');
+  }
+});
 
 async function signIn() {
   const email = document.getElementById('loginEmail').value.trim();
