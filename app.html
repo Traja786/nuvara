@@ -833,7 +833,7 @@ tr:last-child td { border-bottom: none; }
 <!-- COLLAPSED TAB -->
 <div id="rightPanelTab" style="display:none;position:fixed;right:0;top:50%;transform:translateY(-50%);background:var(--navy);color:rgba(255,255,255,0.7);padding:12px 6px;border-radius:8px 0 0 8px;cursor:pointer;z-index:150;writing-mode:vertical-rl;font-size:11px;font-weight:600;letter-spacing:0.5px;" onclick="toggleRightPanel()">
   Overview ▶
-</div></div>
+</div>
 
 <!-- ONBOARDING TOUR -->
 <div id="onboardingModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:99999;align-items:center;justify-content:center;padding:20px;">
@@ -977,6 +977,42 @@ let currentUser = null;
 let holdings = [];
 let watchlist = [];
 let sidebarCollapsed = false;
+
+// ERROR BOUNDARY
+window.addEventListener('error', function(e) {
+  console.error('Nuvara caught an error:', e.error || e.message);
+  showErrorBanner();
+});
+window.addEventListener('unhandledrejection', function(e) {
+  console.error('Nuvara caught a promise rejection:', e.reason);
+  showErrorBanner();
+});
+
+let errorBannerShown = false;
+function showErrorBanner() {
+  if (errorBannerShown) return; // don't spam multiple banners
+  errorBannerShown = true;
+  const banner = document.createElement('div');
+  banner.id = 'nuvaraErrorBanner';
+  banner.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0F172A;color:white;padding:14px 20px;border-radius:12px;z-index:999999;display:flex;align-items:center;gap:14px;box-shadow:0 8px 24px rgba(0,0,0,0.3);max-width:90vw;font-family:Inter,sans-serif;font-size:13px;';
+  banner.innerHTML =
+    '<span>⚠️ Something went wrong loading part of the page.</span>' +
+    '<button onclick="window.location.reload()" style="background:#0A7C5C;color:white;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">Refresh</button>' +
+    '<button onclick="document.getElementById(\'nuvaraErrorBanner\').remove();errorBannerShown=false;" style="background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:16px;">×</button>';
+  document.body.appendChild(banner);
+}
+
+// Wrap a render function so a failure inside it can't blank the whole page
+function safeRender(fn, label) {
+  return function(...args) {
+    try {
+      return fn.apply(this, args);
+    } catch (err) {
+      console.error('Nuvara render error in ' + (label || fn.name) + ':', err);
+      showErrorBanner();
+    }
+  };
+}
 
 // STOCK DATA
 const stocks = {
@@ -1145,15 +1181,22 @@ async function fetchWatchlistPrices() {
 
 // AUTH CHECK
 async function init() {
-  const { data: { session } } = await db.auth.getSession();
-  if (!session) { window.location.href = '/'; return; }
-  currentUser = session.user;
-  document.getElementById('userAvatar').textContent = currentUser.email[0].toUpperCase();
-  document.getElementById('userEmailText').textContent = currentUser.email;
-  document.getElementById('loadingOverlay').style.display = 'none';
-  await loadData();
-  updateRightPanel();
-  setTimeout(() => showOnboarding(), 800);
+  try {
+    const { data: { session } } = await db.auth.getSession();
+    if (!session) { window.location.href = '/'; return; }
+    currentUser = session.user;
+    document.getElementById('userAvatar').textContent = currentUser.email[0].toUpperCase();
+    document.getElementById('userEmailText').textContent = currentUser.email;
+    document.getElementById('loadingOverlay').style.display = 'none';
+    await loadData();
+    updateRightPanel();
+    setTimeout(() => showOnboarding(), 800);
+  } catch (err) {
+    console.error('Nuvara init error:', err);
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) overlay.style.display = 'none';
+    showErrorBanner();
+  }
 }
 
 async function signOut() {
@@ -1183,11 +1226,16 @@ function switchPage(page, el) {
   // Scroll main content to top
   document.getElementById('main').scrollTo(0, 0);
   window.scrollTo(0, 0);
-  if (page === 'alerts') loadAlertsPage();
-  if (page === 'directory') renderDirectory();
-  if (page === 'halalScore') calculateHalalScore();
-  if (page === 'purification') calculatePurification();
-  if (page === 'zakatReport') calculateZakatReport();
+  try {
+    if (page === 'alerts') loadAlertsPage();
+    if (page === 'directory') renderDirectory();
+    if (page === 'halalScore') calculateHalalScore();
+    if (page === 'purification') calculatePurification();
+    if (page === 'zakatReport') calculateZakatReport();
+  } catch (err) {
+    console.error('Nuvara page render error on "' + page + '":', err);
+    showErrorBanner();
+  }
 }
 
 // SCANNER
