@@ -177,7 +177,7 @@ tr:last-child td { border-bottom: none; }
 .msg.success { background: var(--green-subtle); color: var(--green-dark); display: block; }
 
 @media (max-width: 768px) {
-  .sidebar { display: flex; position: fixed; top: 0; left: 0; height: 100vh; z-index: 500; transform: translateX(-100%); transition: transform 0.25s ease; width: 260px !important; }
+  .sidebar { display: flex; position: fixed; top: 0; left: 0; bottom: 0; z-index: 500; transform: translateX(-100%); transition: transform 0.25s ease; width: 260px !important; }
   .sidebar .sidebar-nav { overflow-y: auto; flex: 1; }
   .sidebar .sidebar-footer { flex-shrink: 0; }
   .sidebar.mobile-open { transform: translateX(0); }
@@ -189,7 +189,7 @@ tr:last-child td { border-bottom: none; }
   .mobile-sidebar-backdrop.active { display: block; }
   .stats-row { grid-template-columns: 1fr 1fr; }
   .page-content { padding: 16px; }
-  .page-header { padding: 14px 16px; }
+  .page-header { padding: 14px 16px; top: 56px; }
   .screens-grid { grid-template-columns: 1fr; }
   .sim-grid { grid-template-columns: 1fr; }
   /* Fix tables overflowing the viewport on mobile */
