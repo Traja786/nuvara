@@ -176,6 +176,15 @@ tr:last-child td { border-bottom: none; }
 .msg.error { background: #FEF2F2; color: var(--red); display: block; }
 .msg.success { background: var(--green-subtle); color: var(--green-dark); display: block; }
 
+/* MOBILE TOP BAR */
+.mobile-topbar { display: none; position: fixed; top: 0; left: 0; right: 0; height: 56px; background: var(--navy); align-items: center; justify-content: space-between; padding: 0 16px; z-index: 400; }
+.mobile-topbar .logo { display: flex; align-items: center; gap: 8px; }
+.mobile-hamburger { background: none; border: none; display: flex; flex-direction: column; gap: 4px; padding: 8px; cursor: pointer; }
+.mobile-hamburger span { width: 20px; height: 2px; background: white; border-radius: 2px; }
+.mobile-close-btn { display: none; position: absolute; top: 14px; right: 14px; background: none; border: none; color: white; font-size: 24px; cursor: pointer; line-height: 1; }
+.mobile-sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 450; }
+.mobile-sidebar-backdrop.active { display: block; }
+
 @media (max-width: 768px) {
   .sidebar { display: flex; position: fixed; top: 0; left: 0; bottom: 0; z-index: 500; transform: translateX(-100%); transition: transform 0.25s ease; width: 260px !important; }
   .sidebar .sidebar-nav { overflow-y: auto; flex: 1; }
@@ -199,15 +208,6 @@ tr:last-child td { border-bottom: none; }
   .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table { min-width: 0 !important; }
 }
-
-/* MOBILE TOP BAR */
-.mobile-topbar { display: none; position: fixed; top: 0; left: 0; right: 0; height: 56px; background: var(--navy); align-items: center; justify-content: space-between; padding: 0 16px; z-index: 400; }
-.mobile-topbar .logo { display: flex; align-items: center; gap: 8px; }
-.mobile-hamburger { background: none; border: none; display: flex; flex-direction: column; gap: 4px; padding: 8px; cursor: pointer; }
-.mobile-hamburger span { width: 20px; height: 2px; background: white; border-radius: 2px; }
-.mobile-close-btn { display: none; position: absolute; top: 14px; right: 14px; background: none; border: none; color: white; font-size: 24px; cursor: pointer; line-height: 1; }
-.mobile-sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 450; }
-.mobile-sidebar-backdrop.active { display: block; }
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NB9T7Q8TH7"></script>
 <script>
