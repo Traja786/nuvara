@@ -177,15 +177,32 @@ tr:last-child td { border-bottom: none; }
 .msg.success { background: var(--green-subtle); color: var(--green-dark); display: block; }
 
 @media (max-width: 768px) {
-  .sidebar { display: none; }
-  .main { margin-left: 0 !important; padding-bottom: 72px; }
+  .sidebar { display: block; position: fixed; top: 0; left: 0; height: 100vh; z-index: 500; transform: translateX(-100%); transition: transform 0.25s ease; width: 260px !important; }
+  .sidebar.mobile-open { transform: translateX(0); }
+  .sidebar .toggle-btn { display: none; }
+  .mobile-close-btn { display: flex; }
+  .main { margin-left: 0 !important; padding-bottom: 72px; padding-top: 56px; }
   .mobile-nav { display: block; }
+  .mobile-topbar { display: flex; }
+  .mobile-sidebar-backdrop.active { display: block; }
   .stats-row { grid-template-columns: 1fr 1fr; }
   .page-content { padding: 16px; }
   .page-header { padding: 14px 16px; }
   .screens-grid { grid-template-columns: 1fr; }
   .sim-grid { grid-template-columns: 1fr; }
+  /* Fix tables overflowing the viewport on mobile */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 0 !important; }
 }
+
+/* MOBILE TOP BAR */
+.mobile-topbar { display: none; position: fixed; top: 0; left: 0; right: 0; height: 56px; background: var(--navy); align-items: center; justify-content: space-between; padding: 0 16px; z-index: 400; }
+.mobile-topbar .logo { display: flex; align-items: center; gap: 8px; }
+.mobile-hamburger { background: none; border: none; display: flex; flex-direction: column; gap: 4px; padding: 8px; cursor: pointer; }
+.mobile-hamburger span { width: 20px; height: 2px; background: white; border-radius: 2px; }
+.mobile-close-btn { display: none; position: absolute; top: 14px; right: 14px; background: none; border: none; color: white; font-size: 24px; cursor: pointer; line-height: 1; }
+.mobile-sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 450; }
+.mobile-sidebar-backdrop.active { display: block; }
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NB9T7Q8TH7"></script>
 <script>
@@ -202,6 +219,17 @@ tr:last-child td { border-bottom: none; }
 </div>
 
 <!-- SIDEBAR -->
+<div class="mobile-topbar" id="mobileTopbar">
+  <a href="/" class="logo">
+    <span class="logo-dot"></span>
+    <span class="logo-text">Nuvara</span>
+  </a>
+  <button class="mobile-hamburger" onclick="openMobileSidebar()">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+<div class="mobile-sidebar-backdrop" id="mobileSidebarBackdrop" onclick="closeMobileSidebar()"></div>
+
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <a href="/" class="logo">
@@ -211,6 +239,7 @@ tr:last-child td { border-bottom: none; }
     <button class="toggle-btn" onclick="toggleSidebar()">
       <span class="toggle-icon">◀</span>
     </button>
+    <button class="mobile-close-btn" onclick="closeMobileSidebar()">×</button>
   </div>
 
   <nav class="sidebar-nav">
@@ -1205,6 +1234,15 @@ async function signOut() {
 }
 
 // SIDEBAR TOGGLE
+function openMobileSidebar() {
+  document.getElementById('sidebar').classList.add('mobile-open');
+  document.getElementById('mobileSidebarBackdrop').classList.add('active');
+}
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('mobileSidebarBackdrop').classList.remove('active');
+}
+
 function toggleSidebar() {
   sidebarCollapsed = !sidebarCollapsed;
   document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed);
@@ -1214,6 +1252,7 @@ function toggleSidebar() {
 
 // PAGE SWITCHING
 function switchPage(page, el) {
+  closeMobileSidebar();
   ['scanner','portfolio','watchlist','alerts','simulator','directory','halalScore','purification','zakatReport','compare','sectors'].forEach(p => {
     const el = document.getElementById('page-' + p);
     if (el) el.style.display = p === page ? 'block' : 'none';
@@ -1659,7 +1698,7 @@ async function buyStock() {
 function renderHoldings() {
   const c = document.getElementById('holdingsContainer');
   if (!holdings.length) { c.innerHTML = '<div class="empty">No holdings yet. Buy your first screened stock above.</div>'; return; }
-  c.innerHTML = `<table><thead><tr><th>Stock</th><th>Shares</th><th>Avg price</th><th>Current price</th><th>Value</th><th>P&L</th><th>Status</th><th></th></tr></thead><tbody>` +
+  c.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Stock</th><th>Shares</th><th>Avg price</th><th>Current price</th><th>Value</th><th>P&L</th><th>Status</th><th></th></tr></thead><tbody>` +
     holdings.map(h => {
       const s = stocks[h.ticker] || {};
       const pillClass = s.verdict === 'halal' ? 'halal-pill' : s.verdict === 'haram' ? 'haram-pill' : 'doubtful-pill';
@@ -1682,7 +1721,7 @@ function renderHoldings() {
         <td><span class="verdict-pill ${pillClass}">${verdictText}</span></td>
         <td><button class="btn-sell" onclick="sellStock('${h.id}')">Sell</button></td>
       </tr>`;
-    }).join('') + `</tbody></table>`;
+    }).join('') + `</tbody></table></div>`;
 }
 
 async function sellStock(id) {
