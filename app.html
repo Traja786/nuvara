@@ -1620,10 +1620,12 @@ function updateBuyTotal() {
 
 // PORTFOLIO
 async function loadData() {
-  const { data: pf } = await db.from('profiles').select('cash_balance').eq('user_id', currentUser.id).maybeSingle();
+  const [{ data: pf }, { data: h }, { data: w }] = await Promise.all([
+    db.from('profiles').select('cash_balance').eq('user_id', currentUser.id).maybeSingle(),
+    db.from('holdings').select('*').eq('user_id', currentUser.id),
+    db.from('watchlist').select('*').eq('user_id', currentUser.id)
+  ]);
   const cash = pf ? pf.cash_balance : 10000;
-  const { data: h } = await db.from('holdings').select('*').eq('user_id', currentUser.id);
-  const { data: w } = await db.from('watchlist').select('*').eq('user_id', currentUser.id);
   holdings = h || [];
   watchlist = w || [];
   updatePortfolioStats(cash);
