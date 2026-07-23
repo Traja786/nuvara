@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Nuvara — My Account</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -29,7 +29,7 @@ body { font-family: 'Inter', sans-serif; background: var(--grey-100); color: var
 .toggle-icon { font-size: 18px; transition: transform 0.25s; }
 .sidebar.collapsed .toggle-icon { transform: rotate(180deg); }
 
-.sidebar-nav { flex: 1; padding: 12px 8px; overflow-y: auto; }
+.sidebar-nav { flex: 1; padding: 12px 8px; overflow-y: auto; overscroll-behavior: contain; }
 .nav-section-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 1px; padding: 8px 8px 4px; white-space: nowrap; overflow: hidden; transition: opacity 0.2s; }
 .sidebar.collapsed .nav-section-label { opacity: 0; }
 .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-radius: 10px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.55); cursor: pointer; border: none; background: none; font-family: 'Inter', sans-serif; width: 100%; text-align: left; transition: all 0.15s; margin-bottom: 2px; white-space: nowrap; position: relative; }
@@ -47,7 +47,7 @@ body { font-family: 'Inter', sans-serif; background: var(--grey-100); color: var
 .nav-item .tooltip { position: absolute; left: calc(var(--sidebar-collapsed) - 4px); background: #1E293B; color: white; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 6px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s; z-index: 300; }
 .sidebar.collapsed .nav-item:hover .tooltip { opacity: 1; }
 
-.sidebar-footer { padding: 12px 8px; border-top: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
+.sidebar-footer { padding: 12px 8px; border-top: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; min-height: 60px; }
 .user-row { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; overflow: hidden; }
 .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0; }
 .user-details { overflow: hidden; transition: opacity 0.2s, width 0.2s; }
@@ -161,7 +161,7 @@ tr:last-child td { border-bottom: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* MOBILE BOTTOM NAV */
-.mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--navy); border-top: 1px solid rgba(255,255,255,0.1); z-index: 200; padding: 6px 0 10px; }
+.mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--navy); border-top: 1px solid rgba(255,255,255,0.1); z-index: 200; padding: 6px 0 calc(10px + env(safe-area-inset-bottom, 10px)); }
 .mobile-nav-items { display: flex; }
 .mobile-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px; font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.45); cursor: pointer; border: none; background: none; font-family: 'Inter', sans-serif; letter-spacing: 0.3px; }
 .mobile-nav-btn.active { color: var(--green); }
@@ -186,9 +186,9 @@ tr:last-child td { border-bottom: none; }
 .mobile-sidebar-backdrop.active { display: block; }
 
 @media (max-width: 768px) {
-  .sidebar { display: flex; position: fixed; top: 0; left: 0; bottom: 0; z-index: 500; transform: translateX(-100%); transition: transform 0.25s ease; width: 260px !important; }
-  .sidebar .sidebar-nav { overflow-y: auto; flex: 1; }
-  .sidebar .sidebar-footer { flex-shrink: 0; }
+  .sidebar { display: grid; grid-template-rows: auto 1fr auto; position: fixed; top: 0; left: 0; bottom: 0; z-index: 500; transform: translateX(-100%); transition: transform 0.25s ease; width: 260px !important; height: 100%; }
+  .sidebar .sidebar-nav { overflow-y: auto; min-height: 0; }
+  .sidebar .sidebar-footer { flex-shrink: 0; position: relative; z-index: 10; background: var(--navy); padding-bottom: calc(12px + env(safe-area-inset-bottom, 20px)); }
   .sidebar.mobile-open { transform: translateX(0); }
   .sidebar.collapsed .user-details { opacity: 1 !important; width: auto !important; }
   .sidebar.collapsed .nav-label { opacity: 1 !important; width: auto !important; }
