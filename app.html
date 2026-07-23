@@ -241,9 +241,9 @@ tr:last-child td { border-bottom: none; }
       <span></span><span></span><span></span>
     </button>
     <div id="mobileTopMenu" class="mobile-top-menu">
-      <a href="/" onclick="toggleMobileMenu()" class="mobile-top-menu-item">
+      <button class="mobile-top-menu-item" onclick="goHome()">
         <span>🏠</span> Home
-      </a>
+      </button>
       <button class="mobile-top-menu-item" onclick="openMobileSidebar(); toggleMobileMenu();">
         <span>📊</span> Dashboard
       </button>
@@ -1338,6 +1338,10 @@ async function signOut() {
 }
 
 // SIDEBAR TOGGLE
+function goHome() {
+  window.location.href = '/';
+}
+
 function toggleMobileMenu() {
   document.getElementById('mobileTopMenu').classList.toggle('open');
 }
