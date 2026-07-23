@@ -241,7 +241,7 @@ tr:last-child td { border-bottom: none; }
       <span></span><span></span><span></span>
     </button>
     <div id="mobileTopMenu" class="mobile-top-menu">
-      <a href="/" class="mobile-top-menu-item">
+      <a href="/" onclick="toggleMobileMenu()" class="mobile-top-menu-item">
         <span>🏠</span> Home
       </a>
       <button class="mobile-top-menu-item" onclick="openMobileSidebar(); toggleMobileMenu();">
@@ -840,10 +840,16 @@ tr:last-child td { border-bottom: none; }
         </div>
         <div style="display:grid;gap:12px;">
           <div>
+            <label style="font-size:12px;font-weight:600;color:var(--grey-500);display:block;margin-bottom:6px;">First name</label>
+            <input class="app-input" id="accountFirstName" type="text" placeholder="e.g. Ahmed" style="width:100%;" />
+          </div>
+          <div>
             <label style="font-size:12px;font-weight:600;color:var(--grey-500);display:block;margin-bottom:6px;">Email address</label>
             <input class="app-input" id="accountEmailInput" type="email" disabled style="width:100%;background:var(--grey-100);color:var(--grey-500);" />
             <div style="font-size:11px;color:#94A3B8;margin-top:4px;">Contact hello@nuvara.co.uk to change your email address</div>
           </div>
+          <button onclick="saveAccountProfile()" class="btn-green" style="padding:10px 20px;font-size:13px;justify-self:start;">Save changes</button>
+          <div id="accountProfileMsg" class="msg" style="display:none;"></div>
         </div>
       </div>
 
@@ -1100,6 +1106,7 @@ const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
+let userFirstName = null;
 let holdings = [];
 let watchlist = [];
 let sidebarCollapsed = false;
@@ -1728,11 +1735,13 @@ function updateBuyTotal() {
 // PORTFOLIO
 async function loadData() {
   const [{ data: pf }, { data: h }, { data: w }] = await Promise.all([
-    db.from('profiles').select('cash_balance').eq('user_id', currentUser.id).maybeSingle(),
+    db.from('profiles').select('cash_balance, first_name').eq('user_id', currentUser.id).maybeSingle(),
     db.from('holdings').select('*').eq('user_id', currentUser.id),
     db.from('watchlist').select('*').eq('user_id', currentUser.id)
   ]);
   const cash = pf ? pf.cash_balance : 10000;
+  userFirstName = (pf && pf.first_name) || null;
+  updateGreetingWithName();
   holdings = h || [];
   watchlist = w || [];
   updatePortfolioStats(cash);
@@ -2679,9 +2688,47 @@ async function loadAccountPage() {
     ? 'Member since ' + created.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
     : '';
 
-  const { data: pf } = await db.from('profiles').select('cash_balance').eq('user_id', currentUser.id).maybeSingle();
+  const { data: pf } = await db.from('profiles').select('cash_balance, first_name').eq('user_id', currentUser.id).maybeSingle();
   const cash = pf ? pf.cash_balance : 10000;
   document.getElementById('accountCashBalance').textContent = '£' + Number(cash).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  document.getElementById('accountFirstName').value = (pf && pf.first_name) || '';
+
+  if (pf && pf.first_name) {
+    document.getElementById('accountAvatar').textContent = pf.first_name[0].toUpperCase();
+    document.getElementById('accountEmail').textContent = pf.first_name;
+  }
+}
+
+async function saveAccountProfile() {
+  const name = document.getElementById('accountFirstName').value.trim();
+  const msgEl = document.getElementById('accountProfileMsg');
+  msgEl.style.display = 'none';
+
+  const { error } = await db.from('profiles').upsert({ user_id: currentUser.id, first_name: name || null }, { onConflict: 'user_id' });
+
+  if (error) {
+    msgEl.textContent = 'Something went wrong saving your name. Please try again.';
+    msgEl.className = 'msg error';
+  } else {
+    msgEl.textContent = '✓ Saved';
+    msgEl.className = 'msg success';
+    userFirstName = name || null;
+    updateGreetingWithName();
+    if (name) {
+      document.getElementById('accountAvatar').textContent = name[0].toUpperCase();
+      document.getElementById('accountEmail').textContent = name;
+    }
+  }
+  msgEl.style.display = 'block';
+}
+
+function updateGreetingWithName() {
+  const displayName = userFirstName || (currentUser ? currentUser.email : '');
+  const avatarChar = (userFirstName ? userFirstName[0] : (currentUser ? currentUser.email[0] : '?')).toUpperCase();
+  const avatarEl = document.getElementById('userAvatar');
+  const emailTextEl = document.getElementById('userEmailText');
+  if (avatarEl) avatarEl.textContent = avatarChar;
+  if (emailTextEl) emailTextEl.textContent = displayName;
 }
 
 async function requestAccountPasswordReset() {
