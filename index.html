@@ -1762,10 +1762,13 @@ let selectedModel = null;
 let portfolio = { cash: 10000, holdings: {} };
 let watchlist = [];
 
+let justSignedIn = false;
+
 _supabase.auth.onAuthStateChange((event, session) => {
   currentUser = session?.user || null;
   updateNav();
-  if (currentUser && event === 'SIGNED_IN') {
+  if (currentUser && event === 'SIGNED_IN' && justSignedIn) {
+    justSignedIn = false;
     window.location.href = '/app.html';
   } else if (!currentUser) {
     document.getElementById('dashboard').style.display = 'none';
@@ -1845,8 +1848,9 @@ async function signIn() {
   const password = document.getElementById('loginPassword').value;
   const errEl = document.getElementById('loginError');
   errEl.style.display = 'none';
+  justSignedIn = true;
   const { error } = await _supabase.auth.signInWithPassword({ email, password });
-  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  if (error) { justSignedIn = false; errEl.textContent = error.message; errEl.style.display = 'block'; return; }
   closeAuth();
 }
 
