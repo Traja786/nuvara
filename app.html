@@ -181,6 +181,13 @@ tr:last-child td { border-bottom: none; }
 .mobile-topbar .logo { display: flex; align-items: center; gap: 8px; }
 .mobile-hamburger { background: none; border: none; display: flex; flex-direction: column; gap: 4px; padding: 8px; cursor: pointer; }
 .mobile-hamburger span { width: 20px; height: 2px; background: white; border-radius: 2px; }
+.mobile-top-menu { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--navy); border-radius: 12px; min-width: 200px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); overflow: hidden; z-index: 600; border: 1px solid rgba(255,255,255,0.08); }
+.mobile-top-menu.open { display: block; }
+.mobile-top-menu-item { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 16px; background: none; border: none; color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; text-align: left; text-decoration: none; }
+.mobile-top-menu-item:active { background: rgba(255,255,255,0.06); }
+.mobile-top-menu-item span:first-child { font-size: 16px; width: 20px; text-align: center; }
+.mobile-top-menu-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 4px 0; }
+.mobile-top-menu-signout { color: #FCA5A5; }
 .mobile-close-btn { display: none; position: absolute; top: 14px; right: 14px; background: none; border: none; color: white; font-size: 24px; cursor: pointer; line-height: 1; }
 .mobile-sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 450; }
 .mobile-sidebar-backdrop.active { display: block; }
@@ -229,9 +236,26 @@ tr:last-child td { border-bottom: none; }
     <span class="logo-dot"></span>
     <span class="logo-text">Nuvara</span>
   </a>
-  <button class="mobile-hamburger" onclick="openMobileSidebar()">
-    <span></span><span></span><span></span>
-  </button>
+  <div style="position:relative;">
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <div id="mobileTopMenu" class="mobile-top-menu">
+      <a href="/" class="mobile-top-menu-item">
+        <span>🏠</span> Home
+      </a>
+      <button class="mobile-top-menu-item" onclick="openMobileSidebar(); toggleMobileMenu();">
+        <span>📊</span> Dashboard
+      </button>
+      <button class="mobile-top-menu-item" onclick="switchPage('account'); toggleMobileMenu();">
+        <span>👤</span> Account
+      </button>
+      <div class="mobile-top-menu-divider"></div>
+      <button class="mobile-top-menu-item mobile-top-menu-signout" onclick="signOut()">
+        <span>🚪</span> Sign out
+      </button>
+    </div>
+  </div>
 </div>
 <div class="mobile-sidebar-backdrop" id="mobileSidebarBackdrop" onclick="closeMobileSidebar()"></div>
 
@@ -795,6 +819,74 @@ tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
+  <!-- ACCOUNT PAGE -->
+  <div id="page-account" style="display:none;">
+    <div class="page-header">
+      <div>
+        <div class="page-title">👤 Account</div>
+        <div class="page-subtitle">Manage your profile and preferences</div>
+      </div>
+    </div>
+    <div class="page-content">
+
+      <div class="card">
+        <div class="card-title">Profile</div>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+          <div style="width:52px;height:52px;border-radius:50%;background:var(--green);color:white;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:20px;font-weight:800;" id="accountAvatar">?</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;" id="accountEmail">Loading...</div>
+            <div style="font-size:12px;color:var(--grey-500);" id="accountMemberSince">Member since —</div>
+          </div>
+        </div>
+        <div style="display:grid;gap:12px;">
+          <div>
+            <label style="font-size:12px;font-weight:600;color:var(--grey-500);display:block;margin-bottom:6px;">Email address</label>
+            <input class="app-input" id="accountEmailInput" type="email" disabled style="width:100%;background:var(--grey-100);color:var(--grey-500);" />
+            <div style="font-size:11px;color:#94A3B8;margin-top:4px;">Contact hello@nuvara.co.uk to change your email address</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Password</div>
+        <div style="font-size:13px;color:var(--grey-500);margin-bottom:14px;">Change your password by requesting a reset link to your email.</div>
+        <button onclick="requestAccountPasswordReset()" class="btn-green" style="padding:10px 20px;font-size:13px;">Send password reset link</button>
+        <div id="accountPasswordMsg" class="msg" style="margin-top:10px;"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Portfolio settings</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--grey-100);">
+          <div>
+            <div style="font-weight:600;font-size:14px;">Virtual cash balance</div>
+            <div style="font-size:12px;color:var(--grey-500);">Your current paper trading balance</div>
+          </div>
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:16px;color:var(--green);" id="accountCashBalance">£10,000</div>
+        </div>
+        <div style="padding-top:12px;">
+          <button onclick="resetPortfolio()" style="background:none;border:1.5px solid #FECACA;color:var(--red);border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">Reset portfolio to £10,000</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🚀 Nuvara Plus — Billing</div>
+        <div style="background:var(--grey-100);border-radius:12px;padding:20px;text-align:center;">
+          <div style="font-size:28px;margin-bottom:8px;">💳</div>
+          <div style="font-weight:700;font-size:14px;color:var(--black);margin-bottom:4px;">No active subscription</div>
+          <div style="font-size:13px;color:var(--grey-500);margin-bottom:14px;">Nuvara Plus billing will appear here once you subscribe.</div>
+          <button onclick="showPlusSignup()" style="background:var(--green);color:white;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">Join early access →</button>
+        </div>
+      </div>
+
+      <div class="card" style="border:1.5px solid #FECACA;">
+        <div class="card-title" style="color:var(--red);">Danger zone</div>
+        <div style="font-size:13px;color:var(--grey-500);margin-bottom:14px;">Need to delete your account or export your data? Contact us and we'll help.</div>
+        <a href="mailto:hello@nuvara.co.uk?subject=Account%20request" style="display:inline-block;background:none;border:1.5px solid #FECACA;color:var(--red);border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;text-decoration:none;font-family:Inter,sans-serif;">Contact support</a>
+      </div>
+
+    </div>
+  </div>
+
 
 </div>
 <!-- RIGHT STATS PANEL -->
@@ -1239,6 +1331,17 @@ async function signOut() {
 }
 
 // SIDEBAR TOGGLE
+function toggleMobileMenu() {
+  document.getElementById('mobileTopMenu').classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('mobileTopMenu');
+  const hamburger = document.querySelector('.mobile-hamburger');
+  if (menu && menu.classList.contains('open') && !menu.contains(e.target) && e.target !== hamburger && !hamburger.contains(e.target)) {
+    menu.classList.remove('open');
+  }
+});
+
 function openMobileSidebar() {
   document.getElementById('sidebar').classList.add('mobile-open');
   document.getElementById('mobileSidebarBackdrop').classList.add('active');
@@ -1258,7 +1361,7 @@ function toggleSidebar() {
 // PAGE SWITCHING
 function switchPage(page, el) {
   closeMobileSidebar();
-  ['scanner','portfolio','watchlist','alerts','simulator','directory','halalScore','purification','zakatReport','compare','sectors'].forEach(p => {
+  ['scanner','portfolio','watchlist','alerts','simulator','directory','halalScore','purification','zakatReport','compare','sectors','account'].forEach(p => {
     const el = document.getElementById('page-' + p);
     if (el) el.style.display = p === page ? 'block' : 'none';
   });
@@ -1271,6 +1374,7 @@ function switchPage(page, el) {
   document.getElementById('main').scrollTo(0, 0);
   window.scrollTo(0, 0);
   try {
+    if (page === 'account') loadAccountPage();
     if (page === 'alerts') loadAlertsPage();
     if (page === 'directory') renderDirectory();
     if (page === 'halalScore') calculateHalalScore();
@@ -2562,6 +2666,38 @@ function screenSector(sector, el) {
   } else {
     document.getElementById('sectorLock').style.display = 'none';
   }
+}
+
+// ACCOUNT
+async function loadAccountPage() {
+  document.getElementById('accountAvatar').textContent = currentUser.email[0].toUpperCase();
+  document.getElementById('accountEmail').textContent = currentUser.email;
+  document.getElementById('accountEmailInput').value = currentUser.email;
+
+  const created = currentUser.created_at ? new Date(currentUser.created_at) : null;
+  document.getElementById('accountMemberSince').textContent = created
+    ? 'Member since ' + created.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
+    : '';
+
+  const { data: pf } = await db.from('profiles').select('cash_balance').eq('user_id', currentUser.id).maybeSingle();
+  const cash = pf ? pf.cash_balance : 10000;
+  document.getElementById('accountCashBalance').textContent = '£' + Number(cash).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+async function requestAccountPasswordReset() {
+  const msgEl = document.getElementById('accountPasswordMsg');
+  msgEl.style.display = 'none';
+  const { error } = await db.auth.resetPasswordForEmail(currentUser.email, {
+    redirectTo: window.location.origin + '/'
+  });
+  if (error) {
+    msgEl.textContent = error.message;
+    msgEl.className = 'msg error';
+  } else {
+    msgEl.textContent = '✓ Check your email — we\'ve sent a link to reset your password.';
+    msgEl.className = 'msg success';
+  }
+  msgEl.style.display = 'block';
 }
 
 // ALERTS PAGE
